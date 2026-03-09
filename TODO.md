@@ -1,123 +1,107 @@
-## Swift SQL Formatter Port Plan
+## Swift SQL Formatter Port Checklist
 
 ### Direction
 
-- Port from the TypeScript project first; use the Java port as a reference for strong typing and API translation.
-- Target idiomatic Swift, not a line-by-line Java or TypeScript rewrite.
-- Build behavior parity through tests, starting with standard SQL and expanding dialects incrementally.
+- [x] Port from the TypeScript project first; use the Java port as a reference for strong typing and API translation.
+- [x] Target idiomatic Swift, not a line-by-line Java or TypeScript rewrite.
+- [x] Use tests as the behavior contract, starting with standard SQL and expanding dialects incrementally.
 
-### Goals
+### Current Scaffold
 
-- Provide a simple public API:
-  - `format(_ sql: String, options: FormatOptions = .default) throws -> String`
-- Keep the formatter deterministic and testable.
-- Make dialect support data-driven so new dialects are mostly configuration additions.
+- [x] Initialize SwiftPM package.
+- [x] Add a public `format(_ sql: String, options: FormatOptions = .default) throws -> String` entry point.
+- [x] Create initial source layout for `Dialects`, `Lexer`, `Formatter`, `Parser`, and `Tokens`.
+- [x] Add a starter test target under `Tests/SQLFormatterTests`.
 
-### Architecture
+### Phase 1 - Core API and Models
 
-- `SQLFormatter.swift`
-  - Public entry points.
-- `FormatOptions.swift`
-  - Indentation, casing, line-break, placeholder, and dialect options.
-- `Errors.swift`
-  - Parse/tokenization errors with line/column.
-- `Tokens/`
-  - Token types and token model.
-- `Lexer/`
-  - SQL tokenizer.
-- `Dialects/`
-  - Dialect definitions and registry.
-- `Parser/`
-  - Formatting state / token stream traversal.
-- `Formatter/`
-  - Output builder, indentation, newline logic.
-- `Tests/`
-  - Unit, fixture, and end-to-end behavior tests.
+- [x] Create `FormatOptions`.
+- [x] Create `Dialect`.
+- [x] Create `FormatError`.
+- [x] Create `Token` and `TokenType`.
+- [ ] Decide final public API shape beyond the initial `format()` function.
+- [ ] Define line/column tracking model for parse errors.
 
-### Implementation Order
+### Phase 2 - Standard SQL Tokenizer
 
-1. Scaffold SwiftPM package with library and test targets.
-2. Define core models:
-   - `Token`
-   - `TokenType`
-   - `FormatOptions`
-   - `Dialect`
-   - `FormatError`
-3. Implement tokenizer for standard SQL.
-4. Implement formatter state machine for core clauses:
-   - `SELECT`
-   - `FROM`
-   - `WHERE`
-   - `GROUP BY`
-   - `ORDER BY`
-   - `LIMIT`
-   - joins
-5. Implement output builder rules:
-   - indentation
-   - line breaks
-   - keyword casing
-   - multiple-query separation
-6. Add placeholder replacement.
-7. Add comments and formatter disable/enable block handling.
-8. Add dialect registry and convert standard SQL into a dialect definition.
-9. Add a second dialect to validate extensibility, preferably PostgreSQL or MySQL.
-10. Expand to remaining dialects and options.
+- [ ] Tokenize whitespace and newlines separately.
+- [ ] Tokenize words, identifiers, strings, numbers, operators, and punctuation.
+- [ ] Support quoted identifiers and string literals.
+- [ ] Support line and block comments.
+- [ ] Track token locations for diagnostics.
+- [ ] Add tokenizer unit tests.
 
-### Test Strategy
+### Phase 3 - Formatter Engine
 
-- Port tests from the TypeScript project as the primary behavior contract.
-- Use three layers of tests:
-  - tokenizer tests
-  - formatter rule tests
-  - full fixture/end-to-end tests
-- Prioritize coverage for:
-  - nested subqueries
-  - CTEs
-  - comments
-  - placeholders
-  - quoted identifiers
-  - multiline expressions
-  - multiple queries separated by `;`
+- [ ] Build output buffer utilities for spaces, indentation, and newlines.
+- [ ] Add indentation state management.
+- [ ] Implement clause-aware formatting for:
+  - [ ] `SELECT`
+  - [ ] `FROM`
+  - [ ] `WHERE`
+  - [ ] `GROUP BY`
+  - [ ] `ORDER BY`
+  - [ ] `LIMIT`
+  - [ ] joins
+- [ ] Add multiple-query separation.
+- [ ] Add formatter rule tests.
 
-### Milestones
+### Phase 4 - Options Parity
 
-- Milestone 1
-  - SwiftPM package
-  - public `format()` API
-  - standard SQL basic clause formatting
-- Milestone 2
-  - core options parity
-  - indentation and keyword case controls
-- Milestone 3
-  - placeholders
-  - comments
-  - multi-query input
-- Milestone 4
-  - dialect system
-  - 2-3 supported dialects
-- Milestone 5
-  - broader test parity with TypeScript fixtures
-- Milestone 6
-  - CLI and package polish
+- [ ] Support `tabWidth`.
+- [ ] Support `useTabs`.
+- [ ] Support keyword casing.
+- [ ] Support `linesBetweenQueries`.
+- [ ] Add expression width / line-wrapping strategy.
+- [ ] Add option coverage tests.
+
+### Phase 5 - Placeholders and Comments
+
+- [ ] Add positional placeholder replacement.
+- [ ] Add named placeholder replacement.
+- [ ] Add configurable placeholder types.
+- [ ] Support formatter disable/enable comment blocks.
+- [ ] Add tests for placeholders and comments.
+
+### Phase 6 - Dialect System
+
+- [ ] Convert standard SQL rules into dialect configuration.
+- [ ] Add dialect registry.
+- [ ] Add PostgreSQL or MySQL as the second dialect.
+- [ ] Validate dialect-specific quoting, operators, and reserved words.
+- [ ] Add dialect fixture tests.
+
+### Phase 7 - Test Parity
+
+- [ ] Port a small starter set of TypeScript fixtures.
+- [ ] Add end-to-end formatting fixtures.
+- [ ] Prioritize tricky coverage:
+  - [ ] nested subqueries
+  - [ ] CTEs
+  - [ ] comments
+  - [ ] placeholders
+  - [ ] quoted identifiers
+  - [ ] multiline expressions
+  - [ ] multiple queries separated by `;`
+- [ ] Expand fixture coverage as features land.
+
+### Phase 8 - Package Polish
+
+- [ ] Add README usage examples.
+- [ ] Add a CLI target if needed.
+- [ ] Add basic benchmark/perf checks.
+- [ ] Prepare release/versioning workflow.
 
 ### Risks
 
-- A direct Java port may preserve Java-specific design that feels unnatural in Swift.
-- A direct TypeScript port may carry over dynamic-language assumptions.
-- Most complexity will be in tokenization and newline/indentation decisions, not the public API.
+- [ ] Avoid copying Java structure where Swift value types or enums are better.
+- [ ] Avoid carrying over TypeScript dynamic assumptions into Swift API design.
+- [ ] Watch lexer complexity around `String.Index` and Unicode correctness.
+- [ ] Keep formatting decisions centralized to avoid inconsistent output rules.
 
-### Swift-Specific Notes
+### Immediate Next Steps
 
-- Prefer enums and value types where possible.
-- Keep dialect definitions immutable.
-- Use a centralized output builder to avoid scattered formatting logic.
-- Be careful with `String.Index` and Unicode handling in the lexer.
-- Favor pure functions and small state objects over large mutable classes.
-
-### First Practical Steps
-
-- Initialize the Swift package.
-- Create the core model files.
-- Port a minimal tokenizer.
-- Port a minimal formatter for `SELECT ... FROM ... WHERE ...`.
-- Bring over a small set of fixture tests from the TypeScript project.
+- [ ] Replace the placeholder tokenizer with a real standard SQL tokenizer.
+- [ ] Replace the passthrough formatter pipeline with basic clause formatting.
+- [ ] Add the first meaningful API and formatter tests.
+- [ ] Import a few TypeScript fixtures as parity targets.

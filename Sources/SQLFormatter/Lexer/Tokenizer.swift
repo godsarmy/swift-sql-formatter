@@ -9,6 +9,7 @@ struct Tokenizer {
       let character = sql[index]
 
       if character == "\n" || character == "\r" {
+        let start = index
         if character == "\r" {
           let nextIndex = sql.index(after: index)
           if nextIndex < sql.endIndex, sql[nextIndex] == "\n" {
@@ -16,7 +17,7 @@ struct Tokenizer {
           }
         }
 
-        tokens.append(Token(type: .newline, text: "\n"))
+        tokens.append(Token(type: .newline, text: "\n", location: location(in: sql, at: start)))
         index = sql.index(after: index)
         continue
       }
@@ -24,14 +25,23 @@ struct Tokenizer {
       if character.isWhitespace {
         let start = index
         index = advanceWhile(in: sql, from: index) { $0.isWhitespace && $0 != "\n" && $0 != "\r" }
-        tokens.append(Token(type: .whitespace, text: String(sql[start..<index])))
+        tokens.append(
+          Token(
+            type: .whitespace,
+            text: String(sql[start..<index]),
+            location: location(in: sql, at: start)
+          ))
         continue
       }
 
       if character == "-", hasPrefix("--", in: sql, at: index) {
         let start = index
         index = advanceUntilLineBreak(in: sql, from: index)
-        tokens.append(Token(type: .comment, text: String(sql[start..<index])))
+        tokens.append(
+          Token(
+            type: .comment, text: String(sql[start..<index]), location: location(in: sql, at: start)
+          )
+        )
         continue
       }
 
@@ -42,7 +52,12 @@ struct Tokenizer {
         while index < sql.endIndex {
           if hasPrefix("*/", in: sql, at: index) {
             index = sql.index(index, offsetBy: 2)
-            tokens.append(Token(type: .comment, text: String(sql[start..<index])))
+            tokens.append(
+              Token(
+                type: .comment,
+                text: String(sql[start..<index]),
+                location: location(in: sql, at: start)
+              ))
             break
           }
           index = sql.index(after: index)
@@ -62,7 +77,11 @@ struct Tokenizer {
           let current = sql[index]
           if current == closingDelimiter {
             index = sql.index(after: index)
-            tokens.append(Token(type: .quoted, text: String(sql[start..<index])))
+            tokens.append(
+              Token(
+                type: .quoted, text: String(sql[start..<index]),
+                location: location(in: sql, at: start))
+            )
             break
           }
           index = sql.index(after: index)
@@ -75,7 +94,9 @@ struct Tokenizer {
       }
 
       if isPunctuation(character) {
-        tokens.append(Token(type: .punctuation, text: String(character)))
+        tokens.append(
+          Token(type: .punctuation, text: String(character), location: location(in: sql, at: index))
+        )
         index = sql.index(after: index)
         continue
       }
@@ -83,7 +104,12 @@ struct Tokenizer {
       if isOperator(character) {
         let start = index
         index = advanceWhile(in: sql, from: index, matching: isOperator)
-        tokens.append(Token(type: .operatorToken, text: String(sql[start..<index])))
+        tokens.append(
+          Token(
+            type: .operatorToken,
+            text: String(sql[start..<index]),
+            location: location(in: sql, at: start)
+          ))
         continue
       }
 
@@ -92,7 +118,9 @@ struct Tokenizer {
         !current.isWhitespace && !isPunctuation(current) && !isOperator(current)
           && quotedTokenDelimiter(for: current) == nil
       }
-      tokens.append(Token(type: .word, text: String(sql[start..<index])))
+      tokens.append(
+        Token(type: .word, text: String(sql[start..<index]), location: location(in: sql, at: start))
+      )
     }
 
     return tokens

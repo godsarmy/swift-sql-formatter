@@ -128,6 +128,16 @@ import Testing
   #expect(tokens[6].text == "-- trailing")
 }
 
+@Test func tokenizerTracksTokenLocations() async throws {
+  let tokenizer = Tokenizer(dialect: .standardSQL)
+  let tokens = try tokenizer.tokenize("SELECT\n  name")
+
+  #expect(tokens[0].location == SQLFormatter.SourceLocation(line: 1, column: 1, offset: 0))
+  #expect(tokens[1].location == SQLFormatter.SourceLocation(line: 1, column: 7, offset: 6))
+  #expect(tokens[2].location == SQLFormatter.SourceLocation(line: 2, column: 1, offset: 7))
+  #expect(tokens[3].location == SQLFormatter.SourceLocation(line: 2, column: 3, offset: 9))
+}
+
 @Test func unterminatedQuotedTokenIncludesLocation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
 

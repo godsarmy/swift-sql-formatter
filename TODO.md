@@ -27,8 +27,8 @@
 - [x] Tokenize whitespace and newlines separately.
 - [x] Tokenize words, identifiers, strings, numbers, operators, and punctuation.
 - [x] Support quoted identifiers and string literals.
-- [ ] Support line and block comments.
-- [ ] Track token locations for diagnostics.
+- [x] Support line and block comments.
+- [x] Track token locations for diagnostics.
 - [x] Add tokenizer unit tests.
 
 ### Phase 3 - Formatter Engine

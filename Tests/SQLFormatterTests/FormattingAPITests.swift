@@ -19,6 +19,24 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func supportsReusableFormatterInstance() async throws {
+  let formatter = SQLFormatter.Formatter()
+  let sql = "SELECT id, name FROM people WHERE active = 1"
+  let expected = """
+    SELECT
+      id,
+      name
+    FROM
+      people
+    WHERE
+      active = 1
+    """
+
+  let result = try formatter.format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func formatsJoinGroupOrderAndLimitClauses() async throws {
   let sql =
     "SELECT id, name FROM users INNER JOIN teams ON users.team_id = teams.id WHERE active = 1 GROUP BY id, name ORDER BY name LIMIT 10"

@@ -20,7 +20,7 @@
 - [x] Create `FormatError`.
 - [x] Create `Token` and `TokenType`.
 - [x] Decide final public API shape beyond the initial `format()` function.
-- [ ] Define line/column tracking model for parse errors.
+- [x] Define line/column tracking model for parse errors.
 
 ### Phase 2 - Standard SQL Tokenizer
 

@@ -49,7 +49,7 @@ struct Tokenizer {
         }
 
         if tokens.last?.type != .comment || tokens.last?.text != String(sql[start..<index]) {
-          throw FormatError.unterminatedBlockComment
+          throw FormatError.unterminatedBlockComment(at: location(in: sql, at: start))
         }
         continue
       }
@@ -69,7 +69,7 @@ struct Tokenizer {
         }
 
         if tokens.last?.text != String(sql[start..<index]) {
-          throw FormatError.unterminatedQuotedToken
+          throw FormatError.unterminatedQuotedToken(at: location(in: sql, at: start))
         }
         continue
       }
@@ -124,6 +124,37 @@ struct Tokenizer {
 
   private func hasPrefix(_ prefix: String, in sql: String, at index: String.Index) -> Bool {
     sql[index...].hasPrefix(prefix)
+  }
+
+  private func location(in sql: String, at targetIndex: String.Index) -> SourceLocation {
+    var line = 1
+    var column = 1
+    var offset = 0
+    var index = sql.startIndex
+
+    while index < targetIndex {
+      let character = sql[index]
+      offset += 1
+
+      if character == "\n" {
+        line += 1
+        column = 1
+      } else if character == "\r" {
+        let nextIndex = sql.index(after: index)
+        if nextIndex < targetIndex, sql[nextIndex] == "\n" {
+          index = nextIndex
+          offset += 1
+        }
+        line += 1
+        column = 1
+      } else {
+        column += 1
+      }
+
+      index = sql.index(after: index)
+    }
+
+    return SourceLocation(line: line, column: column, offset: offset)
   }
 
   private func quotedTokenDelimiter(for character: Character) -> Character? {

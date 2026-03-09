@@ -128,6 +128,36 @@ import Testing
   #expect(tokens[6].text == "-- trailing")
 }
 
+@Test func unterminatedQuotedTokenIncludesLocation() async throws {
+  let tokenizer = Tokenizer(dialect: .standardSQL)
+
+  do {
+    _ = try tokenizer.tokenize("SELECT\n'hello")
+    Issue.record("Expected unterminated quoted token error")
+  } catch let error as FormatError {
+    #expect(
+      error
+        == .unterminatedQuotedToken(
+          at: SQLFormatter.SourceLocation(line: 2, column: 1, offset: 7)
+        ))
+  }
+}
+
+@Test func unterminatedBlockCommentIncludesLocation() async throws {
+  let tokenizer = Tokenizer(dialect: .standardSQL)
+
+  do {
+    _ = try tokenizer.tokenize("SELECT\n/* note")
+    Issue.record("Expected unterminated block comment error")
+  } catch let error as FormatError {
+    #expect(
+      error
+        == .unterminatedBlockComment(
+          at: SQLFormatter.SourceLocation(line: 2, column: 1, offset: 7)
+        ))
+  }
+}
+
 @Test func defaultDialectIsStandardSQL() async throws {
   let options = FormatOptions.default
 

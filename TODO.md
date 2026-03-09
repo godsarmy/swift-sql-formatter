@@ -24,27 +24,27 @@
 
 ### Phase 2 - Standard SQL Tokenizer
 
-- [ ] Tokenize whitespace and newlines separately.
-- [ ] Tokenize words, identifiers, strings, numbers, operators, and punctuation.
-- [ ] Support quoted identifiers and string literals.
+- [x] Tokenize whitespace and newlines separately.
+- [x] Tokenize words, identifiers, strings, numbers, operators, and punctuation.
+- [x] Support quoted identifiers and string literals.
 - [ ] Support line and block comments.
 - [ ] Track token locations for diagnostics.
-- [ ] Add tokenizer unit tests.
+- [x] Add tokenizer unit tests.
 
 ### Phase 3 - Formatter Engine
 
-- [ ] Build output buffer utilities for spaces, indentation, and newlines.
+- [x] Build output buffer utilities for spaces, indentation, and newlines.
 - [ ] Add indentation state management.
 - [ ] Implement clause-aware formatting for:
-  - [ ] `SELECT`
-  - [ ] `FROM`
-  - [ ] `WHERE`
+  - [x] `SELECT`
+  - [x] `FROM`
+  - [x] `WHERE`
   - [ ] `GROUP BY`
   - [ ] `ORDER BY`
   - [ ] `LIMIT`
   - [ ] joins
 - [ ] Add multiple-query separation.
-- [ ] Add formatter rule tests.
+- [x] Add formatter rule tests.
 
 ### Phase 4 - Options Parity
 
@@ -101,7 +101,7 @@
 
 ### Immediate Next Steps
 
-- [ ] Replace the placeholder tokenizer with a real standard SQL tokenizer.
-- [ ] Replace the passthrough formatter pipeline with basic clause formatting.
-- [ ] Add the first meaningful API and formatter tests.
+- [x] Replace the placeholder tokenizer with a real standard SQL tokenizer.
+- [x] Replace the passthrough formatter pipeline with basic clause formatting.
+- [x] Add the first meaningful API and formatter tests.
 - [ ] Import a few TypeScript fixtures as parity targets.

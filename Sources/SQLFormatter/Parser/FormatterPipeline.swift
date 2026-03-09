@@ -7,15 +7,30 @@ struct FormatterPipeline {
     )
     var clauseIndented = false
     var pendingSpace = false
+    var index = 0
 
-    for token in tokens {
+    while index < tokens.count {
+      let token = tokens[index]
+
       switch token.type {
       case .whitespace, .newline:
         pendingSpace = !buffer.output.hasSuffix("\n")
+      case .comment:
+        if clauseIndented {
+          buffer.outdent()
+          clauseIndented = false
+        }
+        buffer.newline()
+        buffer.write(token.text)
+        buffer.newline()
+        pendingSpace = false
       case .punctuation:
         if token.text == "," {
           buffer.write(token.text)
           buffer.newline()
+        } else if token.text == "." {
+          buffer.write(token.text)
+          pendingSpace = false
         } else if token.text == ";" {
           if clauseIndented {
             buffer.outdent()
@@ -27,23 +42,24 @@ struct FormatterPipeline {
             buffer.space()
           }
           buffer.write(token.text)
+          pendingSpace = token.text != "("
         }
-        pendingSpace = token.text == ")"
       case .operatorToken:
         buffer.space()
         buffer.write(token.text)
         pendingSpace = true
       case .word, .quoted:
-        if isClauseKeyword(token) {
+        if let clause = clause(at: index, in: tokens) {
           if clauseIndented {
             buffer.outdent()
           }
           buffer.newline()
-          buffer.write(token.text)
+          buffer.write(clause.text)
           buffer.newline()
           buffer.indent()
           clauseIndented = true
           pendingSpace = false
+          index = clause.endIndex
         } else {
           if pendingSpace {
             buffer.space()
@@ -52,6 +68,8 @@ struct FormatterPipeline {
           pendingSpace = true
         }
       }
+
+      index += 1
     }
 
     if clauseIndented {
@@ -61,16 +79,49 @@ struct FormatterPipeline {
     return buffer.rendered()
   }
 
-  private func isClauseKeyword(_ token: Token) -> Bool {
-    guard token.type == .word else {
-      return false
+  private func clause(at index: Int, in tokens: [Token]) -> (text: String, endIndex: Int)? {
+    guard tokens[index].type == .word else {
+      return nil
     }
 
-    switch token.text.uppercased() {
-    case "SELECT", "FROM", "WHERE":
-      return true
-    default:
-      return false
+    let keyword = tokens[index].text.uppercased()
+
+    if ["SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON"].contains(keyword) {
+      return (tokens[index].text, index)
     }
+
+    if ["GROUP", "ORDER"].contains(keyword),
+      let nextWord = nextWordToken(after: index, in: tokens), nextWord.text.uppercased() == "BY"
+    {
+      return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
+    }
+
+    if keyword.hasSuffix("JOIN") {
+      return (tokens[index].text, index)
+    }
+
+    if ["INNER", "LEFT", "RIGHT", "FULL", "CROSS"].contains(keyword),
+      let nextWord = nextWordToken(after: index, in: tokens), nextWord.text.uppercased() == "JOIN"
+    {
+      return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
+    }
+
+    return nil
+  }
+
+  private func nextWordToken(after index: Int, in tokens: [Token]) -> (text: String, index: Int)? {
+    var nextIndex = index + 1
+    while nextIndex < tokens.count {
+      let token = tokens[nextIndex]
+      switch token.type {
+      case .whitespace, .newline:
+        nextIndex += 1
+      case .word:
+        return (token.text, nextIndex)
+      default:
+        return nil
+      }
+    }
+    return nil
   }
 }

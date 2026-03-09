@@ -19,6 +19,52 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsJoinGroupOrderAndLimitClauses() async throws {
+  let sql =
+    "SELECT id, name FROM users INNER JOIN teams ON users.team_id = teams.id WHERE active = 1 GROUP BY id, name ORDER BY name LIMIT 10"
+  let expected = """
+    SELECT
+      id,
+      name
+    FROM
+      users
+    INNER JOIN
+      teams
+    ON
+      users.team_id = teams.id
+    WHERE
+      active = 1
+    GROUP BY
+      id,
+      name
+    ORDER BY
+      name
+    LIMIT
+      10
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func preservesCommentsAsStandaloneLines() async throws {
+  let sql = "SELECT id FROM users -- active users\nWHERE active = 1"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    -- active users
+    WHERE
+      active = 1
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func tokenizerSplitsWordsOperatorsAndPunctuation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
   let tokens = try tokenizer.tokenize("SELECT name, age FROM people WHERE active = 1")
@@ -49,6 +95,19 @@ import Testing
   #expect(tokens.map(\.type) == expectedTypes)
   #expect(tokens[2].text == "'hello world'")
   #expect(tokens[5].text == "[user]")
+}
+
+@Test func tokenizerCapturesLineAndBlockComments() async throws {
+  let tokenizer = Tokenizer(dialect: .standardSQL)
+  let tokens = try tokenizer.tokenize("SELECT /* note */ id -- trailing")
+
+  let expectedTypes: [TokenType] = [
+    .word, .whitespace, .comment, .whitespace, .word, .whitespace, .comment,
+  ]
+
+  #expect(tokens.map(\.type) == expectedTypes)
+  #expect(tokens[2].text == "/* note */")
+  #expect(tokens[6].text == "-- trailing")
 }
 
 @Test func defaultDialectIsStandardSQL() async throws {

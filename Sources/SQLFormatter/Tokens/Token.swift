@@ -2,6 +2,7 @@ public enum TokenType: Sendable {
   case word
   case quoted
   case `operatorToken`
+  case comment
   case whitespace
   case newline
   case punctuation

@@ -28,6 +28,32 @@ struct Tokenizer {
         continue
       }
 
+      if character == "-", hasPrefix("--", in: sql, at: index) {
+        let start = index
+        index = advanceUntilLineBreak(in: sql, from: index)
+        tokens.append(Token(type: .comment, text: String(sql[start..<index])))
+        continue
+      }
+
+      if character == "/", hasPrefix("/*", in: sql, at: index) {
+        let start = index
+        index = sql.index(index, offsetBy: 2)
+
+        while index < sql.endIndex {
+          if hasPrefix("*/", in: sql, at: index) {
+            index = sql.index(index, offsetBy: 2)
+            tokens.append(Token(type: .comment, text: String(sql[start..<index])))
+            break
+          }
+          index = sql.index(after: index)
+        }
+
+        if tokens.last?.type != .comment || tokens.last?.text != String(sql[start..<index]) {
+          throw FormatError.unterminatedBlockComment
+        }
+        continue
+      }
+
       if let closingDelimiter = quotedTokenDelimiter(for: character) {
         let start = index
         index = sql.index(after: index)
@@ -82,6 +108,22 @@ struct Tokenizer {
       currentIndex = sql.index(after: currentIndex)
     }
     return currentIndex
+  }
+
+  private func advanceUntilLineBreak(in sql: String, from index: String.Index) -> String.Index {
+    var currentIndex = index
+    while currentIndex < sql.endIndex {
+      let character = sql[currentIndex]
+      if character == "\n" || character == "\r" {
+        break
+      }
+      currentIndex = sql.index(after: currentIndex)
+    }
+    return currentIndex
+  }
+
+  private func hasPrefix(_ prefix: String, in sql: String, at index: String.Index) -> Bool {
+    sql[index...].hasPrefix(prefix)
   }
 
   private func quotedTokenDelimiter(for character: Character) -> Character? {

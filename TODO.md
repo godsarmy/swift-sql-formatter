@@ -51,7 +51,7 @@
 - [x] Support `tabWidth`.
 - [x] Support `useTabs`.
 - [x] Support keyword casing.
-- [ ] Support `linesBetweenQueries`.
+- [x] Support `linesBetweenQueries`.
 - [ ] Add expression width / line-wrapping strategy.
 - [ ] Add option coverage tests.
 

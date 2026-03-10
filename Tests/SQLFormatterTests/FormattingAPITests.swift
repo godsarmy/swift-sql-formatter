@@ -141,6 +141,26 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func supportsMultipleBlankLinesBetweenQueries() async throws {
+  let sql = "SELECT id FROM users; SELECT id FROM teams"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users;
+
+
+    SELECT
+      id
+    FROM
+      teams
+    """
+
+  let result = try format(sql, options: FormatOptions(linesBetweenQueries: 2))
+
+  #expect(result == expected)
+}
+
 @Test func respectsTabWidthOption() async throws {
   let sql = "SELECT id, name FROM users"
   let expected = """

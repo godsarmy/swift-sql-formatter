@@ -43,7 +43,7 @@
   - [x] `ORDER BY`
   - [x] `LIMIT`
   - [x] joins
-- [ ] Add multiple-query separation.
+- [x] Add multiple-query separation.
 - [x] Add formatter rule tests.
 
 ### Phase 4 - Options Parity

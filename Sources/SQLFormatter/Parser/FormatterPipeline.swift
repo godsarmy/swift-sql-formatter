@@ -64,6 +64,10 @@ struct FormatterPipeline {
         } else if token.text == ";" {
           indentationState.endClauseIfNeeded(using: &buffer)
           buffer.write(token.text)
+          if hasNextStatementToken(after: index, in: tokens) {
+            buffer.newline(count: max(1, options.linesBetweenQueries + 1))
+          }
+          pendingSpace = false
         } else {
           if pendingSpace, token.text != ")" {
             buffer.space()
@@ -164,5 +168,20 @@ struct FormatterPipeline {
       }
     }
     return nil
+  }
+
+  private func hasNextStatementToken(after index: Int, in tokens: [Token]) -> Bool {
+    var nextIndex = index + 1
+    while nextIndex < tokens.count {
+      let token = tokens[nextIndex]
+      switch token.type {
+      case .whitespace, .newline:
+        nextIndex += 1
+      default:
+        return true
+      }
+    }
+
+    return false
   }
 }

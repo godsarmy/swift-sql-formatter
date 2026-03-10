@@ -104,6 +104,43 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func separatesMultipleQueriesWithDefaultSpacing() async throws {
+  let sql = "SELECT id FROM users; SELECT id FROM teams"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users;
+
+    SELECT
+      id
+    FROM
+      teams
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func respectsLinesBetweenQueriesOption() async throws {
+  let sql = "SELECT id FROM users; SELECT id FROM teams"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users;
+    SELECT
+      id
+    FROM
+      teams
+    """
+
+  let result = try format(sql, options: FormatOptions(linesBetweenQueries: 0))
+
+  #expect(result == expected)
+}
+
 @Test func tokenizerSplitsWordsOperatorsAndPunctuation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
   let tokens = try tokenizer.tokenize("SELECT name, age FROM people WHERE active = 1")

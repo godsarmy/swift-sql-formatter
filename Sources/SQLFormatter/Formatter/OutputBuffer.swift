@@ -32,7 +32,7 @@ struct OutputBuffer {
     output += " "
   }
 
-  mutating func newline() {
+  mutating func newline(count: Int = 1) {
     guard !output.isEmpty else {
       return
     }
@@ -41,8 +41,10 @@ struct OutputBuffer {
       output.removeLast()
     }
 
-    if !output.hasSuffix("\n") {
-      output += "\n"
+    let trailingNewlines = output.reversed().prefix { $0 == "\n" }.count
+    let missingNewlines = max(0, count - trailingNewlines)
+    if missingNewlines > 0 {
+      output += String(repeating: "\n", count: missingNewlines)
     }
 
     isLineStart = true

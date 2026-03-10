@@ -236,6 +236,39 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func preservesKeywordCaseByDefault() async throws {
+  let sql = "select id, name from users where active = 1"
+  let expected = """
+    select
+      id,
+      name
+    from
+      users
+    where
+      active = 1
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func doesNotWrapExpressionsWhenExpressionWidthIsNonPositive() async throws {
+  let sql = "SELECT id FROM users WHERE active = 1 AND deleted = 0"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    WHERE
+      active = 1 AND deleted = 0
+    """
+
+  let result = try format(sql, options: FormatOptions(expressionWidth: 0))
+
+  #expect(result == expected)
+}
+
 @Test func tokenizerSplitsWordsOperatorsAndPunctuation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
   let tokens = try tokenizer.tokenize("SELECT name, age FROM people WHERE active = 1")

@@ -90,5 +90,5 @@ swift run sqlfmt-bench
 
 ## Release workflow
 
-- CI build and tests run on pull requests and pushes to `master`.
+- CI build and tests run on pull requests and pushes to `main`.
 - A GitHub release is created automatically when a tag like `v0.1.0` is pushed.

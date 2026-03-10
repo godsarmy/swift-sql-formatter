@@ -88,7 +88,7 @@
 ### Phase 8 - Package Polish
 
 - [x] Add README usage examples.
-- [ ] Add a CLI target if needed.
+- [x] Add a CLI target if needed.
 - [ ] Add basic benchmark/perf checks.
 - [ ] Prepare release/versioning workflow.
 

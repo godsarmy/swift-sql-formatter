@@ -453,3 +453,10 @@ import Testing
       == [.questionMark, .colonNamed, .atNamed, .dollarNamed]
   )
 }
+
+@Test func canResolveDialectByNameFromRegistry() async throws {
+  let dialect = DialectRegistry.dialect(named: "sql")
+
+  #expect(dialect == .standardSQL)
+  #expect(DialectRegistry.dialect(named: "missing") == nil)
+}

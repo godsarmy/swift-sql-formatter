@@ -43,7 +43,7 @@ public struct Dialect: Sendable, Hashable {
     reservedWords: [
       "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
-      "ASC", "DESC",
+      "ASC", "AS", "DESC",
     ]
   )
 
@@ -62,7 +62,7 @@ public struct Dialect: Sendable, Hashable {
       "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
       "USING", "RETURNING", "ILIKE",
-      "ASC", "DESC", "RECURSIVE",
+      "ASC", "AS", "DESC", "RECURSIVE",
     ]
   )
 

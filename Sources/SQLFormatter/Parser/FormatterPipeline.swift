@@ -101,7 +101,9 @@ struct FormatterPipeline {
           }
           pendingSpace = false
         } else {
-          if pendingSpace, resolvedTokenText != ")" {
+          if pendingSpace, resolvedTokenText != ")",
+            !shouldOmitSpaceBeforePunctuation(resolvedTokenText, at: index, in: tokens)
+          {
             buffer.space()
           }
           buffer.write(resolvedTokenText)
@@ -125,8 +127,13 @@ struct FormatterPipeline {
           index = clause.endIndex
         } else {
           let tokenText: String
-          if token.type == .word, isKeyword(token.text) || isLogicalOperator(token.text) {
-            tokenText = formatKeyword(resolvedTokenText)
+          if token.type == .word {
+            tokenText = formatWordToken(
+              resolvedTokenText,
+              originalTokenText: token.text,
+              at: index,
+              in: tokens
+            )
           } else {
             tokenText = resolvedTokenText
           }
@@ -247,7 +254,23 @@ struct FormatterPipeline {
   }
 
   private func formatKeyword(_ text: String) -> String {
-    switch options.keywordCase {
+    formatCasedText(text, using: options.keywordCase)
+  }
+
+  private func formatFunctionName(_ text: String) -> String {
+    formatCasedText(text, using: options.functionCase)
+  }
+
+  private func formatDataType(_ text: String) -> String {
+    formatCasedText(text, using: options.dataTypeCase)
+  }
+
+  private func formatIdentifier(_ text: String) -> String {
+    formatCasedText(text, using: options.identifierCase)
+  }
+
+  private func formatCasedText(_ text: String, using rule: KeywordCase) -> String {
+    switch rule {
     case .preserve:
       return text
     case .upper:
@@ -265,6 +288,64 @@ struct FormatterPipeline {
     ["AND", "OR", "XOR"].contains(text.uppercased())
   }
 
+  private func isDataType(_ text: String) -> Bool {
+    [
+      "BIGINT", "BOOL", "BOOLEAN", "CHAR", "DATE", "DATETIME", "DECIMAL", "DOUBLE", "FLOAT",
+      "INT", "INTEGER", "NUMERIC", "REAL", "SMALLINT", "TEXT", "TIME", "TIMESTAMP", "UUID",
+      "VARCHAR",
+    ].contains(text.uppercased())
+  }
+
+  private func isFunctionName(at index: Int, in tokens: [Token], text: String) -> Bool {
+    guard !isKeyword(text), !isLogicalOperator(text), !isDataType(text),
+      let nextToken = nextNonWhitespaceToken(after: index, in: tokens)
+    else {
+      return false
+    }
+
+    return nextToken.type == .punctuation && nextToken.text == "("
+  }
+
+  private func nextNonWhitespaceToken(after index: Int, in tokens: [Token]) -> Token? {
+    var nextIndex = index + 1
+    while nextIndex < tokens.count {
+      let token = tokens[nextIndex]
+      switch token.type {
+      case .whitespace, .newline:
+        nextIndex += 1
+      default:
+        return token
+      }
+    }
+
+    return nil
+  }
+
+  private func formatWordToken(
+    _ resolvedText: String,
+    originalTokenText: String,
+    at index: Int,
+    in tokens: [Token]
+  ) -> String {
+    guard resolvedText == originalTokenText else {
+      return resolvedText
+    }
+
+    if isKeyword(originalTokenText) || isLogicalOperator(originalTokenText) {
+      return formatKeyword(resolvedText)
+    }
+
+    if isDataType(originalTokenText) {
+      return formatDataType(resolvedText)
+    }
+
+    if isFunctionName(at: index, in: tokens, text: originalTokenText) {
+      return formatFunctionName(resolvedText)
+    }
+
+    return formatIdentifier(resolvedText)
+  }
+
   private func shouldInsertPendingSpaceAfterWhitespace(buffer: OutputBuffer) -> Bool {
     guard !buffer.output.hasSuffix("\n") else {
       return false
@@ -275,6 +356,47 @@ struct FormatterPipeline {
     }
 
     return !options.dialect.operatorCharacters.contains(lastCharacter) && lastCharacter != "("
+  }
+
+  private func shouldOmitSpaceBeforePunctuation(
+    _ punctuation: String,
+    at index: Int,
+    in tokens: [Token]
+  ) -> Bool {
+    guard punctuation == "(",
+      let previousIndex = previousNonWhitespaceTokenIndex(before: index, in: tokens)
+    else {
+      return false
+    }
+
+    let previousToken = tokens[previousIndex]
+
+    switch previousToken.type {
+    case .word, .quoted:
+      if previousToken.type == .word {
+        return isDataType(previousToken.text)
+          || isFunctionName(at: previousIndex, in: tokens, text: previousToken.text)
+      }
+
+      return false
+    default:
+      return false
+    }
+  }
+
+  private func previousNonWhitespaceTokenIndex(before index: Int, in tokens: [Token]) -> Int? {
+    var previousIndex = index - 1
+    while previousIndex >= 0 {
+      let token = tokens[previousIndex]
+      switch token.type {
+      case .whitespace, .newline:
+        previousIndex -= 1
+      default:
+        return previousIndex
+      }
+    }
+
+    return nil
   }
 
   private func resolvePlaceholderText(

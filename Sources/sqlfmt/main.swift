@@ -6,6 +6,9 @@ struct CLIOptions {
   var tabWidth: Int = 2
   var useTabs: Bool = false
   var keywordCase: KeywordCase = .preserve
+  var functionCase: KeywordCase = .preserve
+  var dataTypeCase: KeywordCase = .preserve
+  var identifierCase: KeywordCase = .preserve
   var logicalOperatorNewline: LogicalOperatorNewline = .before
   var linesBetweenQueries: Int = 1
   var expressionWidth: Int? = nil
@@ -30,6 +33,9 @@ struct SQLFormatterCLI {
         tabWidth: options.tabWidth,
         useTabs: options.useTabs,
         keywordCase: options.keywordCase,
+        functionCase: options.functionCase,
+        dataTypeCase: options.dataTypeCase,
+        identifierCase: options.identifierCase,
         logicalOperatorNewline: options.logicalOperatorNewline,
         linesBetweenQueries: options.linesBetweenQueries,
         expressionWidth: options.expressionWidth,
@@ -77,20 +83,14 @@ struct SQLFormatterCLI {
       case "--tabs":
         options.useTabs = true
       case "--keyword-case":
-        guard let value = iterator.next() else {
-          throw CLIError.invalidArgument("Missing value for --keyword-case")
-        }
-
-        switch value.lowercased() {
-        case "preserve":
-          options.keywordCase = .preserve
-        case "upper":
-          options.keywordCase = .upper
-        case "lower":
-          options.keywordCase = .lower
-        default:
-          throw CLIError.invalidArgument("--keyword-case must be preserve, upper, or lower")
-        }
+        options.keywordCase = try parseKeywordCase(flag: "--keyword-case", iterator: &iterator)
+      case "--function-case":
+        options.functionCase = try parseKeywordCase(flag: "--function-case", iterator: &iterator)
+      case "--data-type-case":
+        options.dataTypeCase = try parseKeywordCase(flag: "--data-type-case", iterator: &iterator)
+      case "--identifier-case":
+        options.identifierCase = try parseKeywordCase(
+          flag: "--identifier-case", iterator: &iterator)
       case "--logical-operator-newline":
         guard let value = iterator.next() else {
           throw CLIError.invalidArgument("Missing value for --logical-operator-newline")
@@ -124,6 +124,26 @@ struct SQLFormatterCLI {
     }
   }
 
+  private static func parseKeywordCase(
+    flag: String,
+    iterator: inout IndexingIterator<ArraySlice<String>>
+  ) throws -> KeywordCase {
+    guard let value = iterator.next() else {
+      throw CLIError.invalidArgument("Missing value for \(flag)")
+    }
+
+    switch value.lowercased() {
+    case "preserve":
+      return .preserve
+    case "upper":
+      return .upper
+    case "lower":
+      return .lower
+    default:
+      throw CLIError.invalidArgument("\(flag) must be preserve, upper, or lower")
+    }
+  }
+
   private static func printHelpAndExit() -> Never {
     let help = """
       sqlfmt - Format SQL from stdin
@@ -136,6 +156,9 @@ struct SQLFormatterCLI {
         --tab-width <n>
         --tabs
         --keyword-case <preserve|upper|lower>
+        --function-case <preserve|upper|lower>
+        --data-type-case <preserve|upper|lower>
+        --identifier-case <preserve|upper|lower>
         --logical-operator-newline <before|after>
         --lines-between-queries <n>
         --expression-width <n>

@@ -44,11 +44,11 @@ Compared this project against every page currently under `sql-formatter-org/sql-
 
 ### P1 - missing formatting options
 
-- [ ] Add `functionCase` option.
+- [x] Add `functionCase` option.
   - Needs function-call detection so only function identifiers change case.
-- [ ] Add `dataTypeCase` option.
+- [x] Add `dataTypeCase` option.
   - Needs data type classification distinct from generic identifiers.
-- [ ] Add `identifierCase` option.
+- [x] Add `identifierCase` option.
   - Upstream marks this experimental; safest to land after token classification improves.
 - [x] Add `logicalOperatorNewline` option (`before` vs `after`).
   - Current `FormatterPipeline` always places logical operators in leading position style.

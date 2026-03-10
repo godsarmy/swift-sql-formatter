@@ -103,6 +103,9 @@ public struct FormatOptions: Sendable {
   public var tabWidth: Int
   public var useTabs: Bool
   public var keywordCase: KeywordCase
+  public var functionCase: KeywordCase
+  public var dataTypeCase: KeywordCase
+  public var identifierCase: KeywordCase
   public var logicalOperatorNewline: LogicalOperatorNewline
   public var linesBetweenQueries: Int
   public var expressionWidth: Int?
@@ -119,6 +122,9 @@ public struct FormatOptions: Sendable {
     tabWidth: Int = 2,
     useTabs: Bool = false,
     keywordCase: KeywordCase = .preserve,
+    functionCase: KeywordCase = .preserve,
+    dataTypeCase: KeywordCase = .preserve,
+    identifierCase: KeywordCase = .preserve,
     logicalOperatorNewline: LogicalOperatorNewline = .before,
     linesBetweenQueries: Int = 1,
     expressionWidth: Int? = nil,
@@ -136,6 +142,9 @@ public struct FormatOptions: Sendable {
     self.tabWidth = tabWidth
     self.useTabs = useTabs
     self.keywordCase = keywordCase
+    self.functionCase = functionCase
+    self.dataTypeCase = dataTypeCase
+    self.identifierCase = identifierCase
     self.logicalOperatorNewline = logicalOperatorNewline
     self.linesBetweenQueries = linesBetweenQueries
     self.expressionWidth = expressionWidth

@@ -239,6 +239,52 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func respectsFunctionCaseOption() async throws {
+  let sql = "SELECT Concat(Trim(first_name), ' ', Trim(last_name)) FROM users"
+  let expected = """
+    SELECT
+      CONCAT(TRIM(first_name),
+      ' ',
+      TRIM(last_name))
+    FROM
+      users
+    """
+
+  let result = try format(sql, options: FormatOptions(functionCase: .upper))
+
+  #expect(result == expected)
+}
+
+@Test func respectsDataTypeCaseOption() async throws {
+  let sql = "SELECT Cast(ssid AS Int), VarChar(20) FROM employee"
+  let expected = """
+    SELECT
+      Cast(ssid AS INT),
+      VARCHAR(20)
+    FROM
+      employee
+    """
+
+  let result = try format(sql, options: FormatOptions(dataTypeCase: .upper))
+
+  #expect(result == expected)
+}
+
+@Test func respectsIdentifierCaseOption() async throws {
+  let sql = "select count(a.Column1), a.Column2 as myCol from Table1 as a"
+  let expected = """
+    select
+      count(A.COLUMN1),
+      A.COLUMN2 as MYCOL
+    from
+      TABLE1 as A
+    """
+
+  let result = try format(sql, options: FormatOptions(identifierCase: .upper))
+
+  #expect(result == expected)
+}
+
 @Test func placesLogicalOperatorsAfterExpressionsWhenConfigured() async throws {
   let sql = "SELECT id FROM users WHERE active = 1 AND deleted = 0 OR archived = 0"
   let expected = """
@@ -623,6 +669,9 @@ import Testing
   #expect(options.tabWidth == 2)
   #expect(options.useTabs == false)
   #expect(options.keywordCase == .preserve)
+  #expect(options.functionCase == .preserve)
+  #expect(options.dataTypeCase == .preserve)
+  #expect(options.identifierCase == .preserve)
   #expect(options.logicalOperatorNewline == .before)
   #expect(options.linesBetweenQueries == 1)
   #expect(options.expressionWidth == nil)

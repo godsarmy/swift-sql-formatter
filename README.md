@@ -73,3 +73,22 @@ SELECT id FROM teams
 - `Dialect.postgreSQL`
 
 You can also discover dialects by name with `DialectRegistry`.
+
+## CLI
+
+Format SQL from stdin:
+
+```bash
+cat query.sql | swift run sqlfmt --dialect postgresql --keyword-case upper
+```
+
+Run quick benchmark checks:
+
+```bash
+swift run sqlfmt-bench
+```
+
+## Release workflow
+
+- CI build and tests run on pull requests and pushes to `master`.
+- A GitHub release is created automatically when a tag like `v0.1.0` is pushed.

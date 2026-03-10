@@ -90,7 +90,7 @@
 - [x] Add README usage examples.
 - [x] Add a CLI target if needed.
 - [x] Add basic benchmark/perf checks.
-- [ ] Prepare release/versioning workflow.
+- [x] Prepare release/versioning workflow.
 
 ### Risks
 

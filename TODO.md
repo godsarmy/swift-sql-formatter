@@ -74,16 +74,16 @@
 ### Phase 7 - Test Parity
 
 - [x] Port a small starter set of TypeScript fixtures.
-- [ ] Add end-to-end formatting fixtures.
-- [ ] Prioritize tricky coverage:
-  - [ ] nested subqueries
-  - [ ] CTEs
-  - [ ] comments
-  - [ ] placeholders
-  - [ ] quoted identifiers
-  - [ ] multiline expressions
-  - [ ] multiple queries separated by `;`
-- [ ] Expand fixture coverage as features land.
+- [x] Add end-to-end formatting fixtures.
+- [x] Prioritize tricky coverage:
+  - [x] nested subqueries
+  - [x] CTEs
+  - [x] comments
+  - [x] placeholders
+  - [x] quoted identifiers
+  - [x] multiline expressions
+  - [x] multiple queries separated by `;`
+- [x] Expand fixture coverage as features land.
 
 ### Phase 8 - Package Polish
 

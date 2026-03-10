@@ -50,11 +50,11 @@ Compared this project against every page currently under `sql-formatter-org/sql-
   - Needs data type classification distinct from generic identifiers.
 - [ ] Add `identifierCase` option.
   - Upstream marks this experimental; safest to land after token classification improves.
-- [ ] Add `logicalOperatorNewline` option (`before` vs `after`).
+- [x] Add `logicalOperatorNewline` option (`before` vs `after`).
   - Current `FormatterPipeline` always places logical operators in leading position style.
-- [ ] Add `newlineBeforeSemicolon` option.
+- [x] Add `newlineBeforeSemicolon` option.
   - Current `FormatterPipeline` always emits `;` inline.
-- [ ] Add `denseOperators` option.
+- [x] Add `denseOperators` option.
   - Current operator formatting in `Sources/SQLFormatter/Parser/FormatterPipeline.swift` always inserts spaces.
 
 ### P1 - placeholder and params parity

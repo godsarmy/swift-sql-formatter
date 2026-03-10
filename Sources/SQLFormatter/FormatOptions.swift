@@ -6,6 +6,11 @@ public enum KeywordCase: Sendable {
   case lower
 }
 
+public enum LogicalOperatorNewline: Sendable {
+  case before
+  case after
+}
+
 public enum PlaceholderType: Sendable, Hashable {
   case questionMark
   case colonNamed
@@ -98,8 +103,11 @@ public struct FormatOptions: Sendable {
   public var tabWidth: Int
   public var useTabs: Bool
   public var keywordCase: KeywordCase
+  public var logicalOperatorNewline: LogicalOperatorNewline
   public var linesBetweenQueries: Int
   public var expressionWidth: Int?
+  public var newlineBeforeSemicolon: Bool
+  public var denseOperators: Bool
   public var positionalPlaceholders: [String]
   public var namedPlaceholders: [String: String]
   public var placeholderTypes: Set<PlaceholderType>
@@ -111,8 +119,11 @@ public struct FormatOptions: Sendable {
     tabWidth: Int = 2,
     useTabs: Bool = false,
     keywordCase: KeywordCase = .preserve,
+    logicalOperatorNewline: LogicalOperatorNewline = .before,
     linesBetweenQueries: Int = 1,
     expressionWidth: Int? = nil,
+    newlineBeforeSemicolon: Bool = false,
+    denseOperators: Bool = false,
     positionalPlaceholders: [String] = [],
     namedPlaceholders: [String: String] = [:],
     placeholderTypes: Set<PlaceholderType> = [
@@ -125,8 +136,11 @@ public struct FormatOptions: Sendable {
     self.tabWidth = tabWidth
     self.useTabs = useTabs
     self.keywordCase = keywordCase
+    self.logicalOperatorNewline = logicalOperatorNewline
     self.linesBetweenQueries = linesBetweenQueries
     self.expressionWidth = expressionWidth
+    self.newlineBeforeSemicolon = newlineBeforeSemicolon
+    self.denseOperators = denseOperators
     self.positionalPlaceholders = positionalPlaceholders
     self.namedPlaceholders = namedPlaceholders
     self.placeholderTypes = placeholderTypes

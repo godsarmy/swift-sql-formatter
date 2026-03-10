@@ -66,7 +66,7 @@ struct FormatterPipeline {
 
       switch token.type {
       case .whitespace, .newline:
-        pendingSpace = !buffer.output.hasSuffix("\n")
+        pendingSpace = shouldInsertPendingSpaceAfterWhitespace(buffer: buffer)
       case .comment:
         if isFormatterDisableDirective(token.text) {
           indentationState.endClauseIfNeeded(using: &buffer)
@@ -92,6 +92,9 @@ struct FormatterPipeline {
           pendingSpace = false
         } else if resolvedTokenText == ";" {
           indentationState.endClauseIfNeeded(using: &buffer)
+          if options.newlineBeforeSemicolon {
+            buffer.newline()
+          }
           buffer.write(resolvedTokenText)
           if hasNextStatementToken(after: index, in: tokens) {
             buffer.newline(count: max(1, options.linesBetweenQueries + 1))
@@ -105,13 +108,12 @@ struct FormatterPipeline {
           pendingSpace = resolvedTokenText != "("
         }
       case .operatorToken:
-        writeExpressionToken(
+        writeOperatorToken(
           resolvedTokenText,
-          requiresLeadingSpace: true,
           buffer: &buffer,
-          indentationState: indentationState
+          indentationState: indentationState,
+          pendingSpace: &pendingSpace
         )
-        pendingSpace = true
       case .word, .quoted:
         if let clause = clause(at: index, in: tokens) {
           indentationState.endClauseIfNeeded(using: &buffer)
@@ -123,19 +125,28 @@ struct FormatterPipeline {
           index = clause.endIndex
         } else {
           let tokenText: String
-          if token.type == .word, isKeyword(token.text) {
+          if token.type == .word, isKeyword(token.text) || isLogicalOperator(token.text) {
             tokenText = formatKeyword(resolvedTokenText)
           } else {
             tokenText = resolvedTokenText
           }
 
-          writeExpressionToken(
-            tokenText,
-            requiresLeadingSpace: pendingSpace,
-            buffer: &buffer,
-            indentationState: indentationState
-          )
-          pendingSpace = true
+          if token.type == .word, isLogicalOperator(token.text) {
+            writeLogicalOperator(
+              tokenText,
+              buffer: &buffer,
+              indentationState: indentationState,
+              pendingSpace: &pendingSpace
+            )
+          } else {
+            writeExpressionToken(
+              tokenText,
+              requiresLeadingSpace: pendingSpace,
+              buffer: &buffer,
+              indentationState: indentationState
+            )
+            pendingSpace = true
+          }
         }
       }
 
@@ -248,6 +259,22 @@ struct FormatterPipeline {
 
   private func isKeyword(_ text: String) -> Bool {
     options.dialect.reservedWords.contains(text.uppercased())
+  }
+
+  private func isLogicalOperator(_ text: String) -> Bool {
+    ["AND", "OR", "XOR"].contains(text.uppercased())
+  }
+
+  private func shouldInsertPendingSpaceAfterWhitespace(buffer: OutputBuffer) -> Bool {
+    guard !buffer.output.hasSuffix("\n") else {
+      return false
+    }
+
+    guard options.denseOperators, let lastCharacter = buffer.output.last else {
+      return true
+    }
+
+    return !options.dialect.operatorCharacters.contains(lastCharacter) && lastCharacter != "("
   }
 
   private func resolvePlaceholderText(
@@ -425,6 +452,58 @@ struct FormatterPipeline {
 
   private func isFormatterEnableDirective(_ commentText: String) -> Bool {
     commentText.lowercased().contains("sql-formatter-enable")
+  }
+
+  private func writeLogicalOperator(
+    _ text: String,
+    buffer: inout OutputBuffer,
+    indentationState: IndentationState,
+    pendingSpace: inout Bool
+  ) {
+    switch options.logicalOperatorNewline {
+    case .before:
+      buffer.newline()
+      buffer.write(text)
+      pendingSpace = true
+    case .after:
+      writeExpressionToken(
+        text,
+        requiresLeadingSpace: pendingSpace,
+        buffer: &buffer,
+        indentationState: indentationState
+      )
+      buffer.newline()
+      pendingSpace = false
+    }
+  }
+
+  private func writeOperatorToken(
+    _ text: String,
+    buffer: inout OutputBuffer,
+    indentationState: IndentationState,
+    pendingSpace: inout Bool
+  ) {
+    if options.denseOperators {
+      if shouldWrapExpressionToken(
+        text,
+        requiresLeadingSpace: false,
+        buffer: buffer,
+        indentationState: indentationState
+      ) {
+        buffer.newline()
+      }
+      buffer.write(text)
+      pendingSpace = false
+      return
+    }
+
+    writeExpressionToken(
+      text,
+      requiresLeadingSpace: true,
+      buffer: &buffer,
+      indentationState: indentationState
+    )
+    pendingSpace = true
   }
 
   private func writeExpressionToken(

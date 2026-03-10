@@ -6,8 +6,11 @@ struct CLIOptions {
   var tabWidth: Int = 2
   var useTabs: Bool = false
   var keywordCase: KeywordCase = .preserve
+  var logicalOperatorNewline: LogicalOperatorNewline = .before
   var linesBetweenQueries: Int = 1
   var expressionWidth: Int? = nil
+  var newlineBeforeSemicolon: Bool = false
+  var denseOperators: Bool = false
 }
 
 enum CLIError: Error {
@@ -27,8 +30,11 @@ struct SQLFormatterCLI {
         tabWidth: options.tabWidth,
         useTabs: options.useTabs,
         keywordCase: options.keywordCase,
+        logicalOperatorNewline: options.logicalOperatorNewline,
         linesBetweenQueries: options.linesBetweenQueries,
-        expressionWidth: options.expressionWidth
+        expressionWidth: options.expressionWidth,
+        newlineBeforeSemicolon: options.newlineBeforeSemicolon,
+        denseOperators: options.denseOperators
       )
 
       let formatted = try format(sql, options: formatOptions)
@@ -85,6 +91,19 @@ struct SQLFormatterCLI {
         default:
           throw CLIError.invalidArgument("--keyword-case must be preserve, upper, or lower")
         }
+      case "--logical-operator-newline":
+        guard let value = iterator.next() else {
+          throw CLIError.invalidArgument("Missing value for --logical-operator-newline")
+        }
+
+        switch value.lowercased() {
+        case "before":
+          options.logicalOperatorNewline = .before
+        case "after":
+          options.logicalOperatorNewline = .after
+        default:
+          throw CLIError.invalidArgument("--logical-operator-newline must be before or after")
+        }
       case "--lines-between-queries":
         guard let value = iterator.next(), let lines = Int(value), lines >= 0 else {
           throw CLIError.invalidArgument("--lines-between-queries must be a non-negative integer")
@@ -95,6 +114,10 @@ struct SQLFormatterCLI {
           throw CLIError.invalidArgument("--expression-width must be a positive integer")
         }
         options.expressionWidth = width
+      case "--newline-before-semicolon":
+        options.newlineBeforeSemicolon = true
+      case "--dense-operators":
+        options.denseOperators = true
       default:
         throw CLIError.invalidArgument("Unknown argument: \(argument)")
       }
@@ -113,8 +136,11 @@ struct SQLFormatterCLI {
         --tab-width <n>
         --tabs
         --keyword-case <preserve|upper|lower>
+        --logical-operator-newline <before|after>
         --lines-between-queries <n>
         --expression-width <n>
+        --newline-before-semicolon
+        --dense-operators
         -h, --help
       """
 

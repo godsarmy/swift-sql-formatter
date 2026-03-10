@@ -161,6 +161,26 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func placesSemicolonOnNewLineWhenConfigured() async throws {
+  let sql = "SELECT id FROM users; SELECT id FROM teams"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    ;
+
+    SELECT
+      id
+    FROM
+      teams
+    """
+
+  let result = try format(sql, options: FormatOptions(newlineBeforeSemicolon: true))
+
+  #expect(result == expected)
+}
+
 @Test func respectsTabWidthOption() async throws {
   let sql = "SELECT id, name FROM users"
   let expected = """
@@ -219,6 +239,43 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func placesLogicalOperatorsAfterExpressionsWhenConfigured() async throws {
+  let sql = "SELECT id FROM users WHERE active = 1 AND deleted = 0 OR archived = 0"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    WHERE
+      active = 1 AND
+      deleted = 0 OR
+      archived = 0
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(logicalOperatorNewline: .after)
+  )
+
+  #expect(result == expected)
+}
+
+@Test func keepsOperatorsDenseWhenConfigured() async throws {
+  let sql = "SELECT price + (price * tax) FROM products WHERE id = 1"
+  let expected = """
+    SELECT
+      price+(price*tax)
+    FROM
+      products
+    WHERE
+      id=1
+    """
+
+  let result = try format(sql, options: FormatOptions(denseOperators: true))
+
+  #expect(result == expected)
+}
+
 @Test func wrapsLongExpressionsWhenExpressionWidthIsSet() async throws {
   let sql = "SELECT id FROM users WHERE active = 1 AND deleted = 0"
   let expected = """
@@ -227,8 +284,8 @@ import Testing
     FROM
       users
     WHERE
-      active = 1 AND
-      deleted = 0
+      active = 1
+      AND deleted = 0
     """
 
   let result = try format(sql, options: FormatOptions(expressionWidth: 18))
@@ -261,7 +318,8 @@ import Testing
     FROM
       users
     WHERE
-      active = 1 AND deleted = 0
+      active = 1
+      AND deleted = 0
     """
 
   let result = try format(sql, options: FormatOptions(expressionWidth: 0))
@@ -565,8 +623,11 @@ import Testing
   #expect(options.tabWidth == 2)
   #expect(options.useTabs == false)
   #expect(options.keywordCase == .preserve)
+  #expect(options.logicalOperatorNewline == .before)
   #expect(options.linesBetweenQueries == 1)
   #expect(options.expressionWidth == nil)
+  #expect(options.newlineBeforeSemicolon == false)
+  #expect(options.denseOperators == false)
   #expect(options.positionalPlaceholders == [])
   #expect(options.namedPlaceholders == [:])
   #expect(

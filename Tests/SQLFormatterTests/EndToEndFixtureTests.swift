@@ -94,9 +94,9 @@ private struct EndToEndFixture {
         FROM
           users
         WHERE
-          active = 1 AND
-          deleted = 0 AND
-          archived = 0
+          active = 1
+          AND deleted = 0
+          AND archived = 0
         """
     ),
     EndToEndFixture(

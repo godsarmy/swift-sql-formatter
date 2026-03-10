@@ -186,21 +186,14 @@ struct Tokenizer {
   }
 
   private func quotedTokenDelimiter(for character: Character) -> Character? {
-    switch character {
-    case "'", "\"", "`":
-      return character
-    case "[":
-      return "]"
-    default:
-      return nil
-    }
+    dialect.quotedIdentifierDelimiters[character]
   }
 
   private func isPunctuation(_ character: Character) -> Bool {
-    [",", "(", ")", ";", "."].contains(character)
+    dialect.punctuationCharacters.contains(character)
   }
 
   private func isOperator(_ character: Character) -> Bool {
-    ["=", ">", "<", "!", "+", "-", "*", "/", "%"].contains(character)
+    dialect.operatorCharacters.contains(character)
   }
 }

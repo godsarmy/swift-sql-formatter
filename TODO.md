@@ -65,7 +65,7 @@
 
 ### Phase 6 - Dialect System
 
-- [ ] Convert standard SQL rules into dialect configuration.
+- [x] Convert standard SQL rules into dialect configuration.
 - [ ] Add dialect registry.
 - [ ] Add PostgreSQL or MySQL as the second dialect.
 - [ ] Validate dialect-specific quoting, operators, and reserved words.

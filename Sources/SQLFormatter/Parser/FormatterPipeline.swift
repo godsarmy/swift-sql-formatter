@@ -150,12 +150,13 @@ struct FormatterPipeline {
 
     let keyword = tokens[index].text.uppercased()
 
-    if ["SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON"].contains(keyword) {
+    if options.dialect.clauseKeywords.contains(keyword) {
       return (tokens[index].text, index)
     }
 
-    if ["GROUP", "ORDER"].contains(keyword),
-      let nextWord = nextWordToken(after: index, in: tokens), nextWord.text.uppercased() == "BY"
+    if let possibleSuffixes = options.dialect.compoundClauseKeywords[keyword],
+      let nextWord = nextWordToken(after: index, in: tokens),
+      possibleSuffixes.contains(nextWord.text.uppercased())
     {
       return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
     }
@@ -164,13 +165,13 @@ struct FormatterPipeline {
       return (tokens[index].text, index)
     }
 
-    if ["INNER", "CROSS", "NATURAL", "STRAIGHT"].contains(keyword),
+    if options.dialect.joinModifierKeywords.contains(keyword),
       let nextWord = nextWordToken(after: index, in: tokens), nextWord.text.uppercased() == "JOIN"
     {
       return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
     }
 
-    if ["LEFT", "RIGHT", "FULL"].contains(keyword),
+    if options.dialect.outerJoinModifierKeywords.contains(keyword),
       let nextWord = nextWordToken(after: index, in: tokens)
     {
       let nextKeyword = nextWord.text.uppercased()
@@ -242,10 +243,7 @@ struct FormatterPipeline {
   }
 
   private func isKeyword(_ text: String) -> Bool {
-    [
-      "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
-      "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
-    ].contains(text.uppercased())
+    options.dialect.reservedWords.contains(text.uppercased())
   }
 
   private func resolvePlaceholderText(for token: Token, positionalIndex: inout Int) -> String {

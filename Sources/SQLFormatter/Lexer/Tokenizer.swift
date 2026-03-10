@@ -8,15 +8,8 @@ struct Tokenizer {
     while index < sql.endIndex {
       let character = sql[index]
 
-      if character == "\n" || character == "\r" {
+      if isLineBreakCharacter(character) {
         let start = index
-        if character == "\r" {
-          let nextIndex = sql.index(after: index)
-          if nextIndex < sql.endIndex, sql[nextIndex] == "\n" {
-            index = nextIndex
-          }
-        }
-
         tokens.append(Token(type: .newline, text: "\n", location: location(in: sql, at: start)))
         index = sql.index(after: index)
         continue
@@ -24,7 +17,7 @@ struct Tokenizer {
 
       if character.isWhitespace {
         let start = index
-        index = advanceWhile(in: sql, from: index) { $0.isWhitespace && $0 != "\n" && $0 != "\r" }
+        index = advanceWhile(in: sql, from: index) { $0.isWhitespace && !isLineBreakCharacter($0) }
         tokens.append(
           Token(
             type: .whitespace,
@@ -142,7 +135,7 @@ struct Tokenizer {
     var currentIndex = index
     while currentIndex < sql.endIndex {
       let character = sql[currentIndex]
-      if character == "\n" || character == "\r" {
+      if isLineBreakCharacter(character) {
         break
       }
       currentIndex = sql.index(after: currentIndex)
@@ -162,17 +155,9 @@ struct Tokenizer {
 
     while index < targetIndex {
       let character = sql[index]
-      offset += 1
+      offset += character.unicodeScalars.count
 
-      if character == "\n" {
-        line += 1
-        column = 1
-      } else if character == "\r" {
-        let nextIndex = sql.index(after: index)
-        if nextIndex < targetIndex, sql[nextIndex] == "\n" {
-          index = nextIndex
-          offset += 1
-        }
+      if isLineBreakCharacter(character) {
         line += 1
         column = 1
       } else {
@@ -195,5 +180,11 @@ struct Tokenizer {
 
   private func isOperator(_ character: Character) -> Bool {
     dialect.operatorCharacters.contains(character)
+  }
+
+  private func isLineBreakCharacter(_ character: Character) -> Bool {
+    character.unicodeScalars.contains { scalar in
+      scalar == "\n" || scalar == "\r"
+    }
   }
 }

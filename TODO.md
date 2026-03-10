@@ -94,10 +94,10 @@
 
 ### Risks
 
-- [ ] Avoid copying Java structure where Swift value types or enums are better.
-- [ ] Avoid carrying over TypeScript dynamic assumptions into Swift API design.
-- [ ] Watch lexer complexity around `String.Index` and Unicode correctness.
-- [ ] Keep formatting decisions centralized to avoid inconsistent output rules.
+- [x] Avoid copying Java structure where Swift value types or enums are better.
+- [x] Avoid carrying over TypeScript dynamic assumptions into Swift API design.
+- [x] Watch lexer complexity around `String.Index` and Unicode correctness.
+- [x] Keep formatting decisions centralized to avoid inconsistent output rules.
 
 ### Immediate Next Steps
 

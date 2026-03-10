@@ -407,6 +407,16 @@ import Testing
   #expect(tokens[3].location == SQLFormatter.SourceLocation(line: 2, column: 3, offset: 9))
 }
 
+@Test func tokenizerTracksUnicodeAndCRLFLocations() async throws {
+  let tokenizer = Tokenizer(dialect: .standardSQL)
+  let tokens = try tokenizer.tokenize("SELECT\r\n😀name")
+
+  #expect(tokens[0].location == SQLFormatter.SourceLocation(line: 1, column: 1, offset: 0))
+  #expect(tokens[1].location == SQLFormatter.SourceLocation(line: 1, column: 7, offset: 6))
+  #expect(tokens[2].location == SQLFormatter.SourceLocation(line: 2, column: 1, offset: 8))
+  #expect(tokens[2].text == "😀name")
+}
+
 @Test func unterminatedQuotedTokenIncludesLocation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
 

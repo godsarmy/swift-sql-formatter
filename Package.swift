@@ -15,6 +15,10 @@ let package = Package(
       name: "sqlfmt",
       targets: ["sqlfmt"]
     ),
+    .executable(
+      name: "sqlfmt-bench",
+      targets: ["sqlfmt-bench"]
+    ),
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,6 +28,10 @@ let package = Package(
     ),
     .executableTarget(
       name: "sqlfmt",
+      dependencies: ["SQLFormatter"]
+    ),
+    .executableTarget(
+      name: "sqlfmt-bench",
       dependencies: ["SQLFormatter"]
     ),
     .testTarget(

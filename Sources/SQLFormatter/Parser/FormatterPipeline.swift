@@ -118,14 +118,33 @@ struct FormatterPipeline {
       return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
     }
 
-    if keyword.hasSuffix("JOIN") {
+    if keyword == "JOIN" || keyword.hasSuffix("JOIN") {
       return (tokens[index].text, index)
     }
 
-    if ["INNER", "LEFT", "RIGHT", "FULL", "CROSS"].contains(keyword),
+    if ["INNER", "CROSS", "NATURAL", "STRAIGHT"].contains(keyword),
       let nextWord = nextWordToken(after: index, in: tokens), nextWord.text.uppercased() == "JOIN"
     {
       return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
+    }
+
+    if ["LEFT", "RIGHT", "FULL"].contains(keyword),
+      let nextWord = nextWordToken(after: index, in: tokens)
+    {
+      let nextKeyword = nextWord.text.uppercased()
+      if nextKeyword == "JOIN" {
+        return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
+      }
+
+      if nextKeyword == "OUTER",
+        let joinWord = nextWordToken(after: nextWord.index, in: tokens),
+        joinWord.text.uppercased() == "JOIN"
+      {
+        return (
+          "\(tokens[index].text) \(nextWord.text) \(joinWord.text)",
+          joinWord.index
+        )
+      }
     }
 
     return nil

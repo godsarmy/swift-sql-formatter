@@ -39,10 +39,10 @@
   - [x] `SELECT`
   - [x] `FROM`
   - [x] `WHERE`
-  - [ ] `GROUP BY`
-  - [ ] `ORDER BY`
-  - [ ] `LIMIT`
-  - [ ] joins
+  - [x] `GROUP BY`
+  - [x] `ORDER BY`
+  - [x] `LIMIT`
+  - [x] joins
 - [ ] Add multiple-query separation.
 - [x] Add formatter rule tests.
 

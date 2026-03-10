@@ -66,6 +66,27 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsLeftOuterJoinAndNaturalJoinClauses() async throws {
+  let sql =
+    "SELECT id FROM users LEFT OUTER JOIN teams ON users.team_id = teams.id NATURAL JOIN offices"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    LEFT OUTER JOIN
+      teams
+    ON
+      users.team_id = teams.id
+    NATURAL JOIN
+      offices
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func preservesCommentsAsStandaloneLines() async throws {
   let sql = "SELECT id FROM users -- active users\nWHERE active = 1"
   let expected = """

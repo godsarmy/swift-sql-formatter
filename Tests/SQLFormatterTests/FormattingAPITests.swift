@@ -461,3 +461,36 @@ import Testing
   #expect(DialectRegistry.dialect(named: "postgresql") == .postgreSQL)
   #expect(DialectRegistry.dialect(named: "missing") == nil)
 }
+
+@Test func postgreSQLDialectTokenizesPostgresSpecificOperators() async throws {
+  let tokenizer = Tokenizer(dialect: .postgreSQL)
+  let tokens = try tokenizer.tokenize("SELECT meta::jsonb || data")
+
+  #expect(tokens.map(\.text) == ["SELECT", " ", "meta", "::", "jsonb", " ", "||", " ", "data"])
+  #expect(tokens[3].type == .operatorToken)
+  #expect(tokens[6].type == .operatorToken)
+}
+
+@Test func standardDialectDoesNotTokenizePostgresSpecificOperators() async throws {
+  let tokenizer = Tokenizer(dialect: .standardSQL)
+  let tokens = try tokenizer.tokenize("SELECT meta::jsonb || data")
+
+  #expect(tokens.contains(where: { $0.text == "::" && $0.type == .operatorToken }) == false)
+  #expect(tokens.contains(where: { $0.text == "||" && $0.type == .operatorToken }) == false)
+}
+
+@Test func postgreSQLDialectFormatsReturningClauseAndKeywordCasing() async throws {
+  let sql = "select id from users returning id"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    RETURNING
+      id
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .postgreSQL, keywordCase: .upper))
+
+  #expect(result == expected)
+}

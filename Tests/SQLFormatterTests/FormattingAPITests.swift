@@ -465,10 +465,36 @@ import Testing
 }
 
 @Test func canResolveDialectByNameFromRegistry() async throws {
-  let dialect = DialectRegistry.dialect(named: "sql")
+  let expectedDialects: [(String, Dialect)] = [
+    ("sql", .standardSQL),
+    ("bigquery", .bigQuery),
+    ("clickhouse", .clickHouse),
+    ("db2", .db2),
+    ("db2i", .db2i),
+    ("duckdb", .duckDB),
+    ("hive", .hive),
+    ("mariadb", .mariaDB),
+    ("mysql", .mySQL),
+    ("tidb", .tiDB),
+    ("n1ql", .n1ql),
+    ("plsql", .plSQL),
+    ("postgresql", .postgreSQL),
+    ("redshift", .redshift),
+    ("singlestoredb", .singleStoreDB),
+    ("snowflake", .snowflake),
+    ("spark", .spark),
+    ("sqlite", .sqlite),
+    ("transactsql", .transactSQL),
+    ("trino", .trino),
+  ]
 
-  #expect(dialect == .standardSQL)
-  #expect(DialectRegistry.dialect(named: "postgresql") == .postgreSQL)
+  for (name, dialect) in expectedDialects {
+    #expect(DialectRegistry.dialect(named: name) == dialect)
+  }
+
+  #expect(DialectRegistry.dialect(named: "postgres") == .postgreSQL)
+  #expect(DialectRegistry.dialect(named: "singlestore") == .singleStoreDB)
+  #expect(DialectRegistry.dialect(named: "tsql") == .transactSQL)
   #expect(DialectRegistry.dialect(named: "missing") == nil)
 }
 

@@ -58,7 +58,9 @@ struct SQLFormatterCLI {
       case "--dialect":
         guard let value = iterator.next(), let dialect = DialectRegistry.dialect(named: value)
         else {
-          throw CLIError.invalidArgument("Unknown dialect. Available: sql, postgresql")
+          throw CLIError.invalidArgument(
+            "Unknown dialect. Available: \(DialectRegistry.names.joined(separator: ", "))"
+          )
         }
         options.dialect = dialect
       case "--tab-width":
@@ -107,7 +109,7 @@ struct SQLFormatterCLI {
         cat query.sql | sqlfmt [options]
 
       Options:
-        --dialect <sql|postgresql>
+        --dialect <\(DialectRegistry.names.joined(separator: "|"))>
         --tab-width <n>
         --tabs
         --keyword-case <preserve|upper|lower>

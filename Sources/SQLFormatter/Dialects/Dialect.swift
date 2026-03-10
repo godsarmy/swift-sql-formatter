@@ -65,4 +65,55 @@ public struct Dialect: Sendable, Hashable {
       "ASC", "DESC", "RECURSIVE",
     ]
   )
+
+  public static let bigQuery = standardSQL.copy(
+    name: "bigquery",
+    quotedIdentifierDelimiters: ["`": "`", "\"": "\"", "'": "'"]
+  )
+  public static let clickHouse = standardSQL.copy(name: "clickhouse")
+  public static let db2 = standardSQL.copy(name: "db2")
+  public static let db2i = standardSQL.copy(name: "db2i")
+  public static let duckDB = postgreSQL.copy(name: "duckdb")
+  public static let hive = standardSQL.copy(
+    name: "hive", quotedIdentifierDelimiters: ["`": "`", "\"": "\"", "'": "'"])
+  public static let mariaDB = standardSQL.copy(
+    name: "mariadb", quotedIdentifierDelimiters: ["`": "`", "\"": "\"", "'": "'"])
+  public static let mySQL = mariaDB.copy(name: "mysql")
+  public static let tiDB = mySQL.copy(name: "tidb")
+  public static let n1ql = postgreSQL.copy(name: "n1ql")
+  public static let plSQL = postgreSQL.copy(name: "plsql")
+  public static let redshift = postgreSQL.copy(name: "redshift")
+  public static let singleStoreDB = mySQL.copy(name: "singlestoredb")
+  public static let snowflake = postgreSQL.copy(name: "snowflake")
+  public static let spark = standardSQL.copy(name: "spark")
+  public static let sqlite = standardSQL.copy(name: "sqlite")
+  public static let transactSQL = standardSQL.copy(
+    name: "transactsql",
+    quotedIdentifierDelimiters: ["[": "]", "\"": "\"", "'": "'"]
+  )
+  public static let trino = postgreSQL.copy(name: "trino")
+
+  private func copy(
+    name: String,
+    quotedIdentifierDelimiters: [Character: Character]? = nil,
+    punctuationCharacters: Set<Character>? = nil,
+    operatorCharacters: Set<Character>? = nil,
+    clauseKeywords: Set<String>? = nil,
+    compoundClauseKeywords: [String: Set<String>]? = nil,
+    joinModifierKeywords: Set<String>? = nil,
+    outerJoinModifierKeywords: Set<String>? = nil,
+    reservedWords: Set<String>? = nil
+  ) -> Dialect {
+    Dialect(
+      name: name,
+      quotedIdentifierDelimiters: quotedIdentifierDelimiters ?? self.quotedIdentifierDelimiters,
+      punctuationCharacters: punctuationCharacters ?? self.punctuationCharacters,
+      operatorCharacters: operatorCharacters ?? self.operatorCharacters,
+      clauseKeywords: clauseKeywords ?? self.clauseKeywords,
+      compoundClauseKeywords: compoundClauseKeywords ?? self.compoundClauseKeywords,
+      joinModifierKeywords: joinModifierKeywords ?? self.joinModifierKeywords,
+      outerJoinModifierKeywords: outerJoinModifierKeywords ?? self.outerJoinModifierKeywords,
+      reservedWords: reservedWords ?? self.reservedWords
+    )
+  }
 }

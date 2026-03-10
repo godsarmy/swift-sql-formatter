@@ -69,8 +69,26 @@ SELECT id FROM teams
 
 ## Supported dialects
 
-- `Dialect.standardSQL`
-- `Dialect.postgreSQL`
+- `sql`
+- `bigquery`
+- `clickhouse`
+- `db2`
+- `db2i`
+- `duckdb`
+- `hive`
+- `mariadb`
+- `mysql`
+- `tidb`
+- `n1ql`
+- `plsql`
+- `postgresql`
+- `redshift`
+- `singlestoredb` (`singlestore` alias)
+- `snowflake`
+- `spark`
+- `sqlite`
+- `transactsql` (`tsql` alias)
+- `trino`
 
 You can also discover dialects by name with `DialectRegistry`.
 

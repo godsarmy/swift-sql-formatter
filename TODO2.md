@@ -81,9 +81,9 @@ Compared this project against every page currently under `sql-formatter-org/sql-
 
 ### P3 - optional / low priority parity
 
-- [ ] Decide whether to implement deprecated `indentStyle`.
+- [x] Decide whether to implement deprecated `indentStyle`.
   - Upstream explicitly marks it deprecated and caveated.
-  - Reasonable choice: skip for now unless strict parity is required.
+  - Chosen direction: skip for now unless strict parity is required.
 
 ## Suggested implementation order
 

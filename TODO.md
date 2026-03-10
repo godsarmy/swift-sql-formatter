@@ -34,7 +34,7 @@
 ### Phase 3 - Formatter Engine
 
 - [x] Build output buffer utilities for spaces, indentation, and newlines.
-- [ ] Add indentation state management.
+- [x] Add indentation state management.
 - [ ] Implement clause-aware formatting for:
   - [x] `SELECT`
   - [x] `FROM`

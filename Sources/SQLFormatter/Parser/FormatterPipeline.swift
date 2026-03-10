@@ -1,11 +1,44 @@
 struct FormatterPipeline {
   let options: FormatOptions
 
+  private struct IndentationState {
+    private enum Scope {
+      case clause
+    }
+
+    private var scopes: [Scope] = []
+
+    var hasOpenClause: Bool {
+      scopes.last == .clause
+    }
+
+    mutating func beginClause(using buffer: inout OutputBuffer) {
+      scopes.append(.clause)
+      buffer.indent()
+    }
+
+    mutating func endClauseIfNeeded(using buffer: inout OutputBuffer) {
+      guard hasOpenClause else {
+        return
+      }
+
+      scopes.removeLast()
+      buffer.outdent()
+    }
+
+    mutating func endAll(using buffer: inout OutputBuffer) {
+      while !scopes.isEmpty {
+        scopes.removeLast()
+        buffer.outdent()
+      }
+    }
+  }
+
   func format(tokens: [Token], originalSQL: String) throws -> String {
     var buffer = OutputBuffer(
       indentationUnit: options.useTabs ? "\t" : String(repeating: " ", count: options.tabWidth)
     )
-    var clauseIndented = false
+    var indentationState = IndentationState()
     var pendingSpace = false
     var index = 0
 
@@ -16,10 +49,7 @@ struct FormatterPipeline {
       case .whitespace, .newline:
         pendingSpace = !buffer.output.hasSuffix("\n")
       case .comment:
-        if clauseIndented {
-          buffer.outdent()
-          clauseIndented = false
-        }
+        indentationState.endClauseIfNeeded(using: &buffer)
         buffer.newline()
         buffer.write(token.text)
         buffer.newline()
@@ -32,10 +62,7 @@ struct FormatterPipeline {
           buffer.write(token.text)
           pendingSpace = false
         } else if token.text == ";" {
-          if clauseIndented {
-            buffer.outdent()
-            clauseIndented = false
-          }
+          indentationState.endClauseIfNeeded(using: &buffer)
           buffer.write(token.text)
         } else {
           if pendingSpace, token.text != ")" {
@@ -50,14 +77,11 @@ struct FormatterPipeline {
         pendingSpace = true
       case .word, .quoted:
         if let clause = clause(at: index, in: tokens) {
-          if clauseIndented {
-            buffer.outdent()
-          }
+          indentationState.endClauseIfNeeded(using: &buffer)
           buffer.newline()
           buffer.write(clause.text)
           buffer.newline()
-          buffer.indent()
-          clauseIndented = true
+          indentationState.beginClause(using: &buffer)
           pendingSpace = false
           index = clause.endIndex
         } else {
@@ -72,9 +96,7 @@ struct FormatterPipeline {
       index += 1
     }
 
-    if clauseIndented {
-      buffer.outdent()
-    }
+    indentationState.endAll(using: &buffer)
 
     return buffer.rendered()
   }

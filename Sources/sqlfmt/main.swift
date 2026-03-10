@@ -11,7 +11,7 @@ struct CLIOptions {
   var identifierCase: KeywordCase = .preserve
   var logicalOperatorNewline: LogicalOperatorNewline = .before
   var linesBetweenQueries: Int = 1
-  var expressionWidth: Int? = nil
+  var expressionWidth: Int? = 50
   var newlineBeforeSemicolon: Bool = false
   var denseOperators: Bool = false
 }

@@ -127,7 +127,7 @@ public struct FormatOptions: Sendable {
     identifierCase: KeywordCase = .preserve,
     logicalOperatorNewline: LogicalOperatorNewline = .before,
     linesBetweenQueries: Int = 1,
-    expressionWidth: Int? = nil,
+    expressionWidth: Int? = 50,
     newlineBeforeSemicolon: Bool = false,
     denseOperators: Bool = false,
     positionalPlaceholders: [String] = [],

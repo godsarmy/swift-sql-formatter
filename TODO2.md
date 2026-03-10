@@ -73,7 +73,7 @@ Compared this project against every page currently under `sql-formatter-org/sql-
 
 ### P2 - semantic differences worth tightening
 
-- [ ] Align `expressionWidth` semantics more closely with upstream.
+- [x] Align `expressionWidth` semantics more closely with upstream.
   - Upstream documents a default width of `50` and frames the rule around parenthesized expressions.
   - Local `FormatOptions.expressionWidth` defaults to `nil`, so wrapping is opt-in.
 - [ ] Review whether `linesBetweenQueries` validation should match upstream wording/behavior exactly.

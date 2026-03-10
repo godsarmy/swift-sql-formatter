@@ -44,6 +44,7 @@ struct FormatterPipeline {
     var pendingSpace = false
     var formattingDisabled = false
     var positionalPlaceholderIndex = 0
+    var parenthesizedExpressionDepth = 0
     var index = 0
 
     while index < tokens.count {
@@ -101,6 +102,10 @@ struct FormatterPipeline {
           }
           pendingSpace = false
         } else {
+          if resolvedTokenText == ")" {
+            parenthesizedExpressionDepth = max(0, parenthesizedExpressionDepth - 1)
+          }
+
           if pendingSpace, resolvedTokenText != ")",
             !shouldOmitSpaceBeforePunctuation(resolvedTokenText, at: index, in: tokens)
           {
@@ -108,12 +113,17 @@ struct FormatterPipeline {
           }
           buffer.write(resolvedTokenText)
           pendingSpace = resolvedTokenText != "("
+
+          if resolvedTokenText == "(" {
+            parenthesizedExpressionDepth += 1
+          }
         }
       case .operatorToken:
         writeOperatorToken(
           resolvedTokenText,
           buffer: &buffer,
           indentationState: indentationState,
+          parenthesizedExpressionDepth: parenthesizedExpressionDepth,
           pendingSpace: &pendingSpace
         )
       case .word, .quoted:
@@ -143,6 +153,7 @@ struct FormatterPipeline {
               tokenText,
               buffer: &buffer,
               indentationState: indentationState,
+              parenthesizedExpressionDepth: parenthesizedExpressionDepth,
               pendingSpace: &pendingSpace
             )
           } else {
@@ -150,7 +161,8 @@ struct FormatterPipeline {
               tokenText,
               requiresLeadingSpace: pendingSpace,
               buffer: &buffer,
-              indentationState: indentationState
+              indentationState: indentationState,
+              parenthesizedExpressionDepth: parenthesizedExpressionDepth
             )
             pendingSpace = true
           }
@@ -580,6 +592,7 @@ struct FormatterPipeline {
     _ text: String,
     buffer: inout OutputBuffer,
     indentationState: IndentationState,
+    parenthesizedExpressionDepth: Int,
     pendingSpace: inout Bool
   ) {
     switch options.logicalOperatorNewline {
@@ -592,7 +605,8 @@ struct FormatterPipeline {
         text,
         requiresLeadingSpace: pendingSpace,
         buffer: &buffer,
-        indentationState: indentationState
+        indentationState: indentationState,
+        parenthesizedExpressionDepth: parenthesizedExpressionDepth
       )
       buffer.newline()
       pendingSpace = false
@@ -603,6 +617,7 @@ struct FormatterPipeline {
     _ text: String,
     buffer: inout OutputBuffer,
     indentationState: IndentationState,
+    parenthesizedExpressionDepth: Int,
     pendingSpace: inout Bool
   ) {
     if options.denseOperators {
@@ -610,7 +625,8 @@ struct FormatterPipeline {
         text,
         requiresLeadingSpace: false,
         buffer: buffer,
-        indentationState: indentationState
+        indentationState: indentationState,
+        parenthesizedExpressionDepth: parenthesizedExpressionDepth
       ) {
         buffer.newline()
       }
@@ -623,7 +639,8 @@ struct FormatterPipeline {
       text,
       requiresLeadingSpace: true,
       buffer: &buffer,
-      indentationState: indentationState
+      indentationState: indentationState,
+      parenthesizedExpressionDepth: parenthesizedExpressionDepth
     )
     pendingSpace = true
   }
@@ -632,13 +649,15 @@ struct FormatterPipeline {
     _ text: String,
     requiresLeadingSpace: Bool,
     buffer: inout OutputBuffer,
-    indentationState: IndentationState
+    indentationState: IndentationState,
+    parenthesizedExpressionDepth: Int
   ) {
     if shouldWrapExpressionToken(
       text,
       requiresLeadingSpace: requiresLeadingSpace,
       buffer: buffer,
-      indentationState: indentationState
+      indentationState: indentationState,
+      parenthesizedExpressionDepth: parenthesizedExpressionDepth
     ) {
       buffer.newline()
       buffer.write(text)
@@ -655,9 +674,11 @@ struct FormatterPipeline {
     _ text: String,
     requiresLeadingSpace: Bool,
     buffer: OutputBuffer,
-    indentationState: IndentationState
+    indentationState: IndentationState,
+    parenthesizedExpressionDepth: Int
   ) -> Bool {
     guard let width = options.expressionWidth, width > 0, indentationState.hasOpenClause,
+      parenthesizedExpressionDepth > 0,
       buffer.currentLineLength > 0
     else {
       return false

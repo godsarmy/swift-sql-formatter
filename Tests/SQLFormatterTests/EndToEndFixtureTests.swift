@@ -86,17 +86,14 @@ private struct EndToEndFixture {
     ),
     EndToEndFixture(
       name: "multiline expression wrapping",
-      sql: "SELECT id FROM users WHERE active = 1 AND deleted = 0 AND archived = 0",
-      options: FormatOptions(expressionWidth: 18),
+      sql: "SELECT price + (product.original_price * product.sales_tax) AS total FROM product",
+      options: FormatOptions(expressionWidth: 40),
       expected: """
         SELECT
-          id
+          price + (product.original_price *
+          product.sales_tax) AS total
         FROM
-          users
-        WHERE
-          active = 1
-          AND deleted = 0
-          AND archived = 0
+          product
         """
     ),
     EndToEndFixture(

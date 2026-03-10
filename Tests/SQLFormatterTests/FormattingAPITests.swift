@@ -323,18 +323,16 @@ import Testing
 }
 
 @Test func wrapsLongExpressionsWhenExpressionWidthIsSet() async throws {
-  let sql = "SELECT id FROM users WHERE active = 1 AND deleted = 0"
+  let sql = "SELECT price + (product.original_price * product.sales_tax) AS total FROM product"
   let expected = """
     SELECT
-      id
+      price + (product.original_price *
+      product.sales_tax) AS total
     FROM
-      users
-    WHERE
-      active = 1
-      AND deleted = 0
+      product
     """
 
-  let result = try format(sql, options: FormatOptions(expressionWidth: 18))
+  let result = try format(sql, options: FormatOptions(expressionWidth: 40))
 
   #expect(result == expected)
 }
@@ -357,15 +355,12 @@ import Testing
 }
 
 @Test func doesNotWrapExpressionsWhenExpressionWidthIsNonPositive() async throws {
-  let sql = "SELECT id FROM users WHERE active = 1 AND deleted = 0"
+  let sql = "SELECT price + (product.original_price * product.sales_tax) AS total FROM product"
   let expected = """
     SELECT
-      id
+      price + (product.original_price * product.sales_tax) AS total
     FROM
-      users
-    WHERE
-      active = 1
-      AND deleted = 0
+      product
     """
 
   let result = try format(sql, options: FormatOptions(expressionWidth: 0))
@@ -674,7 +669,7 @@ import Testing
   #expect(options.identifierCase == .preserve)
   #expect(options.logicalOperatorNewline == .before)
   #expect(options.linesBetweenQueries == 1)
-  #expect(options.expressionWidth == nil)
+  #expect(options.expressionWidth == 50)
   #expect(options.newlineBeforeSemicolon == false)
   #expect(options.denseOperators == false)
   #expect(options.positionalPlaceholders == [])

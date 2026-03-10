@@ -165,6 +165,40 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func respectsUpperKeywordCaseOption() async throws {
+  let sql = "select id, name from users where active = 1"
+  let expected = """
+    SELECT
+      id,
+      name
+    FROM
+      users
+    WHERE
+      active = 1
+    """
+
+  let result = try format(sql, options: FormatOptions(keywordCase: .upper))
+
+  #expect(result == expected)
+}
+
+@Test func respectsLowerKeywordCaseOption() async throws {
+  let sql = "SELECT id, name FROM users WHERE active = 1"
+  let expected = """
+    select
+      id,
+      name
+    from
+      users
+    where
+      active = 1
+    """
+
+  let result = try format(sql, options: FormatOptions(keywordCase: .lower))
+
+  #expect(result == expected)
+}
+
 @Test func tokenizerSplitsWordsOperatorsAndPunctuation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
   let tokens = try tokenizer.tokenize("SELECT name, age FROM people WHERE active = 1")
@@ -256,5 +290,6 @@ import Testing
   #expect(options.dialect == .standardSQL)
   #expect(options.tabWidth == 2)
   #expect(options.useTabs == false)
+  #expect(options.keywordCase == .preserve)
   #expect(options.linesBetweenQueries == 1)
 }

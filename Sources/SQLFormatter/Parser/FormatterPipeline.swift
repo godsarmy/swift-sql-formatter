@@ -83,7 +83,7 @@ struct FormatterPipeline {
         if let clause = clause(at: index, in: tokens) {
           indentationState.endClauseIfNeeded(using: &buffer)
           buffer.newline()
-          buffer.write(clause.text)
+          buffer.write(formatClauseKeyword(clause.text))
           buffer.newline()
           indentationState.beginClause(using: &buffer)
           pendingSpace = false
@@ -92,7 +92,11 @@ struct FormatterPipeline {
           if pendingSpace {
             buffer.space()
           }
-          buffer.write(token.text)
+          if token.type == .word, isKeyword(token.text) {
+            buffer.write(formatKeyword(token.text))
+          } else {
+            buffer.write(token.text)
+          }
           pendingSpace = true
         }
       }
@@ -183,5 +187,30 @@ struct FormatterPipeline {
     }
 
     return false
+  }
+
+  private func formatClauseKeyword(_ text: String) -> String {
+    text
+      .split(separator: " ")
+      .map { formatKeyword(String($0)) }
+      .joined(separator: " ")
+  }
+
+  private func formatKeyword(_ text: String) -> String {
+    switch options.keywordCase {
+    case .preserve:
+      return text
+    case .upper:
+      return text.uppercased()
+    case .lower:
+      return text.lowercased()
+    }
+  }
+
+  private func isKeyword(_ text: String) -> Bool {
+    [
+      "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
+      "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
+    ].contains(text.uppercased())
   }
 }

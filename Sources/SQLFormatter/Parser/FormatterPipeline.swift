@@ -40,44 +40,69 @@ struct FormatterPipeline {
     )
     var indentationState = IndentationState()
     var pendingSpace = false
+    var formattingDisabled = false
+    var positionalPlaceholderIndex = 0
     var index = 0
 
     while index < tokens.count {
       let token = tokens[index]
+      let resolvedTokenText = resolvePlaceholderText(
+        for: token,
+        positionalIndex: &positionalPlaceholderIndex
+      )
+
+      if formattingDisabled {
+        buffer.writeVerbatim(resolvedTokenText)
+        if token.type == .comment, isFormatterEnableDirective(token.text) {
+          formattingDisabled = false
+        }
+        index += 1
+        continue
+      }
 
       switch token.type {
       case .whitespace, .newline:
         pendingSpace = !buffer.output.hasSuffix("\n")
       case .comment:
+        if isFormatterDisableDirective(token.text) {
+          indentationState.endClauseIfNeeded(using: &buffer)
+          buffer.newline()
+          buffer.writeVerbatim(token.text)
+          pendingSpace = false
+          formattingDisabled = true
+          index += 1
+          continue
+        }
+
         indentationState.endClauseIfNeeded(using: &buffer)
         buffer.newline()
-        buffer.write(token.text)
+        buffer.write(resolvedTokenText)
         buffer.newline()
         pendingSpace = false
       case .punctuation:
-        if token.text == "," {
-          buffer.write(token.text)
+        if resolvedTokenText == "," {
+          buffer.write(resolvedTokenText)
           buffer.newline()
-        } else if token.text == "." {
-          buffer.write(token.text)
+        } else if resolvedTokenText == "." {
+          buffer.write(resolvedTokenText)
           pendingSpace = false
-        } else if token.text == ";" {
+        } else if resolvedTokenText == ";" {
           indentationState.endClauseIfNeeded(using: &buffer)
-          buffer.write(token.text)
+          buffer.write(resolvedTokenText)
           if hasNextStatementToken(after: index, in: tokens) {
             buffer.newline(count: max(1, options.linesBetweenQueries + 1))
           }
           pendingSpace = false
         } else {
-          if pendingSpace, token.text != ")" {
+          if pendingSpace, resolvedTokenText != ")" {
             buffer.space()
           }
-          buffer.write(token.text)
-          pendingSpace = token.text != "("
+          buffer.write(resolvedTokenText)
+          pendingSpace = resolvedTokenText != "("
         }
       case .operatorToken:
         writeExpressionToken(
-          token.text,
+          resolvedTokenText,
           requiresLeadingSpace: true,
           buffer: &buffer,
           indentationState: indentationState
@@ -95,9 +120,9 @@ struct FormatterPipeline {
         } else {
           let tokenText: String
           if token.type == .word, isKeyword(token.text) {
-            tokenText = formatKeyword(token.text)
+            tokenText = formatKeyword(resolvedTokenText)
           } else {
-            tokenText = token.text
+            tokenText = resolvedTokenText
           }
 
           writeExpressionToken(
@@ -221,6 +246,63 @@ struct FormatterPipeline {
       "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
     ].contains(text.uppercased())
+  }
+
+  private func resolvePlaceholderText(for token: Token, positionalIndex: inout Int) -> String {
+    guard token.type == .word else {
+      return token.text
+    }
+
+    if options.placeholderTypes.contains(.questionMark), token.text == "?" {
+      guard positionalIndex < options.positionalPlaceholders.count else {
+        return token.text
+      }
+
+      let value = options.positionalPlaceholders[positionalIndex]
+      positionalIndex += 1
+      return value
+    }
+
+    if options.placeholderTypes.contains(.colonNamed),
+      let value = namedPlaceholderValue(for: token.text, prefix: ":")
+    {
+      return value
+    }
+
+    if options.placeholderTypes.contains(.atNamed),
+      let value = namedPlaceholderValue(for: token.text, prefix: "@")
+    {
+      return value
+    }
+
+    if options.placeholderTypes.contains(.dollarNamed),
+      let value = namedPlaceholderValue(for: token.text, prefix: "$")
+    {
+      return value
+    }
+
+    return token.text
+  }
+
+  private func namedPlaceholderValue(for tokenText: String, prefix: Character) -> String? {
+    guard tokenText.first == prefix else {
+      return nil
+    }
+
+    let name = String(tokenText.dropFirst())
+    guard !name.isEmpty else {
+      return nil
+    }
+
+    return options.namedPlaceholders[name]
+  }
+
+  private func isFormatterDisableDirective(_ commentText: String) -> Bool {
+    commentText.lowercased().contains("sql-formatter-disable")
+  }
+
+  private func isFormatterEnableDirective(_ commentText: String) -> Bool {
+    commentText.lowercased().contains("sql-formatter-enable")
   }
 
   private func writeExpressionToken(

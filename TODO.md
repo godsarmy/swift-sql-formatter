@@ -35,7 +35,7 @@
 
 - [x] Build output buffer utilities for spaces, indentation, and newlines.
 - [x] Add indentation state management.
-- [ ] Implement clause-aware formatting for:
+- [x] Implement clause-aware formatting for:
   - [x] `SELECT`
   - [x] `FROM`
   - [x] `WHERE`
@@ -57,11 +57,11 @@
 
 ### Phase 5 - Placeholders and Comments
 
-- [ ] Add positional placeholder replacement.
-- [ ] Add named placeholder replacement.
-- [ ] Add configurable placeholder types.
-- [ ] Support formatter disable/enable comment blocks.
-- [ ] Add tests for placeholders and comments.
+- [x] Add positional placeholder replacement.
+- [x] Add named placeholder replacement.
+- [x] Add configurable placeholder types.
+- [x] Support formatter disable/enable comment blocks.
+- [x] Add tests for placeholders and comments.
 
 ### Phase 6 - Dialect System
 

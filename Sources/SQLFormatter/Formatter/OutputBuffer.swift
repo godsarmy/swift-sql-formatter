@@ -58,6 +58,15 @@ struct OutputBuffer {
     indentLevel = max(0, indentLevel - 1)
   }
 
+  mutating func writeVerbatim(_ text: String) {
+    guard !text.isEmpty else {
+      return
+    }
+
+    output += text
+    isLineStart = text.last == "\n"
+  }
+
   var currentLineLength: Int {
     if let lineStart = output.lastIndex(of: "\n") {
       return output.distance(from: output.index(after: lineStart), to: output.endIndex)

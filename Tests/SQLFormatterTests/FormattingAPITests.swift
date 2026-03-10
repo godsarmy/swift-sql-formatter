@@ -269,6 +269,89 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func replacesPositionalPlaceholders() async throws {
+  let sql = "SELECT ? FROM users WHERE id = ?"
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(sql, options: FormatOptions(positionalPlaceholders: ["name", "42"]))
+
+  #expect(result == expected)
+}
+
+@Test func replacesNamedPlaceholders() async throws {
+  let sql = "SELECT :column FROM users WHERE id = :id"
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(namedPlaceholders: ["column": "name", "id": "42"])
+  )
+
+  #expect(result == expected)
+}
+
+@Test func respectsConfiguredPlaceholderTypes() async throws {
+  let sql = "SELECT @column, :column FROM users"
+  let expected = """
+    SELECT
+      name,
+      :column
+    FROM
+      users
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(
+      namedPlaceholders: ["column": "name"],
+      placeholderTypes: [.atNamed]
+    )
+  )
+
+  #expect(result == expected)
+}
+
+@Test func preservesContentBetweenDisableEnableDirectives() async throws {
+  let sql = """
+    SELECT id FROM users
+    -- sql-formatter-disable
+    select   id,   name   from users where active=1
+    -- sql-formatter-enable
+    SELECT id FROM teams
+    """
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    -- sql-formatter-disable
+    select   id,   name   from users where active=1
+    -- sql-formatter-enable
+    SELECT
+      id
+    FROM
+      teams
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func tokenizerSplitsWordsOperatorsAndPunctuation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
   let tokens = try tokenizer.tokenize("SELECT name, age FROM people WHERE active = 1")
@@ -363,4 +446,10 @@ import Testing
   #expect(options.keywordCase == .preserve)
   #expect(options.linesBetweenQueries == 1)
   #expect(options.expressionWidth == nil)
+  #expect(options.positionalPlaceholders == [])
+  #expect(options.namedPlaceholders == [:])
+  #expect(
+    options.placeholderTypes
+      == [.questionMark, .colonNamed, .atNamed, .dollarNamed]
+  )
 }

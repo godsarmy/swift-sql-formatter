@@ -141,6 +141,21 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func respectsTabWidthOption() async throws {
+  let sql = "SELECT id, name FROM users"
+  let expected = """
+    SELECT
+        id,
+        name
+    FROM
+        users
+    """
+
+  let result = try format(sql, options: FormatOptions(tabWidth: 4))
+
+  #expect(result == expected)
+}
+
 @Test func tokenizerSplitsWordsOperatorsAndPunctuation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
   let tokens = try tokenizer.tokenize("SELECT name, age FROM people WHERE active = 1")

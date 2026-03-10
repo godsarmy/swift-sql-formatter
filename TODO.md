@@ -48,7 +48,7 @@
 
 ### Phase 4 - Options Parity
 
-- [ ] Support `tabWidth`.
+- [x] Support `tabWidth`.
 - [ ] Support `useTabs`.
 - [ ] Support keyword casing.
 - [ ] Support `linesBetweenQueries`.

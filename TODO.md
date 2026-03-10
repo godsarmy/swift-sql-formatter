@@ -69,7 +69,7 @@
 - [x] Add dialect registry.
 - [x] Add PostgreSQL or MySQL as the second dialect.
 - [x] Validate dialect-specific quoting, operators, and reserved words.
-- [ ] Add dialect fixture tests.
+- [x] Add dialect fixture tests.
 
 ### Phase 7 - Test Parity
 

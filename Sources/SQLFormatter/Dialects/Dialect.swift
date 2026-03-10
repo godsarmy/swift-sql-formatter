@@ -36,13 +36,14 @@ public struct Dialect: Sendable, Hashable {
     quotedIdentifierDelimiters: ["\"": "\"", "`": "`", "[": "]", "'": "'"],
     punctuationCharacters: [",", "(", ")", ";", "."],
     operatorCharacters: ["=", ">", "<", "!", "+", "-", "*", "/", "%"],
-    clauseKeywords: ["SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON"],
+    clauseKeywords: ["WITH", "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON"],
     compoundClauseKeywords: ["GROUP": ["BY"], "ORDER": ["BY"]],
     joinModifierKeywords: ["INNER", "CROSS", "NATURAL", "STRAIGHT"],
     outerJoinModifierKeywords: ["LEFT", "RIGHT", "FULL"],
     reservedWords: [
       "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
+      "ASC", "DESC",
     ]
   )
 
@@ -53,7 +54,7 @@ public struct Dialect: Sendable, Hashable {
     operatorCharacters: [
       "=", ">", "<", "!", "+", "-", "*", "/", "%", "|", "&", "#", "~", "^", "?", ":",
     ],
-    clauseKeywords: ["SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "RETURNING"],
+    clauseKeywords: ["WITH", "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "RETURNING"],
     compoundClauseKeywords: ["GROUP": ["BY"], "ORDER": ["BY"]],
     joinModifierKeywords: ["INNER", "CROSS", "NATURAL", "STRAIGHT"],
     outerJoinModifierKeywords: ["LEFT", "RIGHT", "FULL"],
@@ -61,6 +62,7 @@ public struct Dialect: Sendable, Hashable {
       "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
       "USING", "RETURNING", "ILIKE",
+      "ASC", "DESC", "RECURSIVE",
     ]
   )
 }

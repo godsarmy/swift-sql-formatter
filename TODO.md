@@ -73,7 +73,7 @@
 
 ### Phase 7 - Test Parity
 
-- [ ] Port a small starter set of TypeScript fixtures.
+- [x] Port a small starter set of TypeScript fixtures.
 - [ ] Add end-to-end formatting fixtures.
 - [ ] Prioritize tricky coverage:
   - [ ] nested subqueries
@@ -104,4 +104,4 @@
 - [x] Replace the placeholder tokenizer with a real standard SQL tokenizer.
 - [x] Replace the passthrough formatter pipeline with basic clause formatting.
 - [x] Add the first meaningful API and formatter tests.
-- [ ] Import a few TypeScript fixtures as parity targets.
+- [x] Import a few TypeScript fixtures as parity targets.

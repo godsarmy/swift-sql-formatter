@@ -1,3 +1,5 @@
+import Foundation
+
 struct FormatterPipeline {
   let options: FormatOptions
 
@@ -46,17 +48,19 @@ struct FormatterPipeline {
 
     while index < tokens.count {
       let token = tokens[index]
-      let resolvedTokenText = resolvePlaceholderText(
-        for: token,
+      let resolvedPlaceholder = resolvePlaceholderText(
+        at: index,
+        in: tokens,
         positionalIndex: &positionalPlaceholderIndex
       )
+      let resolvedTokenText = resolvedPlaceholder.text
 
       if formattingDisabled {
         buffer.writeVerbatim(resolvedTokenText)
         if token.type == .comment, isFormatterEnableDirective(token.text) {
           formattingDisabled = false
         }
-        index += 1
+        index += resolvedPlaceholder.consumedTokenCount
         continue
       }
 
@@ -70,7 +74,7 @@ struct FormatterPipeline {
           buffer.writeVerbatim(token.text)
           pendingSpace = false
           formattingDisabled = true
-          index += 1
+          index += resolvedPlaceholder.consumedTokenCount
           continue
         }
 
@@ -135,7 +139,7 @@ struct FormatterPipeline {
         }
       }
 
-      index += 1
+      index += resolvedPlaceholder.consumedTokenCount
     }
 
     indentationState.endAll(using: &buffer)
@@ -246,53 +250,173 @@ struct FormatterPipeline {
     options.dialect.reservedWords.contains(text.uppercased())
   }
 
-  private func resolvePlaceholderText(for token: Token, positionalIndex: inout Int) -> String {
-    guard token.type == .word else {
-      return token.text
+  private func resolvePlaceholderText(
+    at index: Int,
+    in tokens: [Token],
+    positionalIndex: inout Int
+  ) -> (text: String, consumedTokenCount: Int) {
+    let token = tokens[index]
+
+    if let resolvedValue = prefixedPlaceholderValue(at: index, in: tokens) {
+      return resolvedValue
     }
 
-    if options.placeholderTypes.contains(.questionMark), token.text == "?" {
-      guard positionalIndex < options.positionalPlaceholders.count else {
-        return token.text
+    guard token.type == .word else {
+      return (token.text, 1)
+    }
+
+    if options.resolvedParamTypes.positional, token.text == "?" {
+      let positionalParams = options.resolvedPositionalParams
+      guard positionalIndex < positionalParams.count else {
+        return (token.text, 1)
       }
 
-      let value = options.positionalPlaceholders[positionalIndex]
+      let value = positionalParams[positionalIndex]
       positionalIndex += 1
-      return value
+      return (value, 1)
     }
 
-    if options.placeholderTypes.contains(.colonNamed),
-      let value = namedPlaceholderValue(for: token.text, prefix: ":")
-    {
-      return value
+    if let value = numberedPlaceholderValue(for: token.text) {
+      return (value, 1)
     }
 
-    if options.placeholderTypes.contains(.atNamed),
-      let value = namedPlaceholderValue(for: token.text, prefix: "@")
-    {
-      return value
+    if let value = namedPlaceholderValue(for: token.text) {
+      return (value, 1)
     }
 
-    if options.placeholderTypes.contains(.dollarNamed),
-      let value = namedPlaceholderValue(for: token.text, prefix: "$")
-    {
-      return value
+    if let value = customPlaceholderValue(for: token.text) {
+      return (value, 1)
     }
 
-    return token.text
+    return (token.text, 1)
   }
 
-  private func namedPlaceholderValue(for tokenText: String, prefix: Character) -> String? {
-    guard tokenText.first == prefix else {
+  private func numberedPlaceholderValue(for tokenText: String) -> String? {
+    let paramTypes = options.resolvedParamTypes
+
+    for prefix in paramTypes.numbered {
+      guard tokenText.first == prefix.rawValue else {
+        continue
+      }
+
+      let key = String(tokenText.dropFirst())
+      guard !key.isEmpty, key.allSatisfy(\.isNumber) else {
+        continue
+      }
+
+      return options.resolvedNamedParams[key]
+    }
+
+    return nil
+  }
+
+  private func namedPlaceholderValue(for tokenText: String) -> String? {
+    let paramTypes = options.resolvedParamTypes
+
+    for prefix in paramTypes.named {
+      guard tokenText.first == prefix.rawValue else {
+        continue
+      }
+
+      let key = String(tokenText.dropFirst())
+      guard !key.isEmpty else {
+        continue
+      }
+
+      return options.resolvedNamedParams[key]
+    }
+
+    return nil
+  }
+
+  private func quotedPlaceholderValue(at index: Int, in tokens: [Token]) -> String? {
+    let paramTypes = options.resolvedParamTypes
+    guard index + 1 < tokens.count else {
       return nil
     }
 
-    let name = String(tokenText.dropFirst())
-    guard !name.isEmpty else {
+    let prefixToken = tokens[index]
+    let quotedToken = tokens[index + 1]
+
+    guard prefixToken.type == .word, quotedToken.type == .quoted,
+      prefixToken.text.count == 1,
+      let prefixCharacter = prefixToken.text.first,
+      let prefix = ParameterPrefix(rawValue: prefixCharacter), paramTypes.quoted.contains(prefix)
+    else {
       return nil
     }
 
-    return options.namedPlaceholders[name]
+    return options.resolvedNamedParams[unquotePlaceholderKey(quotedToken.text)]
+  }
+
+  private func prefixedPlaceholderValue(
+    at index: Int,
+    in tokens: [Token]
+  ) -> (text: String, consumedTokenCount: Int)? {
+    guard index + 1 < tokens.count else {
+      return nil
+    }
+
+    let prefixToken = tokens[index]
+    let valueToken = tokens[index + 1]
+    let supportedPrefixTypes: Set<TokenType> = [.word, .operatorToken]
+
+    guard supportedPrefixTypes.contains(prefixToken.type), prefixToken.text.count == 1,
+      let prefixCharacter = prefixToken.text.first,
+      let prefix = ParameterPrefix(rawValue: prefixCharacter)
+    else {
+      return nil
+    }
+
+    if valueToken.type == .quoted, options.resolvedParamTypes.quoted.contains(prefix) {
+      if let value = quotedPlaceholderValue(at: index, in: tokens) {
+        return (value, 2)
+      }
+    }
+
+    guard valueToken.type == .word else {
+      return nil
+    }
+
+    if options.resolvedParamTypes.numbered.contains(prefix), valueToken.text.allSatisfy(\.isNumber),
+      let value = options.resolvedNamedParams[valueToken.text]
+    {
+      return (value, 2)
+    }
+
+    if options.resolvedParamTypes.named.contains(prefix),
+      let value = options.resolvedNamedParams[valueToken.text]
+    {
+      return (value, 2)
+    }
+
+    return nil
+  }
+
+  private func customPlaceholderValue(for tokenText: String) -> String? {
+    for customType in options.resolvedParamTypes.custom {
+      guard let regex = try? NSRegularExpression(pattern: customType.regex) else {
+        continue
+      }
+
+      let range = NSRange(tokenText.startIndex..<tokenText.endIndex, in: tokenText)
+      guard let match = regex.firstMatch(in: tokenText, range: range), match.range == range else {
+        continue
+      }
+
+      let key = customType.key?(tokenText) ?? tokenText
+      return options.resolvedNamedParams[key]
+    }
+
+    return nil
+  }
+
+  private func unquotePlaceholderKey(_ text: String) -> String {
+    guard text.count >= 2 else {
+      return text
+    }
+
+    return String(text.dropFirst().dropLast())
   }
 
   private func isFormatterDisableDirective(_ commentText: String) -> Bool {

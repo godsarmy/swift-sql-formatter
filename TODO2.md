@@ -59,16 +59,16 @@ Compared this project against every page currently under `sql-formatter-org/sql-
 
 ### P1 - placeholder and params parity
 
-- [ ] Expand placeholder parsing beyond the current four `PlaceholderType` cases in `Sources/SQLFormatter/FormatOptions.swift`.
+- [x] Expand placeholder parsing beyond the current four `PlaceholderType` cases in `Sources/SQLFormatter/FormatOptions.swift`.
   - Missing numbered placeholders such as `?1`, `:1`, `$1`.
   - Missing quoted placeholders such as `@"name"`, `@[name]`, `` @`name` ``.
   - Missing dialect-specific placeholder syntaxes like ClickHouse `{name:Type}`.
-- [ ] Add upstream-style `paramTypes` configuration.
+- [x] Add upstream-style `paramTypes` configuration.
   - Upstream supports enabling/disabling positional, numbered, named, quoted, and custom regex-based placeholder syntaxes.
   - Local API only exposes a fixed `Set<PlaceholderType>`.
-- [ ] Add upstream-style `params` convenience API.
+- [x] Add upstream-style `params` convenience API.
   - Current split between `positionalPlaceholders` and `namedPlaceholders` covers simple replacement, but not the full upstream placeholder matrix.
-- [ ] Define dialect defaults for placeholder support.
+- [x] Define dialect defaults for placeholder support.
   - Upstream behavior varies by dialect; local defaults are currently global.
 
 ### P2 - semantic differences worth tightening

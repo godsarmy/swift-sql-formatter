@@ -304,6 +304,94 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func paramsAPIReplacesPositionalPlaceholders() async throws {
+  let sql = "SELECT ? FROM users WHERE id = ?"
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(
+      params: .positional(["name", "42"]),
+      paramTypes: ParamTypes(positional: true)
+    )
+  )
+
+  #expect(result == expected)
+}
+
+@Test func paramsAPIReplacesNumberedDialectPlaceholders() async throws {
+  let sql = "SELECT $1 FROM users WHERE id = $2"
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(
+      dialect: .postgreSQL,
+      params: .named(["1": "name", "2": "42"])
+    )
+  )
+
+  #expect(result == expected)
+}
+
+@Test func paramsAPIReplacesQuotedDialectPlaceholders() async throws {
+  let sql = "SELECT @\"column\" FROM users WHERE id = @\"id\""
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(
+      dialect: .transactSQL,
+      params: .named(["column": "name", "id": "42"])
+    )
+  )
+
+  #expect(result == expected)
+}
+
+@Test func paramsAPIReplacesClickHouseCustomPlaceholders() async throws {
+  let sql = "SELECT {column:String} FROM users WHERE id = {id:Int32}"
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(
+      dialect: .clickHouse,
+      params: .named(["column": "name", "id": "42"])
+    )
+  )
+
+  #expect(result == expected)
+}
+
 @Test func respectsConfiguredPlaceholderTypes() async throws {
   let sql = "SELECT @column, :column FROM users"
   let expected = """
@@ -319,6 +407,29 @@ import Testing
     options: FormatOptions(
       namedPlaceholders: ["column": "name"],
       placeholderTypes: [.atNamed]
+    )
+  )
+
+  #expect(result == expected)
+}
+
+@Test func paramTypesCanOverrideDialectDefaults() async throws {
+  let sql = "SELECT :column FROM users WHERE id = :id"
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(
+      dialect: .postgreSQL,
+      params: .named(["column": "name", "id": "42"]),
+      paramTypes: ParamTypes(named: [.colon])
     )
   )
 

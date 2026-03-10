@@ -52,7 +52,7 @@
 - [x] Support `useTabs`.
 - [x] Support keyword casing.
 - [x] Support `linesBetweenQueries`.
-- [ ] Add expression width / line-wrapping strategy.
+- [x] Add expression width / line-wrapping strategy.
 - [ ] Add option coverage tests.
 
 ### Phase 5 - Placeholders and Comments

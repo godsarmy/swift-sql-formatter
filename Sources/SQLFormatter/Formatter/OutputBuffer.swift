@@ -58,6 +58,14 @@ struct OutputBuffer {
     indentLevel = max(0, indentLevel - 1)
   }
 
+  var currentLineLength: Int {
+    if let lineStart = output.lastIndex(of: "\n") {
+      return output.distance(from: output.index(after: lineStart), to: output.endIndex)
+    }
+
+    return output.count
+  }
+
   func rendered() -> String {
     output.trimmingCharacters(in: .whitespacesAndNewlines)
   }

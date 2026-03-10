@@ -76,8 +76,12 @@ struct FormatterPipeline {
           pendingSpace = token.text != "("
         }
       case .operatorToken:
-        buffer.space()
-        buffer.write(token.text)
+        writeExpressionToken(
+          token.text,
+          requiresLeadingSpace: true,
+          buffer: &buffer,
+          indentationState: indentationState
+        )
         pendingSpace = true
       case .word, .quoted:
         if let clause = clause(at: index, in: tokens) {
@@ -89,14 +93,19 @@ struct FormatterPipeline {
           pendingSpace = false
           index = clause.endIndex
         } else {
-          if pendingSpace {
-            buffer.space()
-          }
+          let tokenText: String
           if token.type == .word, isKeyword(token.text) {
-            buffer.write(formatKeyword(token.text))
+            tokenText = formatKeyword(token.text)
           } else {
-            buffer.write(token.text)
+            tokenText = token.text
           }
+
+          writeExpressionToken(
+            tokenText,
+            requiresLeadingSpace: pendingSpace,
+            buffer: &buffer,
+            indentationState: indentationState
+          )
           pendingSpace = true
         }
       }
@@ -212,5 +221,44 @@ struct FormatterPipeline {
       "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
     ].contains(text.uppercased())
+  }
+
+  private func writeExpressionToken(
+    _ text: String,
+    requiresLeadingSpace: Bool,
+    buffer: inout OutputBuffer,
+    indentationState: IndentationState
+  ) {
+    if shouldWrapExpressionToken(
+      text,
+      requiresLeadingSpace: requiresLeadingSpace,
+      buffer: buffer,
+      indentationState: indentationState
+    ) {
+      buffer.newline()
+      buffer.write(text)
+      return
+    }
+
+    if requiresLeadingSpace {
+      buffer.space()
+    }
+    buffer.write(text)
+  }
+
+  private func shouldWrapExpressionToken(
+    _ text: String,
+    requiresLeadingSpace: Bool,
+    buffer: OutputBuffer,
+    indentationState: IndentationState
+  ) -> Bool {
+    guard let width = options.expressionWidth, width > 0, indentationState.hasOpenClause,
+      buffer.currentLineLength > 0
+    else {
+      return false
+    }
+
+    let additionalLength = (requiresLeadingSpace ? 1 : 0) + text.count
+    return buffer.currentLineLength + additionalLength > width
   }
 }

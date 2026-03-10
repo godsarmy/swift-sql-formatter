@@ -219,6 +219,23 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func wrapsLongExpressionsWhenExpressionWidthIsSet() async throws {
+  let sql = "SELECT id FROM users WHERE active = 1 AND deleted = 0"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    WHERE
+      active = 1 AND
+      deleted = 0
+    """
+
+  let result = try format(sql, options: FormatOptions(expressionWidth: 18))
+
+  #expect(result == expected)
+}
+
 @Test func tokenizerSplitsWordsOperatorsAndPunctuation() async throws {
   let tokenizer = Tokenizer(dialect: .standardSQL)
   let tokens = try tokenizer.tokenize("SELECT name, age FROM people WHERE active = 1")
@@ -312,4 +329,5 @@ import Testing
   #expect(options.useTabs == false)
   #expect(options.keywordCase == .preserve)
   #expect(options.linesBetweenQueries == 1)
+  #expect(options.expressionWidth == nil)
 }

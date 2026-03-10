@@ -1,7 +1,8 @@
 public enum DialectRegistry {
   public static var all: [Dialect] {
     [
-      .standardSQL
+      .standardSQL,
+      .postgreSQL,
     ]
   }
 

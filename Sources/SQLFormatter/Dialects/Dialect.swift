@@ -45,4 +45,22 @@ public struct Dialect: Sendable, Hashable {
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
     ]
   )
+
+  public static let postgreSQL = Dialect(
+    name: "postgresql",
+    quotedIdentifierDelimiters: ["\"": "\"", "'": "'"],
+    punctuationCharacters: [",", "(", ")", ";", "."],
+    operatorCharacters: [
+      "=", ">", "<", "!", "+", "-", "*", "/", "%", "|", "&", "#", "~", "^", "?", ":",
+    ],
+    clauseKeywords: ["SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "RETURNING"],
+    compoundClauseKeywords: ["GROUP": ["BY"], "ORDER": ["BY"]],
+    joinModifierKeywords: ["INNER", "CROSS", "NATURAL", "STRAIGHT"],
+    outerJoinModifierKeywords: ["LEFT", "RIGHT", "FULL"],
+    reservedWords: [
+      "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
+      "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
+      "USING", "RETURNING", "ILIKE",
+    ]
+  )
 }

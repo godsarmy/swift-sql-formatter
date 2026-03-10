@@ -67,7 +67,7 @@
 
 - [x] Convert standard SQL rules into dialect configuration.
 - [x] Add dialect registry.
-- [ ] Add PostgreSQL or MySQL as the second dialect.
+- [x] Add PostgreSQL or MySQL as the second dialect.
 - [ ] Validate dialect-specific quoting, operators, and reserved words.
 - [ ] Add dialect fixture tests.
 

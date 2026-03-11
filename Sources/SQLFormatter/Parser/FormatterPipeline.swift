@@ -43,6 +43,13 @@ struct FormatterPipeline {
       buffer.outdent()
     }
 
+    mutating func endTrailingBlocks(using buffer: inout OutputBuffer) {
+      while scopes.last == .block {
+        scopes.removeLast()
+        buffer.outdent()
+      }
+    }
+
     mutating func endAll(using buffer: inout OutputBuffer) {
       while !scopes.isEmpty {
         scopes.removeLast()
@@ -235,15 +242,15 @@ struct FormatterPipeline {
       }
     }
 
-    if options.dialect.clauseKeywords.contains(keyword) {
-      return (tokens[index].text, index)
-    }
-
     if let possibleSuffixes = options.dialect.compoundClauseKeywords[keyword],
       let nextWord = nextWordToken(after: index, in: tokens),
       possibleSuffixes.contains(nextWord.text.uppercased())
     {
       return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
+    }
+
+    if options.dialect.clauseKeywords.contains(keyword) {
+      return (tokens[index].text, index)
     }
 
     if keyword == "JOIN" || keyword.hasSuffix("JOIN") {
@@ -345,6 +352,7 @@ struct FormatterPipeline {
     let normalizedText = text.uppercased()
     return [
       "BREAK", "IF", "INSERT INTO", "SET NOCOUNT OFF", "SET NOCOUNT ON", "WHILE",
+      "ELSE IF", "RETURN",
       "CREATE PROCEDURE", "ALTER PROCEDURE", "CREATE OR ALTER PROCEDURE",
     ].contains(normalizedText)
   }
@@ -428,6 +436,19 @@ struct FormatterPipeline {
       buffer.write(formatKeyword(text))
       pendingSpace = true
       return true
+    case "ELSE":
+      if let nextWord = nextWordToken(after: index, in: tokens), nextWord.text.uppercased() == "IF"
+      {
+        return false
+      }
+      indentationState.endClauseIfNeeded(using: &buffer)
+      indentationState.endTrailingBlocks(using: &buffer)
+      if !buffer.output.isEmpty, !buffer.output.hasSuffix("\n") {
+        buffer.newline()
+      }
+      buffer.write(formatKeyword(text))
+      pendingSpace = true
+      return true
     case "GO":
       indentationState.endAll(using: &buffer)
       if !buffer.output.isEmpty, !buffer.output.hasSuffix("\n") {
@@ -435,6 +456,14 @@ struct FormatterPipeline {
       }
       buffer.write(formatKeyword(text))
       pendingSpace = false
+      return true
+    case "RETURN":
+      indentationState.endClauseIfNeeded(using: &buffer)
+      if !buffer.output.isEmpty, !buffer.output.hasSuffix("\n") {
+        buffer.newline()
+      }
+      buffer.write(formatKeyword(text))
+      pendingSpace = true
       return true
     default:
       return false

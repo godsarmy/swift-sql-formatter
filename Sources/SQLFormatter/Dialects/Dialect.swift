@@ -102,6 +102,9 @@ public struct Dialect: Sendable, Hashable {
     clauseKeywords: standardSQL.clauseKeywords.union([
       "ALTER", "AS", "BREAK", "CREATE", "ELSE", "GO", "IF", "RETURN", "SET", "WHILE",
     ]),
+    compoundClauseKeywords: standardSQL.compoundClauseKeywords.merging(["ELSE": ["IF"]]) {
+      current, _ in current
+    },
     reservedWords: standardSQL.reservedWords.union([
       "ALTER", "AS", "BEGIN", "BREAK", "CREATE", "ELSE", "END", "GO", "IF", "NOCOUNT",
       "OFF", "ON", "OR", "PROCEDURE", "RETURN", "SET", "WHILE",

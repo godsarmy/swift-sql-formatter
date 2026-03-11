@@ -221,6 +221,67 @@ private struct DialectFixture {
         """
     ),
     DialectFixture(
+      name: "transactsql if else begin end",
+      sql: "IF 1 = 1 BEGIN SELECT 1; END ELSE BEGIN SELECT 2; END;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        IF 1 = 1 BEGIN
+          SELECT
+            1;
+
+        END
+        ELSE BEGIN
+          SELECT
+            2;
+
+        END;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql if else inline selects",
+      sql: "IF 1 = 1 SELECT 1 ELSE SELECT 2;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        IF 1 = 1
+        SELECT
+          1
+        ELSE
+        SELECT
+          2;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql return in begin end",
+      sql: "IF 1 = 1 BEGIN RETURN; END;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        IF 1 = 1 BEGIN
+          RETURN;
+
+        END;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql standalone return",
+      sql: "RETURN 42;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        RETURN 42;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql else if begin end",
+      sql: "ELSE IF 2 = 2 BEGIN SELECT 2; END;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        ELSE IF 2 = 2 BEGIN
+          SELECT
+            2;
+
+        END;
+        """
+    ),
+    DialectFixture(
       name: "transactsql while break block",
       sql: "WHILE 1 = 1 BEGIN SELECT 'x'; BREAK; END;",
       options: FormatOptions(dialect: .transactSQL),

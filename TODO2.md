@@ -76,8 +76,8 @@ Compared this project against every page currently under `sql-formatter-org/sql-
 - [x] Align `expressionWidth` semantics more closely with upstream.
   - Upstream documents a default width of `50` and frames the rule around parenthesized expressions.
   - Local `FormatOptions.expressionWidth` defaults to `nil`, so wrapping is opt-in.
-- [ ] Review whether `linesBetweenQueries` validation should match upstream wording/behavior exactly.
-  - Local CLI allows `0`; this appears compatible, but should be verified against library-level validation semantics.
+- [x] Review whether `linesBetweenQueries` validation should match upstream wording/behavior exactly.
+  - Verified current behavior is compatible for the documented cases: `0`, `1`, and larger positive values all format as expected in API and CLI tests.
 
 ### P3 - optional / low priority parity
 

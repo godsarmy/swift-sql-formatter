@@ -62,6 +62,21 @@ struct Tokenizer {
         continue
       }
 
+      if let oracleQuote = oracleQuotedTokenStart(in: sql, at: index) {
+        let start = index
+        index = try consumeOracleQuotedToken(
+          in: sql,
+          from: oracleQuote.contentStartIndex,
+          closingDelimiter: oracleQuote.closingDelimiter,
+          tokenStart: start
+        )
+        tokens.append(
+          Token(
+            type: .quoted, text: String(sql[start..<index]), location: location(in: sql, at: start))
+        )
+        continue
+      }
+
       if let prefixedQuote = prefixedQuotedTokenStart(in: sql, at: index) {
         let start = index
         index = try consumeQuotedToken(
@@ -199,6 +214,26 @@ struct Tokenizer {
     return nil
   }
 
+  private func oracleQuotedTokenStart(in sql: String, at index: String.Index) -> (
+    contentStartIndex: String.Index, closingDelimiter: Character
+  )? {
+    guard hasPrefix("q'", in: sql, at: index) || hasPrefix("Q'", in: sql, at: index) else {
+      return nil
+    }
+
+    let delimiterIndex = sql.index(index, offsetBy: 2)
+    guard delimiterIndex < sql.endIndex else {
+      return nil
+    }
+
+    let openingDelimiter = sql[delimiterIndex]
+    let contentStartIndex = sql.index(after: delimiterIndex)
+    return (
+      contentStartIndex: contentStartIndex,
+      closingDelimiter: matchingOracleQuoteDelimiter(for: openingDelimiter)
+    )
+  }
+
   private func consumeQuotedToken(
     in sql: String,
     from openingIndex: String.Index,
@@ -234,6 +269,43 @@ struct Tokenizer {
     }
 
     throw FormatError.unterminatedQuotedToken(at: location(in: sql, at: tokenStart))
+  }
+
+  private func consumeOracleQuotedToken(
+    in sql: String,
+    from contentStartIndex: String.Index,
+    closingDelimiter: Character,
+    tokenStart: String.Index
+  ) throws -> String.Index {
+    var currentIndex = contentStartIndex
+
+    while currentIndex < sql.endIndex {
+      if sql[currentIndex] == closingDelimiter,
+        let quoteIndex = optionalIndex(after: currentIndex, in: sql), quoteIndex < sql.endIndex,
+        sql[quoteIndex] == "'"
+      {
+        return sql.index(after: quoteIndex)
+      }
+
+      currentIndex = sql.index(after: currentIndex)
+    }
+
+    throw FormatError.unterminatedQuotedToken(at: location(in: sql, at: tokenStart))
+  }
+
+  private func matchingOracleQuoteDelimiter(for openingDelimiter: Character) -> Character {
+    switch openingDelimiter {
+    case "[":
+      return "]"
+    case "{":
+      return "}"
+    case "(":
+      return ")"
+    case "<":
+      return ">"
+    default:
+      return openingDelimiter
+    }
   }
 
   private func optionalIndex(after index: String.Index, in sql: String) -> String.Index? {

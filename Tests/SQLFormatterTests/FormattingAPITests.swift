@@ -294,6 +294,96 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func preservesTripleQuotedBigQueryStrings() async throws {
+  let sql = "SELECT '''abc''', '''line\nvalue''' FROM t"
+  let expected = """
+    SELECT
+      '''abc''',
+      '''line
+    value'''
+    FROM
+      t
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .bigQuery))
+
+  #expect(result == expected)
+}
+
+@Test func preservesTripleDoubleQuotedBigQueryStrings() async throws {
+  let sql = "SELECT \"\"\"abc\"\"\", \"\"\"line\nvalue\"\"\" FROM t"
+  let expected = ##"""
+    SELECT
+      """abc""",
+      """line
+    value"""
+    FROM
+      t
+    """##
+
+  let result = try format(sql, options: FormatOptions(dialect: .bigQuery))
+
+  #expect(result == expected)
+}
+
+@Test func preservesRawTripleQuotedBigQueryStrings() async throws {
+  let sql = "SELECT R'''abc''', R'''line\nvalue''' FROM t"
+  let expected = """
+    SELECT
+      R'''abc''',
+      R'''line
+    value'''
+    FROM
+      t
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .bigQuery))
+
+  #expect(result == expected)
+}
+
+@Test func preservesOracleBracketQuotedStrings() async throws {
+  let sql = "SELECT q'[abc]' FROM dual"
+  let expected = """
+    SELECT
+      q'[abc]'
+    FROM
+      dual
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .plSQL))
+
+  #expect(result == expected)
+}
+
+@Test func preservesOracleBraceQuotedStrings() async throws {
+  let sql = "SELECT q'{a''b}' FROM dual"
+  let expected = """
+    SELECT
+      q'{a''b}'
+    FROM
+      dual
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .plSQL))
+
+  #expect(result == expected)
+}
+
+@Test func preservesOraclePipeQuotedStrings() async throws {
+  let sql = "SELECT q'|abc|' FROM dual"
+  let expected = """
+    SELECT
+      q'|abc|'
+    FROM
+      dual
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .plSQL))
+
+  #expect(result == expected)
+}
+
 @Test func preservesDoubleQuotedTokensInSelectLists() async throws {
   let sql = "SELECT \"string literal\" FROM users"
   let expected = """

@@ -183,15 +183,20 @@ struct Tokenizer {
   private func prefixedQuotedTokenStart(in sql: String, at index: String.Index) -> (
     quoteStartIndex: String.Index, openingDelimiter: Character
   )? {
-    let character = sql[index]
-    guard ["N", "E", "B", "X", "R", "U"].contains(character.uppercased()),
-      let nextIndex = optionalIndex(after: index, in: sql), nextIndex < sql.endIndex,
-      sql[nextIndex] == "'"
-    else {
-      return nil
+    for prefix in ["U&", "N", "E", "B", "X", "R", "U"] {
+      guard hasPrefix(prefix, in: sql, at: index) else {
+        continue
+      }
+
+      let quoteStartIndex = sql.index(index, offsetBy: prefix.count)
+      guard quoteStartIndex < sql.endIndex, sql[quoteStartIndex] == "'" else {
+        continue
+      }
+
+      return (quoteStartIndex: quoteStartIndex, openingDelimiter: "'")
     }
 
-    return (quoteStartIndex: nextIndex, openingDelimiter: "'")
+    return nil
   }
 
   private func consumeQuotedToken(

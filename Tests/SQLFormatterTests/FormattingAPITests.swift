@@ -250,6 +250,35 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func preservesPostgresEscapeStrings() async throws {
+  let sql = #"SELECT E'Line\nBreak', E'It\'s ok' FROM users"#
+  let expected = #"""
+    SELECT
+      E'Line\nBreak',
+      E'It\'s ok'
+    FROM
+      users
+    """#
+
+  let result = try format(sql, options: FormatOptions(dialect: .postgreSQL))
+
+  #expect(result == expected)
+}
+
+@Test func preservesUnicodeEscapeStrings() async throws {
+  let sql = #"SELECT U&'d\0061t\+000061' FROM users"#
+  let expected = #"""
+    SELECT
+      U&'d\0061t\+000061'
+    FROM
+      users
+    """#
+
+  let result = try format(sql, options: FormatOptions(dialect: .postgreSQL))
+
+  #expect(result == expected)
+}
+
 @Test func preservesDollarQuotedStrings() async throws {
   let sql = "SELECT $$hello$$, $tag$inner$tag$ FROM users"
   let expected = """

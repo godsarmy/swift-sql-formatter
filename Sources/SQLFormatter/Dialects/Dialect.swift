@@ -98,7 +98,14 @@ public struct Dialect: Sendable, Hashable {
   public static let sqlite = standardSQL.copy(name: "sqlite")
   public static let transactSQL = standardSQL.copy(
     name: "transactsql",
-    quotedIdentifierDelimiters: ["[": "]", "\"": "\"", "'": "'"]
+    quotedIdentifierDelimiters: ["[": "]", "\"": "\"", "'": "'"],
+    clauseKeywords: standardSQL.clauseKeywords.union([
+      "ALTER", "AS", "BREAK", "CREATE", "ELSE", "GO", "IF", "RETURN", "SET", "WHILE",
+    ]),
+    reservedWords: standardSQL.reservedWords.union([
+      "ALTER", "AS", "BEGIN", "BREAK", "CREATE", "ELSE", "END", "GO", "IF", "NOCOUNT",
+      "OFF", "ON", "OR", "PROCEDURE", "RETURN", "SET", "WHILE",
+    ])
   )
   public static let trino = postgreSQL.copy(name: "trino")
 

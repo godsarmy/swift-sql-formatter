@@ -6,6 +6,7 @@ struct FormatterPipeline {
   private struct IndentationState {
     private enum Scope {
       case clause
+      case block
     }
 
     private var scopes: [Scope] = []
@@ -19,8 +20,22 @@ struct FormatterPipeline {
       buffer.indent()
     }
 
+    mutating func beginBlock(using buffer: inout OutputBuffer) {
+      scopes.append(.block)
+      buffer.indent()
+    }
+
     mutating func endClauseIfNeeded(using buffer: inout OutputBuffer) {
       guard hasOpenClause else {
+        return
+      }
+
+      scopes.removeLast()
+      buffer.outdent()
+    }
+
+    mutating func endBlockIfNeeded(using buffer: inout OutputBuffer) {
+      guard scopes.last == .block else {
         return
       }
 
@@ -127,12 +142,28 @@ struct FormatterPipeline {
           pendingSpace: &pendingSpace
         )
       case .word, .quoted:
+        if token.type == .word,
+          handleTransactSQLControlWord(
+            token.text,
+            at: index,
+            in: tokens,
+            buffer: &buffer,
+            indentationState: &indentationState,
+            pendingSpace: &pendingSpace
+          )
+        {
+          index += resolvedPlaceholder.consumedTokenCount
+          continue
+        }
+
         if let clause = clause(at: index, in: tokens) {
           indentationState.endClauseIfNeeded(using: &buffer)
           buffer.newline()
           buffer.write(formatClauseKeyword(clause.text))
           if shouldKeepClauseInline(clause.text) {
-            buffer.space()
+            if shouldInsertSpaceAfterInlineClause(endingAt: clause.endIndex, in: tokens) {
+              buffer.space()
+            }
             pendingSpace = false
           } else {
             buffer.newline()
@@ -196,6 +227,12 @@ struct FormatterPipeline {
 
     if statementKeyword == "GRANT", keyword == "TO" {
       return (tokens[index].text, index)
+    }
+
+    if options.dialect.name == "transactsql" {
+      if let specialClause = transactSQLClause(at: index, in: tokens) {
+        return specialClause
+      }
     }
 
     if options.dialect.clauseKeywords.contains(keyword) {
@@ -305,7 +342,103 @@ struct FormatterPipeline {
   }
 
   private func shouldKeepClauseInline(_ text: String) -> Bool {
-    text.uppercased() == "INSERT INTO"
+    let normalizedText = text.uppercased()
+    return [
+      "BREAK", "IF", "INSERT INTO", "SET NOCOUNT OFF", "SET NOCOUNT ON", "WHILE",
+      "CREATE PROCEDURE", "ALTER PROCEDURE", "CREATE OR ALTER PROCEDURE",
+    ].contains(normalizedText)
+  }
+
+  private func shouldInsertSpaceAfterInlineClause(endingAt endIndex: Int, in tokens: [Token])
+    -> Bool
+  {
+    guard let nextToken = nextNonWhitespaceToken(after: endIndex, in: tokens) else {
+      return false
+    }
+
+    return !(nextToken.type == .punctuation && nextToken.text == ";")
+  }
+
+  private func transactSQLClause(at index: Int, in tokens: [Token]) -> (
+    text: String, endIndex: Int
+  )? {
+    let keyword = tokens[index].text.uppercased()
+
+    if keyword == "SET",
+      let secondWord = nextWordToken(after: index, in: tokens),
+      secondWord.text.uppercased() == "NOCOUNT",
+      let thirdWord = nextWordToken(after: secondWord.index, in: tokens),
+      ["ON", "OFF"].contains(thirdWord.text.uppercased())
+    {
+      return ("\(tokens[index].text) \(secondWord.text) \(thirdWord.text)", thirdWord.index)
+    }
+
+    if ["CREATE", "ALTER"].contains(keyword),
+      let secondWord = nextWordToken(after: index, in: tokens)
+    {
+      let secondKeyword = secondWord.text.uppercased()
+      if secondKeyword == "PROCEDURE" {
+        return ("\(tokens[index].text) \(secondWord.text)", secondWord.index)
+      }
+
+      if keyword == "CREATE", secondKeyword == "OR",
+        let thirdWord = nextWordToken(after: secondWord.index, in: tokens),
+        thirdWord.text.uppercased() == "ALTER",
+        let fourthWord = nextWordToken(after: thirdWord.index, in: tokens),
+        fourthWord.text.uppercased() == "PROCEDURE"
+      {
+        return (
+          "\(tokens[index].text) \(secondWord.text) \(thirdWord.text) \(fourthWord.text)",
+          fourthWord.index
+        )
+      }
+    }
+
+    return nil
+  }
+
+  private func handleTransactSQLControlWord(
+    _ text: String,
+    at index: Int,
+    in tokens: [Token],
+    buffer: inout OutputBuffer,
+    indentationState: inout IndentationState,
+    pendingSpace: inout Bool
+  ) -> Bool {
+    guard options.dialect.name == "transactsql" else {
+      return false
+    }
+
+    switch text.uppercased() {
+    case "BEGIN":
+      indentationState.endClauseIfNeeded(using: &buffer)
+      if !buffer.output.isEmpty, !buffer.output.hasSuffix("\n") {
+        buffer.space()
+      }
+      buffer.write(formatKeyword(text))
+      indentationState.beginBlock(using: &buffer)
+      pendingSpace = true
+      return true
+    case "END":
+      indentationState.endClauseIfNeeded(using: &buffer)
+      indentationState.endBlockIfNeeded(using: &buffer)
+      if !buffer.output.isEmpty, !buffer.output.hasSuffix("\n") {
+        buffer.newline()
+      }
+      buffer.write(formatKeyword(text))
+      pendingSpace = true
+      return true
+    case "GO":
+      indentationState.endAll(using: &buffer)
+      if !buffer.output.isEmpty, !buffer.output.hasSuffix("\n") {
+        buffer.newline(count: 2)
+      }
+      buffer.write(formatKeyword(text))
+      pendingSpace = false
+      return true
+    default:
+      return false
+    }
   }
 
   private func formatKeyword(_ text: String) -> String {

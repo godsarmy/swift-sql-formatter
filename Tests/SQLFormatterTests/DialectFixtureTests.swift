@@ -155,6 +155,86 @@ private struct DialectFixture {
         """
     ),
     DialectFixture(
+      name: "transactsql go batch separator",
+      sql: "SELECT 1; GO SELECT 2;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        SELECT
+          1;
+
+        GO
+        SELECT
+          2;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql create or alter procedure",
+      sql: "CREATE OR ALTER PROCEDURE p AS SELECT 1;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        CREATE OR ALTER PROCEDURE p
+        AS
+        SELECT
+          1;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql create procedure begin end",
+      sql: "CREATE PROCEDURE p AS BEGIN SELECT 1; END;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        CREATE PROCEDURE p
+        AS
+        BEGIN
+          SELECT
+            1;
+
+        END;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql procedure with set nocount",
+      sql: "CREATE PROCEDURE p AS BEGIN SET NOCOUNT ON; SELECT 1; END;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        CREATE PROCEDURE p
+        AS
+        BEGIN
+          SET NOCOUNT ON;
+
+          SELECT
+            1;
+
+        END;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql if begin end",
+      sql: "IF 1 = 1 BEGIN SELECT 1; END;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        IF 1 = 1 BEGIN
+          SELECT
+            1;
+
+        END;
+        """
+    ),
+    DialectFixture(
+      name: "transactsql while break block",
+      sql: "WHILE 1 = 1 BEGIN SELECT 'x'; BREAK; END;",
+      options: FormatOptions(dialect: .transactSQL),
+      expected: """
+        WHILE 1 = 1 BEGIN
+          SELECT
+            'x';
+
+          BREAK;
+
+        END;
+        """
+    ),
+    DialectFixture(
       name: "clickhouse typed placeholder",
       sql: "SELECT {foo:Uint64};",
       options: FormatOptions(dialect: .clickHouse),

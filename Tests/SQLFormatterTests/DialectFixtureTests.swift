@@ -213,6 +213,24 @@ private struct DialectFixture {
         """
     ),
     DialectFixture(
+      name: "clickhouse with before insert",
+      sql: "WITH y AS (SELECT * FROM numbers(10)) INSERT INTO x SELECT * FROM y;",
+      options: FormatOptions(dialect: .clickHouse),
+      expected: """
+        WITH
+          y AS (
+        SELECT
+          *
+        FROM
+          numbers(10))
+        INSERT INTO x
+        SELECT
+          *
+        FROM
+          y;
+        """
+    ),
+    DialectFixture(
       name: "clickhouse drop database cluster sync",
       sql: "DROP DATABASE IF EXISTS db ON CLUSTER my_cluster SYNC;",
       options: FormatOptions(dialect: .clickHouse),
@@ -298,6 +316,33 @@ private struct DialectFixture {
       expected: """
         SET ROLE ALL EXCEPT guest,
         readonly;
+        """
+    ),
+    DialectFixture(
+      name: "clickhouse grant privileges",
+      sql: "GRANT SELECT, INSERT ON db.tbl TO user;",
+      options: FormatOptions(dialect: .clickHouse),
+      expected: """
+        GRANT
+          SELECT,
+          INSERT
+        ON
+          db.tbl
+        TO
+          user;
+        """
+    ),
+    DialectFixture(
+      name: "clickhouse revoke privileges",
+      sql: "REVOKE SELECT ON db.tbl FROM user;",
+      options: FormatOptions(dialect: .clickHouse),
+      expected: """
+        REVOKE
+          SELECT
+        ON
+          db.tbl
+        FROM
+          user;
         """
     ),
     DialectFixture(

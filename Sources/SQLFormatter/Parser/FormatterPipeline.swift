@@ -131,9 +131,14 @@ struct FormatterPipeline {
           indentationState.endClauseIfNeeded(using: &buffer)
           buffer.newline()
           buffer.write(formatClauseKeyword(clause.text))
-          buffer.newline()
-          indentationState.beginClause(using: &buffer)
-          pendingSpace = false
+          if shouldKeepClauseInline(clause.text) {
+            buffer.space()
+            pendingSpace = false
+          } else {
+            buffer.newline()
+            indentationState.beginClause(using: &buffer)
+            pendingSpace = false
+          }
           index = clause.endIndex
         } else {
           let tokenText: String
@@ -183,6 +188,15 @@ struct FormatterPipeline {
     }
 
     let keyword = tokens[index].text.uppercased()
+    let statementKeyword = statementLeadingKeyword(containing: index, in: tokens)
+
+    if ["GRANT", "REVOKE"].contains(statementKeyword), isPrivilegeKeyword(keyword) {
+      return nil
+    }
+
+    if statementKeyword == "GRANT", keyword == "TO" {
+      return (tokens[index].text, index)
+    }
 
     if options.dialect.clauseKeywords.contains(keyword) {
       return (tokens[index].text, index)
@@ -243,6 +257,31 @@ struct FormatterPipeline {
     return nil
   }
 
+  private func statementLeadingKeyword(containing index: Int, in tokens: [Token]) -> String? {
+    var currentIndex = index
+    var words: [(String, Int)] = []
+
+    while currentIndex >= 0 {
+      let token = tokens[currentIndex]
+      if token.type == .punctuation, token.text == ";" {
+        break
+      }
+      if token.type == .word {
+        words.append((token.text.uppercased(), currentIndex))
+      }
+      currentIndex -= 1
+    }
+
+    return words.last?.0
+  }
+
+  private func isPrivilegeKeyword(_ keyword: String) -> Bool {
+    [
+      "SELECT", "INSERT", "UPDATE", "DELETE", "ALTER", "CREATE", "DROP", "TRUNCATE",
+      "USAGE", "ROLE",
+    ].contains(keyword)
+  }
+
   private func hasNextStatementToken(after index: Int, in tokens: [Token]) -> Bool {
     var nextIndex = index + 1
     while nextIndex < tokens.count {
@@ -263,6 +302,10 @@ struct FormatterPipeline {
       .split(separator: " ")
       .map { formatKeyword(String($0)) }
       .joined(separator: " ")
+  }
+
+  private func shouldKeepClauseInline(_ text: String) -> Bool {
+    text.uppercased() == "INSERT INTO"
   }
 
   private func formatKeyword(_ text: String) -> String {

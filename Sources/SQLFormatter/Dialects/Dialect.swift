@@ -70,7 +70,16 @@ public struct Dialect: Sendable, Hashable {
     name: "bigquery",
     quotedIdentifierDelimiters: ["`": "`", "\"": "\"", "'": "'"]
   )
-  public static let clickHouse = standardSQL.copy(name: "clickhouse")
+  public static let clickHouse = standardSQL.copy(
+    name: "clickhouse",
+    clauseKeywords: standardSQL.clauseKeywords.union(["GRANT", "REVOKE"]),
+    compoundClauseKeywords: standardSQL.compoundClauseKeywords.merging(["INSERT": ["INTO"]]) {
+      current, _ in current
+    },
+    reservedWords: standardSQL.reservedWords.union([
+      "GRANT", "INSERT", "INTO", "REVOKE", "TO",
+    ])
+  )
   public static let db2 = standardSQL.copy(name: "db2")
   public static let db2i = standardSQL.copy(name: "db2i")
   public static let duckDB = postgreSQL.copy(name: "duckdb")

@@ -521,6 +521,62 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func preservesOracleParenthesisQuotedStrings() async throws {
+  let sql = "SELECT q'(abc)' FROM dual"
+  let expected = """
+    SELECT
+      q'(abc)'
+    FROM
+      dual
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .plSQL))
+
+  #expect(result == expected)
+}
+
+@Test func preservesOracleAngleBracketQuotedStrings() async throws {
+  let sql = "SELECT q'<abc>' FROM dual"
+  let expected = """
+    SELECT
+      q'<abc>'
+    FROM
+      dual
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .plSQL))
+
+  #expect(result == expected)
+}
+
+@Test func preservesOracleHashQuotedStrings() async throws {
+  let sql = "SELECT q'#abc#' FROM dual"
+  let expected = """
+    SELECT
+      q'#abc#'
+    FROM
+      dual
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .plSQL))
+
+  #expect(result == expected)
+}
+
+@Test func preservesOracleBangQuotedStringsWithEscapedQuotes() async throws {
+  let sql = "SELECT q'!a''b!' FROM dual"
+  let expected = """
+    SELECT
+      q'!a''b!'
+    FROM
+      dual
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .plSQL))
+
+  #expect(result == expected)
+}
+
 @Test func preservesDoubleQuotedTokensInSelectLists() async throws {
   let sql = "SELECT \"string literal\" FROM users"
   let expected = """

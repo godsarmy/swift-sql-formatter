@@ -188,6 +188,81 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsCreateTableStatements() async throws {
+  let sql = "CREATE TABLE users (id INT, name VARCHAR(20), active BOOLEAN);"
+  let expected = """
+    CREATE TABLE users(id INT,
+    name VARCHAR(20),
+    active BOOLEAN);
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsInsertValuesStatements() async throws {
+  let sql = "INSERT INTO users (id, name) VALUES (1, 'A'), (2, 'B');"
+  let expected = """
+    INSERT INTO users(id,
+    name)
+    VALUES
+      (1,
+      'A'),
+      (2,
+      'B');
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsInsertSelectStatements() async throws {
+  let sql = "INSERT INTO users SELECT id, name FROM archived_users;"
+  let expected = """
+    INSERT INTO users
+    SELECT
+      id,
+      name
+    FROM
+      archived_users;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsUpdateStatements() async throws {
+  let sql = "UPDATE users SET name = 'A', active = 1 WHERE id = 1;"
+  let expected = """
+    UPDATE users
+    SET
+      name = 'A',
+      active = 1
+    WHERE
+      id = 1;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsDeleteStatements() async throws {
+  let sql = "DELETE FROM users WHERE active = 0;"
+  let expected = """
+    DELETE FROM users
+    WHERE
+      active = 0;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func preservesMixedNumericLiteralForms() async throws {
   let sql = "SELECT 1, 1.25, -4, 6e7 FROM numbers"
   let expected = """

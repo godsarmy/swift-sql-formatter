@@ -36,12 +36,19 @@ public struct Dialect: Sendable, Hashable {
     quotedIdentifierDelimiters: ["\"": "\"", "`": "`", "[": "]", "'": "'"],
     punctuationCharacters: [",", "(", ")", ";", "."],
     operatorCharacters: ["=", ">", "<", "!", "+", "-", "*", "/", "%"],
-    clauseKeywords: ["WITH", "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON"],
-    compoundClauseKeywords: ["GROUP": ["BY"], "ORDER": ["BY"]],
+    clauseKeywords: [
+      "WITH", "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "CREATE", "UPDATE",
+      "SET", "VALUES",
+    ],
+    compoundClauseKeywords: [
+      "CREATE": ["TABLE"], "DELETE": ["FROM"], "GROUP": ["BY"], "INSERT": ["INTO"],
+      "ORDER": ["BY"],
+    ],
     joinModifierKeywords: ["INNER", "CROSS", "NATURAL", "STRAIGHT"],
     outerJoinModifierKeywords: ["LEFT", "RIGHT", "FULL"],
     reservedWords: [
-      "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "GROUP", "BY", "ORDER",
+      "CREATE", "DELETE", "FROM", "INSERT", "INTO", "LIMIT", "HAVING", "ON", "GROUP",
+      "BY", "ORDER", "SELECT", "SET", "UPDATE", "VALUES", "WHERE",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
       "ASC", "AS", "DESC",
     ]

@@ -397,7 +397,8 @@ private struct DialectFixture {
       sql: "CREATE MATERIALIZED VIEW mv1 REFRESH EVERY 1 HOUR AS SELECT * FROM source_table;",
       options: FormatOptions(dialect: .clickHouse),
       expected: """
-        CREATE MATERIALIZED VIEW mv1 REFRESH EVERY 1 HOUR AS
+        CREATE
+          MATERIALIZED VIEW mv1 REFRESH EVERY 1 HOUR AS
         SELECT
           *
         FROM
@@ -417,7 +418,8 @@ private struct DialectFixture {
       sql: "SHOW CREATE TABLE db.table INTO OUTFILE 'file.txt' FORMAT CSV;",
       options: FormatOptions(dialect: .clickHouse),
       expected: """
-        SHOW CREATE TABLE db.table INTO OUTFILE 'file.txt' FORMAT CSV;
+        SHOW
+        CREATE TABLE db.table INTO OUTFILE 'file.txt' FORMAT CSV;
         """
     ),
     DialectFixture(
@@ -455,8 +457,9 @@ private struct DialectFixture {
       sql: "SET ROLE ALL EXCEPT guest, readonly;",
       options: FormatOptions(dialect: .clickHouse),
       expected: """
-        SET ROLE ALL EXCEPT guest,
-        readonly;
+        SET
+          ROLE ALL EXCEPT guest,
+          readonly;
         """
     ),
     DialectFixture(

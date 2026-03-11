@@ -351,7 +351,8 @@ struct FormatterPipeline {
   private func shouldKeepClauseInline(_ text: String) -> Bool {
     let normalizedText = text.uppercased()
     return [
-      "BREAK", "IF", "INSERT INTO", "SET NOCOUNT OFF", "SET NOCOUNT ON", "WHILE",
+      "BREAK", "CREATE TABLE", "DELETE FROM", "IF", "INSERT INTO", "SET NOCOUNT OFF",
+      "SET NOCOUNT ON", "UPDATE", "WHILE",
       "ELSE IF", "RETURN",
       "CREATE PROCEDURE", "ALTER PROCEDURE", "CREATE OR ALTER PROCEDURE",
     ].contains(normalizedText)

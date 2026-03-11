@@ -263,6 +263,68 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsCreateTableAsSelectStatements() async throws {
+  let sql = "CREATE TABLE t AS SELECT id FROM users;"
+  let expected = """
+    CREATE TABLE t AS
+    SELECT
+      id
+    FROM
+      users;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsInsertSelectWithColumnListAndPredicate() async throws {
+  let sql = "INSERT INTO users (id, name) SELECT id, name FROM archived_users WHERE active = 1;"
+  let expected = """
+    INSERT INTO users(id,
+    name)
+    SELECT
+      id,
+      name
+    FROM
+      archived_users
+    WHERE
+      active = 1;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsUpdateStatementsWithCaseExpressions() async throws {
+  let sql = "UPDATE users SET name = CASE WHEN active = 1 THEN 'A' ELSE 'B' END WHERE id = 1;"
+  let expected = """
+    UPDATE users
+    SET
+      name = CASE WHEN active = 1 THEN 'A' ELSE 'B' END
+    WHERE
+      id = 1;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsDeleteUsingStatements() async throws {
+  let sql = "DELETE FROM users USING archived_users WHERE users.id = archived_users.id;"
+  let expected = """
+    DELETE FROM users USING archived_users
+    WHERE
+      users.id = archived_users.id;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func preservesMixedNumericLiteralForms() async throws {
   let sql = "SELECT 1, 1.25, -4, 6e7 FROM numbers"
   let expected = """

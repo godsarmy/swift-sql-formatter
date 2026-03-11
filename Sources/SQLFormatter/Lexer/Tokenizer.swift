@@ -62,27 +62,33 @@ struct Tokenizer {
         continue
       }
 
-      if let closingDelimiter = quotedTokenDelimiter(for: character) {
+      if let prefixedQuote = prefixedQuotedTokenStart(in: sql, at: index) {
         let start = index
-        index = sql.index(after: index)
+        index = try consumeQuotedToken(
+          in: sql,
+          from: prefixedQuote.quoteStartIndex,
+          openingDelimiter: prefixedQuote.openingDelimiter,
+          tokenStart: start
+        )
+        tokens.append(
+          Token(
+            type: .quoted, text: String(sql[start..<index]), location: location(in: sql, at: start))
+        )
+        continue
+      }
 
-        while index < sql.endIndex {
-          let current = sql[index]
-          if current == closingDelimiter {
-            index = sql.index(after: index)
-            tokens.append(
-              Token(
-                type: .quoted, text: String(sql[start..<index]),
-                location: location(in: sql, at: start))
-            )
-            break
-          }
-          index = sql.index(after: index)
-        }
-
-        if tokens.last?.text != String(sql[start..<index]) {
-          throw FormatError.unterminatedQuotedToken(at: location(in: sql, at: start))
-        }
+      if quotedTokenDelimiter(for: character) != nil {
+        let start = index
+        index = try consumeQuotedToken(
+          in: sql,
+          from: index,
+          openingDelimiter: character,
+          tokenStart: start
+        )
+        tokens.append(
+          Token(
+            type: .quoted, text: String(sql[start..<index]), location: location(in: sql, at: start))
+        )
         continue
       }
 
@@ -172,6 +178,62 @@ struct Tokenizer {
 
   private func quotedTokenDelimiter(for character: Character) -> Character? {
     dialect.quotedIdentifierDelimiters[character]
+  }
+
+  private func prefixedQuotedTokenStart(in sql: String, at index: String.Index) -> (
+    quoteStartIndex: String.Index, openingDelimiter: Character
+  )? {
+    let character = sql[index]
+    guard ["N", "E", "B", "X", "R", "U"].contains(character.uppercased()),
+      let nextIndex = optionalIndex(after: index, in: sql), nextIndex < sql.endIndex,
+      sql[nextIndex] == "'"
+    else {
+      return nil
+    }
+
+    return (quoteStartIndex: nextIndex, openingDelimiter: "'")
+  }
+
+  private func consumeQuotedToken(
+    in sql: String,
+    from openingIndex: String.Index,
+    openingDelimiter: Character,
+    tokenStart: String.Index
+  ) throws -> String.Index {
+    guard let closingDelimiter = quotedTokenDelimiter(for: openingDelimiter) else {
+      throw FormatError.unterminatedQuotedToken(at: location(in: sql, at: tokenStart))
+    }
+
+    var currentIndex = sql.index(after: openingIndex)
+
+    while currentIndex < sql.endIndex {
+      let current = sql[currentIndex]
+
+      if current == "\\", let escapedIndex = optionalIndex(after: currentIndex, in: sql) {
+        currentIndex = sql.index(after: escapedIndex)
+        continue
+      }
+
+      if current == closingDelimiter {
+        if let nextIndex = optionalIndex(after: currentIndex, in: sql), nextIndex < sql.endIndex,
+          sql[nextIndex] == closingDelimiter
+        {
+          currentIndex = sql.index(after: nextIndex)
+          continue
+        }
+
+        return sql.index(after: currentIndex)
+      }
+
+      currentIndex = sql.index(after: currentIndex)
+    }
+
+    throw FormatError.unterminatedQuotedToken(at: location(in: sql, at: tokenStart))
+  }
+
+  private func optionalIndex(after index: String.Index, in sql: String) -> String.Index? {
+    let nextIndex = sql.index(after: index)
+    return nextIndex <= sql.endIndex ? nextIndex : nil
   }
 
   private func isPunctuation(_ character: Character) -> Bool {

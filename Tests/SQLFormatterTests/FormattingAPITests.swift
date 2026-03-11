@@ -220,6 +220,51 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func preservesEscapedSingleQuotedStrings() async throws {
+  let sql = "SELECT 'a''b', 'it''s ok' FROM users"
+  let expected = """
+    SELECT
+      'a''b',
+      'it''s ok'
+    FROM
+      users
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func preservesPrefixedNationalCharacterStrings() async throws {
+  let sql = "SELECT N'name', N'it''s' FROM tbl"
+  let expected = """
+    SELECT
+      N'name',
+      N'it''s'
+    FROM
+      tbl
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .transactSQL))
+
+  #expect(result == expected)
+}
+
+@Test func preservesDollarQuotedStrings() async throws {
+  let sql = "SELECT $$hello$$, $tag$inner$tag$ FROM users"
+  let expected = """
+    SELECT
+      $$hello$$,
+      $tag$inner$tag$
+    FROM
+      users
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .postgreSQL))
+
+  #expect(result == expected)
+}
+
 @Test func preservesDoubleQuotedTokensInSelectLists() async throws {
   let sql = "SELECT \"string literal\" FROM users"
   let expected = """

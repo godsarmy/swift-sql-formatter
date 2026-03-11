@@ -205,6 +205,35 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func preservesBasicSingleQuotedStrings() async throws {
+  let sql = "SELECT 'hello', 'world' FROM users"
+  let expected = """
+    SELECT
+      'hello',
+      'world'
+    FROM
+      users
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func preservesDoubleQuotedTokensInSelectLists() async throws {
+  let sql = "SELECT \"string literal\" FROM users"
+  let expected = """
+    SELECT
+      "string literal"
+    FROM
+      users
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func formatsSimpleOverPartitionClauses() async throws {
   let sql = "SELECT sum(amount) OVER (PARTITION BY team) FROM payroll"
   let expected = """

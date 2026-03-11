@@ -19,6 +19,12 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func returnsEmptyStringForEmptyInput() async throws {
+  let result = try format("")
+
+  #expect(result == "")
+}
+
 @Test func supportsReusableFormatterInstance() async throws {
   let formatter = SQLFormatter.Formatter()
   let sql = "SELECT id, name FROM people WHERE active = 1"
@@ -87,6 +93,148 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsMultipleCtes() async throws {
+  let sql = "WITH ids AS (SELECT id FROM users), teams AS (SELECT id FROM teams) SELECT id FROM ids"
+  let expected = """
+    WITH
+      ids AS (
+    SELECT
+      id
+    FROM
+      users),
+      teams AS (
+    SELECT
+      id
+    FROM
+      teams)
+    SELECT
+      id
+    FROM
+      ids
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsCteColumnLists() async throws {
+  let sql = "WITH ids(a) AS (SELECT id FROM users) SELECT a FROM ids"
+  let expected = """
+    WITH
+      ids(a) AS (
+    SELECT
+      id
+    FROM
+      users)
+    SELECT
+      a
+    FROM
+      ids
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsUnionAllQueries() async throws {
+  let sql = "SELECT id FROM users UNION ALL SELECT id FROM teams"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users UNION ALL
+    SELECT
+      id
+    FROM
+      teams
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsIntersectQueries() async throws {
+  let sql = "SELECT id FROM users INTERSECT SELECT id FROM teams"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users INTERSECT
+    SELECT
+      id
+    FROM
+      teams
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsCaseExpressionsInSelectLists() async throws {
+  let sql = "SELECT CASE WHEN active = 1 THEN name ELSE email END FROM users"
+  let expected = """
+    SELECT
+      CASE WHEN active = 1 THEN name ELSE email END
+    FROM
+      users
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func preservesMixedNumericLiteralForms() async throws {
+  let sql = "SELECT 1, 1.25, -4, 6e7 FROM numbers"
+  let expected = """
+    SELECT
+      1,
+      1.25,
+      - 4,
+      6e7
+    FROM
+      numbers
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsSimpleOverPartitionClauses() async throws {
+  let sql = "SELECT sum(amount) OVER (PARTITION BY team) FROM payroll"
+  let expected = """
+    SELECT
+      sum(amount) OVER(PARTITION BY team)
+    FROM
+      payroll
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsWindowFunctionsWithOrderByInsideOver() async throws {
+  let sql = "SELECT row_number() OVER (PARTITION BY team ORDER BY id) FROM payroll"
+  let expected = """
+    SELECT
+      row_number() OVER(PARTITION BY team
+    ORDER BY
+      id)
+    FROM
+      payroll
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func preservesCommentsAsStandaloneLines() async throws {
   let sql = "SELECT id FROM users -- active users\nWHERE active = 1"
   let expected = """
@@ -100,6 +248,39 @@ import Testing
     """
 
   let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func preservesBlockCommentsAsStandaloneLines() async throws {
+  let sql = "SELECT id FROM users /* active users */ WHERE active = 1"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    /* active users */
+    WHERE
+      active = 1
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func preservesQuotedIdentifierStylesAroundDots() async throws {
+  let sql = "SELECT \"a\".\"b\", `c`, [d] FROM [tbl]"
+  let expected = """
+    SELECT
+      "a"."b",
+      `c`,
+      [d]
+    FROM
+      [tbl]
+    """
+
+  let result = try format(sql, options: FormatOptions(dialect: .standardSQL))
 
   #expect(result == expected)
 }
@@ -215,6 +396,23 @@ import Testing
       users
     WHERE
       active = 1
+    """
+
+  let result = try format(sql, options: FormatOptions(keywordCase: .upper))
+
+  #expect(result == expected)
+}
+
+@Test func uppercasesAscAndDescInOrderByClauses() async throws {
+  let sql = "SELECT foo FROM bar ORDER BY foo asc, zap desc"
+  let expected = """
+    SELECT
+      foo
+    FROM
+      bar
+    ORDER BY
+      foo ASC,
+      zap DESC
     """
 
   let result = try format(sql, options: FormatOptions(keywordCase: .upper))
@@ -529,6 +727,59 @@ import Testing
       dialect: .postgreSQL,
       params: .named(["column": "name", "id": "42"]),
       paramTypes: ParamTypes(named: [.colon])
+    )
+  )
+
+  #expect(result == expected)
+}
+
+@Test func paramTypesSupportQuestionMarkNumberedPlaceholders() async throws {
+  let sql = "SELECT ?1 FROM users WHERE id = ?2"
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(
+      params: .named(["1": "name", "2": "42"]),
+      paramTypes: ParamTypes(numbered: [.questionMark])
+    )
+  )
+
+  #expect(result == expected)
+}
+
+@Test func paramTypesSupportCustomRegexPlaceholders() async throws {
+  let sql = "SELECT __column__ FROM users WHERE id = __id__"
+  let expected = """
+    SELECT
+      name
+    FROM
+      users
+    WHERE
+      id = 42
+    """
+
+  let result = try format(
+    sql,
+    options: FormatOptions(
+      params: .named(["column": "name", "id": "42"]),
+      paramTypes: ParamTypes(
+        custom: [
+          CustomParameterType(
+            regex: #"__[a-zA-Z_][a-zA-Z0-9_]*__"#,
+            key: { text in
+              String(text.dropFirst(2).dropLast(2))
+            }
+          )
+        ]
+      )
     )
   )
 

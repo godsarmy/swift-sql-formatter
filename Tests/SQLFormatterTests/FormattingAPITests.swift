@@ -381,6 +381,28 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsTruncateTableRestartIdentityStatements() async throws {
+  let sql = "TRUNCATE TABLE users RESTART IDENTITY;"
+  let expected = """
+    TRUNCATE TABLE users RESTART IDENTITY;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsTruncateTableCascadeStatements() async throws {
+  let sql = "TRUNCATE TABLE users CASCADE;"
+  let expected = """
+    TRUNCATE TABLE users CASCADE;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func formatsMergeIntoStatements() async throws {
   let sql =
     "MERGE INTO tgt USING src ON tgt.id = src.id WHEN MATCHED THEN UPDATE SET name = src.name WHEN NOT MATCHED THEN INSERT (id, name) VALUES (src.id, src.name);"
@@ -420,6 +442,64 @@ import Testing
     WHEN MATCHED
     THEN
       DELETE;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsMergeIntoNotMatchedBySourceBranches() async throws {
+  let sql = "MERGE INTO tgt USING src ON tgt.id = src.id WHEN NOT MATCHED BY SOURCE THEN DELETE;"
+  let expected = """
+    MERGE INTO tgt
+    USING
+      src
+    ON
+      tgt.id = src.id
+    WHEN NOT MATCHED BY SOURCE
+    THEN
+      DELETE;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsMergeIntoNotMatchedByTargetBranches() async throws {
+  let sql =
+    "MERGE INTO tgt USING src ON tgt.id = src.id WHEN NOT MATCHED BY TARGET THEN INSERT (id) VALUES (src.id);"
+  let expected = """
+    MERGE INTO tgt
+    USING
+      src
+    ON
+      tgt.id = src.id
+    WHEN NOT MATCHED BY TARGET
+    THEN
+      INSERT (id)
+    VALUES
+      (src.id);
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsCreateViewWithCheckOptionStatements() async throws {
+  let sql = "CREATE VIEW active_users AS SELECT id FROM users WHERE active = 1 WITH CHECK OPTION;"
+  let expected = """
+    CREATE VIEW active_users AS
+    SELECT
+      id
+    FROM
+      users
+    WHERE
+      active = 1
+    WITH
+      CHECK OPTION;
     """
 
   let result = try format(sql)

@@ -363,9 +363,10 @@ struct FormatterPipeline {
   private func shouldKeepClauseInline(_ text: String) -> Bool {
     let normalizedText = text.uppercased()
     return [
-      "BREAK", "CREATE OR REPLACE VIEW", "CREATE TABLE", "CREATE VIEW", "DELETE FROM",
+      "BREAK", "CREATE MATERIALIZED VIEW", "CREATE OR REPLACE VIEW", "CREATE TABLE",
+      "CREATE VIEW", "DELETE FROM",
       "IF", "INSERT INTO", "MERGE INTO", "SET NOCOUNT OFF", "SET NOCOUNT ON",
-      "TRUNCATE TABLE", "UPDATE",
+      "TRUNCATE", "TRUNCATE TABLE", "UPDATE",
       "WHILE",
       "ELSE IF", "RETURN",
       "CREATE PROCEDURE", "ALTER PROCEDURE", "CREATE OR ALTER PROCEDURE",
@@ -441,6 +442,18 @@ struct FormatterPipeline {
 
   private func genericClause(at index: Int, in tokens: [Token]) -> (text: String, endIndex: Int)? {
     let keyword = tokens[index].text.uppercased()
+
+    if keyword == "CREATE",
+      let secondWord = nextWordToken(after: index, in: tokens),
+      secondWord.text.uppercased() == "MATERIALIZED",
+      let thirdWord = nextWordToken(after: secondWord.index, in: tokens),
+      thirdWord.text.uppercased() == "VIEW"
+    {
+      return (
+        "\(tokens[index].text) \(secondWord.text) \(thirdWord.text)",
+        thirdWord.index
+      )
+    }
 
     if keyword == "CREATE",
       let secondWord = nextWordToken(after: index, in: tokens),

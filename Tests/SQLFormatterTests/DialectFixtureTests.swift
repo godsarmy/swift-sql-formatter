@@ -397,8 +397,7 @@ private struct DialectFixture {
       sql: "CREATE MATERIALIZED VIEW mv1 REFRESH EVERY 1 HOUR AS SELECT * FROM source_table;",
       options: FormatOptions(dialect: .clickHouse),
       expected: """
-        CREATE
-          MATERIALIZED VIEW mv1 REFRESH EVERY 1 HOUR AS
+        CREATE MATERIALIZED VIEW mv1 REFRESH EVERY 1 HOUR AS
         SELECT
           *
         FROM

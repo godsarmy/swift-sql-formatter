@@ -358,10 +358,64 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsCreateViewWithColumnsStatements() async throws {
+  let sql = "CREATE VIEW my_view (id, fname, lname) AS SELECT * FROM tbl;"
+  let expected = """
+    CREATE VIEW my_view(id,
+    fname,
+    lname) AS
+    SELECT
+      *
+    FROM
+      tbl;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsCreateViewIfNotExistsStatements() async throws {
+  let sql = "CREATE VIEW IF NOT EXISTS my_view AS SELECT 42;"
+  let expected = """
+    CREATE VIEW IF NOT EXISTS my_view AS
+    SELECT
+      42;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsCreateMaterializedViewStatements() async throws {
+  let sql = "CREATE MATERIALIZED VIEW mat_view AS SELECT 42;"
+  let expected = """
+    CREATE MATERIALIZED VIEW mat_view AS
+    SELECT
+      42;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func formatsTruncateTableStatements() async throws {
   let sql = "TRUNCATE TABLE users;"
   let expected = """
     TRUNCATE TABLE users;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsTruncateStatementsWithoutTableKeyword() async throws {
+  let sql = "TRUNCATE Customers;"
+  let expected = """
+    TRUNCATE Customers;
     """
 
   let result = try format(sql)
@@ -442,6 +496,34 @@ import Testing
     WHEN MATCHED
     THEN
       DELETE;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsMergeIntoStatementsWithAliases() async throws {
+  let sql =
+    "MERGE INTO DetailedInventory AS t USING Inventory AS i ON t.product = i.product WHEN MATCHED THEN UPDATE SET quantity = t.quantity + i.quantity WHEN NOT MATCHED THEN INSERT (product, quantity) VALUES ('Horse saddle', 12);"
+  let expected = """
+    MERGE INTO DetailedInventory AS t
+    USING
+      Inventory AS i
+    ON
+      t.product = i.product
+    WHEN MATCHED
+    THEN
+    UPDATE
+    SET
+      quantity = t.quantity + i.quantity
+    WHEN NOT MATCHED
+    THEN
+      INSERT (product,
+      quantity)
+    VALUES
+      ('Horse saddle',
+      12);
     """
 
   let result = try format(sql)

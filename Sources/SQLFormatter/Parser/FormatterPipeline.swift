@@ -236,6 +236,14 @@ struct FormatterPipeline {
       return (tokens[index].text, index)
     }
 
+    if let mergeClause = mergeClause(
+      at: index,
+      in: tokens,
+      statementKeyword: statementKeyword
+    ) {
+      return mergeClause
+    }
+
     if options.dialect.name == "transactsql" {
       if let specialClause = transactSQLClause(at: index, in: tokens) {
         return specialClause
@@ -356,11 +364,79 @@ struct FormatterPipeline {
     let normalizedText = text.uppercased()
     return [
       "BREAK", "CREATE OR REPLACE VIEW", "CREATE TABLE", "CREATE VIEW", "DELETE FROM",
-      "IF", "INSERT INTO", "SET NOCOUNT OFF", "SET NOCOUNT ON", "TRUNCATE TABLE", "UPDATE",
+      "IF", "INSERT INTO", "MERGE INTO", "SET NOCOUNT OFF", "SET NOCOUNT ON",
+      "TRUNCATE TABLE", "UPDATE",
       "WHILE",
       "ELSE IF", "RETURN",
       "CREATE PROCEDURE", "ALTER PROCEDURE", "CREATE OR ALTER PROCEDURE",
     ].contains(normalizedText)
+  }
+
+  private func mergeClause(
+    at index: Int,
+    in tokens: [Token],
+    statementKeyword: String?
+  ) -> (text: String, endIndex: Int)? {
+    guard statementKeyword == "MERGE" else {
+      return nil
+    }
+
+    let keyword = tokens[index].text.uppercased()
+
+    if keyword == "MERGE",
+      let nextWord = nextWordToken(after: index, in: tokens),
+      nextWord.text.uppercased() == "INTO"
+    {
+      return ("\(tokens[index].text) \(nextWord.text)", nextWord.index)
+    }
+
+    if keyword == "USING" || keyword == "THEN" {
+      return (tokens[index].text, index)
+    }
+
+    if keyword != "WHEN" {
+      return nil
+    }
+
+    guard let secondWord = nextWordToken(after: index, in: tokens) else {
+      return (tokens[index].text, index)
+    }
+
+    let secondKeyword = secondWord.text.uppercased()
+    if secondKeyword == "MATCHED" {
+      if let thirdWord = nextWordToken(after: secondWord.index, in: tokens),
+        thirdWord.text.uppercased() == "BY",
+        let fourthWord = nextWordToken(after: thirdWord.index, in: tokens),
+        ["SOURCE", "TARGET"].contains(fourthWord.text.uppercased())
+      {
+        return (
+          "\(tokens[index].text) \(secondWord.text) \(thirdWord.text) \(fourthWord.text)",
+          fourthWord.index
+        )
+      }
+
+      return ("\(tokens[index].text) \(secondWord.text)", secondWord.index)
+    }
+
+    if secondKeyword == "NOT",
+      let thirdWord = nextWordToken(after: secondWord.index, in: tokens),
+      thirdWord.text.uppercased() == "MATCHED"
+    {
+      if let fourthWord = nextWordToken(after: thirdWord.index, in: tokens),
+        fourthWord.text.uppercased() == "BY",
+        let fifthWord = nextWordToken(after: fourthWord.index, in: tokens),
+        ["SOURCE", "TARGET"].contains(fifthWord.text.uppercased())
+      {
+        return (
+          "\(tokens[index].text) \(secondWord.text) \(thirdWord.text) \(fourthWord.text) \(fifthWord.text)",
+          fifthWord.index
+        )
+      }
+
+      return ("\(tokens[index].text) \(secondWord.text) \(thirdWord.text)", thirdWord.index)
+    }
+
+    return (tokens[index].text, index)
   }
 
   private func genericClause(at index: Int, in tokens: [Token]) -> (text: String, endIndex: Int)? {

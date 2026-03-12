@@ -381,6 +381,52 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsMergeIntoStatements() async throws {
+  let sql =
+    "MERGE INTO tgt USING src ON tgt.id = src.id WHEN MATCHED THEN UPDATE SET name = src.name WHEN NOT MATCHED THEN INSERT (id, name) VALUES (src.id, src.name);"
+  let expected = """
+    MERGE INTO tgt
+    USING
+      src
+    ON
+      tgt.id = src.id
+    WHEN MATCHED
+    THEN
+    UPDATE
+    SET
+      name = src.name
+    WHEN NOT MATCHED
+    THEN
+      INSERT (id,
+      name)
+    VALUES
+      (src.id,
+      src.name);
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsMergeIntoDeleteBranches() async throws {
+  let sql = "MERGE INTO tgt USING src ON tgt.id = src.id WHEN MATCHED THEN DELETE;"
+  let expected = """
+    MERGE INTO tgt
+    USING
+      src
+    ON
+      tgt.id = src.id
+    WHEN MATCHED
+    THEN
+      DELETE;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func preservesMixedNumericLiteralForms() async throws {
   let sql = "SELECT 1, 1.25, -4, 6e7 FROM numbers"
   let expected = """

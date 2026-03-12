@@ -47,8 +47,9 @@ public struct Dialect: Sendable, Hashable {
     joinModifierKeywords: ["INNER", "CROSS", "NATURAL", "STRAIGHT"],
     outerJoinModifierKeywords: ["LEFT", "RIGHT", "FULL"],
     reservedWords: [
-      "CREATE", "DELETE", "FROM", "INSERT", "INTO", "LIMIT", "HAVING", "ON", "GROUP",
-      "BY", "ORDER", "SELECT", "SET", "TRUNCATE", "UPDATE", "VALUES", "VIEW", "WHERE",
+      "BY", "CREATE", "DELETE", "FROM", "GROUP", "HAVING", "INSERT", "INTO", "LIMIT",
+      "MATCHED", "MERGE", "NOT", "ON", "ORDER", "SELECT", "SET", "SOURCE", "TARGET",
+      "THEN", "TRUNCATE", "UPDATE", "USING", "VALUES", "VIEW", "WHEN", "WHERE",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
       "ASC", "AS", "DESC",
     ]

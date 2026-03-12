@@ -242,6 +242,10 @@ struct FormatterPipeline {
       }
     }
 
+    if let specialClause = genericClause(at: index, in: tokens) {
+      return specialClause
+    }
+
     if let possibleSuffixes = options.dialect.compoundClauseKeywords[keyword],
       let nextWord = nextWordToken(after: index, in: tokens),
       possibleSuffixes.contains(nextWord.text.uppercased())
@@ -351,11 +355,32 @@ struct FormatterPipeline {
   private func shouldKeepClauseInline(_ text: String) -> Bool {
     let normalizedText = text.uppercased()
     return [
-      "BREAK", "CREATE TABLE", "DELETE FROM", "IF", "INSERT INTO", "SET NOCOUNT OFF",
-      "SET NOCOUNT ON", "UPDATE", "WHILE",
+      "BREAK", "CREATE OR REPLACE VIEW", "CREATE TABLE", "CREATE VIEW", "DELETE FROM",
+      "IF", "INSERT INTO", "SET NOCOUNT OFF", "SET NOCOUNT ON", "TRUNCATE TABLE", "UPDATE",
+      "WHILE",
       "ELSE IF", "RETURN",
       "CREATE PROCEDURE", "ALTER PROCEDURE", "CREATE OR ALTER PROCEDURE",
     ].contains(normalizedText)
+  }
+
+  private func genericClause(at index: Int, in tokens: [Token]) -> (text: String, endIndex: Int)? {
+    let keyword = tokens[index].text.uppercased()
+
+    if keyword == "CREATE",
+      let secondWord = nextWordToken(after: index, in: tokens),
+      secondWord.text.uppercased() == "OR",
+      let thirdWord = nextWordToken(after: secondWord.index, in: tokens),
+      thirdWord.text.uppercased() == "REPLACE",
+      let fourthWord = nextWordToken(after: thirdWord.index, in: tokens),
+      fourthWord.text.uppercased() == "VIEW"
+    {
+      return (
+        "\(tokens[index].text) \(secondWord.text) \(thirdWord.text) \(fourthWord.text)",
+        fourthWord.index
+      )
+    }
+
+    return nil
   }
 
   private func shouldInsertSpaceAfterInlineClause(endingAt endIndex: Int, in tokens: [Token])

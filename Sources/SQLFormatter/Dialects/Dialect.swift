@@ -38,17 +38,17 @@ public struct Dialect: Sendable, Hashable {
     operatorCharacters: ["=", ">", "<", "!", "+", "-", "*", "/", "%"],
     clauseKeywords: [
       "WITH", "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "CREATE", "UPDATE",
-      "SET", "VALUES",
+      "SET", "TRUNCATE", "VALUES",
     ],
     compoundClauseKeywords: [
-      "CREATE": ["TABLE"], "DELETE": ["FROM"], "GROUP": ["BY"], "INSERT": ["INTO"],
-      "ORDER": ["BY"],
+      "CREATE": ["TABLE", "VIEW"], "DELETE": ["FROM"], "GROUP": ["BY"],
+      "INSERT": ["INTO"], "ORDER": ["BY"], "TRUNCATE": ["TABLE"],
     ],
     joinModifierKeywords: ["INNER", "CROSS", "NATURAL", "STRAIGHT"],
     outerJoinModifierKeywords: ["LEFT", "RIGHT", "FULL"],
     reservedWords: [
       "CREATE", "DELETE", "FROM", "INSERT", "INTO", "LIMIT", "HAVING", "ON", "GROUP",
-      "BY", "ORDER", "SELECT", "SET", "UPDATE", "VALUES", "WHERE",
+      "BY", "ORDER", "SELECT", "SET", "TRUNCATE", "UPDATE", "VALUES", "VIEW", "WHERE",
       "JOIN", "INNER", "LEFT", "RIGHT", "FULL", "CROSS", "NATURAL", "STRAIGHT", "OUTER",
       "ASC", "AS", "DESC",
     ]

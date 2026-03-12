@@ -325,6 +325,62 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func formatsCreateViewStatements() async throws {
+  let sql = "CREATE VIEW active_users AS SELECT id, name FROM users WHERE active = 1;"
+  let expected = """
+    CREATE VIEW active_users AS
+    SELECT
+      id,
+      name
+    FROM
+      users
+    WHERE
+      active = 1;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsCreateOrReplaceViewStatements() async throws {
+  let sql = "CREATE OR REPLACE VIEW active_users AS SELECT id FROM users;"
+  let expected = """
+    CREATE OR REPLACE VIEW active_users AS
+    SELECT
+      id
+    FROM
+      users;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsTruncateTableStatements() async throws {
+  let sql = "TRUNCATE TABLE users;"
+  let expected = """
+    TRUNCATE TABLE users;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
+@Test func formatsTruncateTableLists() async throws {
+  let sql = "TRUNCATE TABLE users, teams;"
+  let expected = """
+    TRUNCATE TABLE users,
+    teams;
+    """
+
+  let result = try format(sql)
+
+  #expect(result == expected)
+}
+
 @Test func preservesMixedNumericLiteralForms() async throws {
   let sql = "SELECT 1, 1.25, -4, 6e7 FROM numbers"
   let expected = """

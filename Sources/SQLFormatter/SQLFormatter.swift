@@ -16,3 +16,11 @@ public struct Formatter: Sendable {
 public func format(_ sql: String, options: FormatOptions = .default) throws -> String {
   try Formatter(options: options).format(sql)
 }
+
+public func formatDialect(_ sql: String, dialect: Dialect, options: FormatOptions = .default)
+  throws -> String
+{
+  var resolvedOptions = options
+  resolvedOptions.dialect = dialect
+  return try format(sql, options: resolvedOptions)
+}

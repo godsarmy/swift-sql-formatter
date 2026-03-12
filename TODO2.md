@@ -36,8 +36,8 @@ Compared this project against every page currently under `sql-formatter-org/sql-
 - [x] Add more upstream dialects beyond `sql` and `postgresql`.
   - Current registry is limited in `Sources/SQLFormatter/Dialects/DialectRegistry.swift` and `Sources/SQLFormatter/Dialects/Dialect.swift`.
   - Upstream docs advertise: `bigquery`, `clickhouse`, `db2`, `db2i`, `duckdb`, `hive`, `mariadb`, `mysql`, `tidb`, `n1ql`, `plsql`, `redshift`, `singlestoredb`, `snowflake`, `spark`, `sqlite`, `transactsql`/`tsql`, `trino`.
-- [ ] Decide whether to match upstream's newer explicit dialect API in Swift.
-  - Today `FormatOptions.dialect` already accepts a `Dialect`, which is close, but there is no documented custom dialect builder/story.
+- [x] Decide whether to match upstream's newer explicit dialect API in Swift.
+  - Added `formatDialect(_, dialect:, options:)`, `DialectOptions`, and `createDialect(...)` with tests and README examples.
 - [x] Add CLI parity for dialect selection naming.
   - `Sources/sqlfmt/main.swift` only accepts `--dialect <sql|postgresql>`.
   - Upstream CLI/docs use language/dialect names across the full dialect set.

@@ -1,3 +1,51 @@
+public struct DialectOptions: Sendable {
+  public let name: String
+  public let quotedIdentifierDelimiters: [Character: Character]?
+  public let punctuationCharacters: Set<Character>?
+  public let operatorCharacters: Set<Character>?
+  public let clauseKeywords: Set<String>?
+  public let compoundClauseKeywords: [String: Set<String>]?
+  public let joinModifierKeywords: Set<String>?
+  public let outerJoinModifierKeywords: Set<String>?
+  public let reservedWords: Set<String>?
+
+  public init(
+    name: String,
+    quotedIdentifierDelimiters: [Character: Character]? = nil,
+    punctuationCharacters: Set<Character>? = nil,
+    operatorCharacters: Set<Character>? = nil,
+    clauseKeywords: Set<String>? = nil,
+    compoundClauseKeywords: [String: Set<String>]? = nil,
+    joinModifierKeywords: Set<String>? = nil,
+    outerJoinModifierKeywords: Set<String>? = nil,
+    reservedWords: Set<String>? = nil
+  ) {
+    self.name = name
+    self.quotedIdentifierDelimiters = quotedIdentifierDelimiters
+    self.punctuationCharacters = punctuationCharacters
+    self.operatorCharacters = operatorCharacters
+    self.clauseKeywords = clauseKeywords
+    self.compoundClauseKeywords = compoundClauseKeywords
+    self.joinModifierKeywords = joinModifierKeywords
+    self.outerJoinModifierKeywords = outerJoinModifierKeywords
+    self.reservedWords = reservedWords
+  }
+}
+
+public func createDialect(_ options: DialectOptions, base: Dialect = .standardSQL) -> Dialect {
+  Dialect(
+    name: options.name,
+    quotedIdentifierDelimiters: options.quotedIdentifierDelimiters ?? base.quotedIdentifierDelimiters,
+    punctuationCharacters: options.punctuationCharacters ?? base.punctuationCharacters,
+    operatorCharacters: options.operatorCharacters ?? base.operatorCharacters,
+    clauseKeywords: options.clauseKeywords ?? base.clauseKeywords,
+    compoundClauseKeywords: options.compoundClauseKeywords ?? base.compoundClauseKeywords,
+    joinModifierKeywords: options.joinModifierKeywords ?? base.joinModifierKeywords,
+    outerJoinModifierKeywords: options.outerJoinModifierKeywords ?? base.outerJoinModifierKeywords,
+    reservedWords: options.reservedWords ?? base.reservedWords
+  )
+}
+
 public struct Dialect: Sendable, Hashable {
   public let name: String
   public let quotedIdentifierDelimiters: [Character: Character]

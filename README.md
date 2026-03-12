@@ -37,6 +37,39 @@ let formatter = Formatter(options: .default)
 let formatted = try formatter.format("SELECT id FROM users")
 ```
 
+### Explicit dialect API
+
+```swift
+import SQLFormatter
+
+let sql = "select id from users returning id"
+let formatted = try formatDialect(
+  sql,
+  dialect: .postgreSQL,
+  options: FormatOptions(keywordCase: .upper)
+)
+```
+
+### Custom dialects
+
+```swift
+import SQLFormatter
+
+let customDialect = createDialect(
+  DialectOptions(
+    name: "customsql",
+    clauseKeywords: Dialect.standardSQL.clauseKeywords.union(["RETURNING"]),
+    reservedWords: Dialect.standardSQL.reservedWords.union(["RETURNING"])
+  )
+)
+
+let formatted = try formatDialect(
+  "select id from users returning id",
+  dialect: customDialect,
+  options: FormatOptions(keywordCase: .upper)
+)
+```
+
 ### Options
 
 ```swift
@@ -89,6 +122,7 @@ let numbered = try format(
 ### Option reference
 
 - `dialect` chooses the SQL dialect.
+- `formatDialect(_, dialect:, options:)` mirrors upstream explicit dialect selection.
 - `tabWidth` and `useTabs` control indentation.
 - `keywordCase`, `functionCase`, `dataTypeCase`, and `identifierCase` control token casing.
 - `logicalOperatorNewline`, `linesBetweenQueries`, `expressionWidth`, `newlineBeforeSemicolon`, and `denseOperators` control layout.

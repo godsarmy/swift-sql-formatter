@@ -1615,6 +1615,60 @@ import Testing
   #expect(DialectRegistry.dialect(named: "missing") == nil)
 }
 
+@Test func canResolveCustomDialectByNameFromRegistry() async throws {
+  let custom = createDialect(
+    DialectOptions(
+      name: "customsql",
+      clauseKeywords: Dialect.standardSQL.clauseKeywords.union(["RETURNING"]),
+      reservedWords: Dialect.standardSQL.reservedWords.union(["RETURNING"])
+    )
+  )
+
+  #expect(DialectRegistry.dialect(named: "customsql", additionalDialects: [custom]) == custom)
+  #expect(DialectRegistry.dialect(named: "customsql") == nil)
+}
+
+@Test func formatDialectUsesExplicitDialectArgument() async throws {
+  let sql = "select id from users returning id"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    RETURNING
+      id
+    """
+
+  let options = FormatOptions(dialect: .standardSQL, keywordCase: .upper)
+  let result = try formatDialect(sql, dialect: .postgreSQL, options: options)
+
+  #expect(result == expected)
+}
+
+@Test func canFormatWithCustomDialectFromDialectOptions() async throws {
+  let custom = createDialect(
+    DialectOptions(
+      name: "customsql",
+      clauseKeywords: Dialect.standardSQL.clauseKeywords.union(["RETURNING"]),
+      reservedWords: Dialect.standardSQL.reservedWords.union(["RETURNING"])
+    )
+  )
+
+  let sql = "select id from users returning id"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    RETURNING
+      id
+    """
+
+  let result = try formatDialect(sql, dialect: custom, options: FormatOptions(keywordCase: .upper))
+
+  #expect(result == expected)
+}
+
 @Test func postgreSQLDialectTokenizesPostgresSpecificOperators() async throws {
   let tokenizer = Tokenizer(dialect: .postgreSQL)
   let tokens = try tokenizer.tokenize("SELECT meta::jsonb || data")

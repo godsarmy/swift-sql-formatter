@@ -33,16 +33,16 @@ public enum DialectRegistry {
   }
 
   public static func dialect(named name: String) -> Dialect? {
+    dialect(named: name, additionalDialects: [])
+  }
+
+  public static func dialect(named name: String, additionalDialects: [Dialect]) -> Dialect? {
     let normalizedName = name.lowercased()
+    let candidateDialects = additionalDialects + all
+    let canonicalName = aliases[normalizedName] ?? normalizedName
 
-    if let canonicalName = aliases[normalizedName] {
-      return all.first { dialect in
-        dialect.name == canonicalName
-      }
-    }
-
-    return all.first { dialect in
-      dialect.name == normalizedName
+    return candidateDialects.first { dialect in
+      dialect.name == canonicalName
     }
   }
 

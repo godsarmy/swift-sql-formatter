@@ -1713,6 +1713,29 @@ import Testing
   #expect(resolved == .postgreSQL)
 }
 
+@Test func customAliasWithUnknownTargetDoesNotResolve() async throws {
+  let custom = createDialect(DialectOptions(name: "CustomPG"), base: .postgreSQL)
+
+  let resolved = DialectRegistry.dialect(
+    named: "pgx",
+    additionalDialects: [custom],
+    additionalAliases: ["pgx": "missing-dialect"]
+  )
+
+  #expect(resolved == nil)
+}
+
+@Test func additionalAliasKeysAreNormalizedInNames() async throws {
+  let custom = createDialect(DialectOptions(name: "CustomPG"), base: .postgreSQL)
+  let names = DialectRegistry.names(
+    additionalDialects: [custom],
+    additionalAliases: ["PGX": "CustomPG"]
+  )
+
+  #expect(names.contains("pgx"))
+  #expect(names.contains("PGX") == false)
+}
+
 @Test func formatDialectUsesExplicitDialectArgument() async throws {
   let sql = "select id from users returning id"
   let expected = """

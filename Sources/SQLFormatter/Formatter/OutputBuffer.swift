@@ -58,6 +58,21 @@ struct OutputBuffer {
     indentLevel = max(0, indentLevel - 1)
   }
 
+  mutating func padToColumn(_ column: Int) {
+    guard column > currentLineLength else {
+      return
+    }
+
+    output += String(repeating: " ", count: column - currentLineLength)
+    isLineStart = false
+  }
+
+  mutating func withTemporaryOutdent<T>(_ body: (inout OutputBuffer) -> T) -> T {
+    outdent()
+    defer { indent() }
+    return body(&self)
+  }
+
   mutating func writeVerbatim(_ text: String) {
     guard !text.isEmpty else {
       return

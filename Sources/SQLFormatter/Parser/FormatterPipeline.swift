@@ -60,7 +60,7 @@ struct FormatterPipeline {
 
   func format(tokens: [Token], originalSQL: String) throws -> String {
     var buffer = OutputBuffer(
-      indentationUnit: options.useTabs ? "\t" : String(repeating: " ", count: options.tabWidth)
+      indentationUnit: indentationUnit
     )
     var indentationState = IndentationState()
     var pendingSpace = false
@@ -166,17 +166,14 @@ struct FormatterPipeline {
         if let clause = clause(at: index, in: tokens) {
           indentationState.endClauseIfNeeded(using: &buffer)
           buffer.newline()
-          buffer.write(formatClauseKeyword(clause.text))
-          if shouldKeepClauseInline(clause.text) {
-            if shouldInsertSpaceAfterInlineClause(endingAt: clause.endIndex, in: tokens) {
-              buffer.space()
-            }
-            pendingSpace = false
-          } else {
-            buffer.newline()
-            indentationState.beginClause(using: &buffer)
-            pendingSpace = false
-          }
+          writeClause(
+            clause.text,
+            endingAt: clause.endIndex,
+            in: tokens,
+            buffer: &buffer,
+            indentationState: &indentationState,
+            pendingSpace: &pendingSpace
+          )
           index = clause.endIndex
         } else {
           let tokenText: String
@@ -218,6 +215,65 @@ struct FormatterPipeline {
     indentationState.endAll(using: &buffer)
 
     return buffer.rendered()
+  }
+
+  private var indentationUnit: String {
+    switch options.indentStyle {
+    case .standard:
+      return options.useTabs ? "\t" : String(repeating: " ", count: options.tabWidth)
+    case .tabularLeft, .tabularRight:
+      return String(repeating: " ", count: 10)
+    }
+  }
+
+  private var isTabularStyle: Bool {
+    switch options.indentStyle {
+    case .standard:
+      return false
+    case .tabularLeft, .tabularRight:
+      return true
+    }
+  }
+
+  private func writeClause(
+    _ text: String,
+    endingAt endIndex: Int,
+    in tokens: [Token],
+    buffer: inout OutputBuffer,
+    indentationState: inout IndentationState,
+    pendingSpace: inout Bool
+  ) {
+    let formattedText = formatClauseKeyword(text)
+
+    guard isTabularStyle else {
+      buffer.write(formattedText)
+      if shouldKeepClauseInline(text) {
+        if shouldInsertSpaceAfterInlineClause(endingAt: endIndex, in: tokens) {
+          buffer.space()
+        }
+        pendingSpace = false
+      } else {
+        buffer.newline()
+        indentationState.beginClause(using: &buffer)
+        pendingSpace = false
+      }
+      return
+    }
+
+    buffer.write(tabularKeyword(formattedText))
+    indentationState.beginClause(using: &buffer)
+    pendingSpace = false
+  }
+
+  private func tabularKeyword(_ text: String) -> String {
+    switch options.indentStyle {
+    case .standard:
+      return text
+    case .tabularLeft:
+      return text + String(repeating: " ", count: max(1, 10 - text.count))
+    case .tabularRight:
+      return String(repeating: " ", count: max(0, 9 - text.count)) + text + " "
+    }
   }
 
   private func clause(at index: Int, in tokens: [Token]) -> (text: String, endIndex: Int)? {
@@ -915,6 +971,30 @@ struct FormatterPipeline {
     parenthesizedExpressionDepth: Int,
     pendingSpace: inout Bool
   ) {
+    if isTabularStyle, indentationState.hasOpenClause {
+      switch options.logicalOperatorNewline {
+      case .before:
+        buffer.withTemporaryOutdent { temporaryBuffer in
+          temporaryBuffer.newline()
+          temporaryBuffer.write(tabularKeyword(text))
+        }
+        pendingSpace = false
+      case .after:
+        writeExpressionToken(
+          text,
+          requiresLeadingSpace: pendingSpace,
+          buffer: &buffer,
+          indentationState: indentationState,
+          parenthesizedExpressionDepth: parenthesizedExpressionDepth
+        )
+        buffer.withTemporaryOutdent { temporaryBuffer in
+          temporaryBuffer.newline()
+        }
+        pendingSpace = false
+      }
+      return
+    }
+
     switch options.logicalOperatorNewline {
     case .before:
       buffer.newline()

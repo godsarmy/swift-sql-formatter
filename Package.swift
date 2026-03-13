@@ -11,6 +11,10 @@ let package = Package(
       name: "SQLFormatter",
       targets: ["SQLFormatter"]
     ),
+    .library(
+      name: "SQLFormatterCLICommon",
+      targets: ["SQLFormatterCLICommon"]
+    ),
     .executable(
       name: "sqlfmt",
       targets: ["sqlfmt"]
@@ -26,9 +30,13 @@ let package = Package(
     .target(
       name: "SQLFormatter"
     ),
+    .target(
+      name: "SQLFormatterCLICommon",
+      dependencies: ["SQLFormatter"]
+    ),
     .executableTarget(
       name: "sqlfmt",
-      dependencies: ["SQLFormatter"]
+      dependencies: ["SQLFormatterCLICommon"]
     ),
     .executableTarget(
       name: "sqlfmt-bench",
@@ -36,7 +44,7 @@ let package = Package(
     ),
     .testTarget(
       name: "SQLFormatterTests",
-      dependencies: ["SQLFormatter"]
+      dependencies: ["SQLFormatter", "SQLFormatterCLICommon"]
     ),
   ]
 )

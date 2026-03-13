@@ -11,6 +11,12 @@ public enum LogicalOperatorNewline: Sendable {
   case after
 }
 
+public enum IndentStyle: Sendable {
+  case standard
+  case tabularLeft
+  case tabularRight
+}
+
 public enum PlaceholderType: Sendable, Hashable {
   case questionMark
   case colonNamed
@@ -102,6 +108,7 @@ public struct FormatOptions: Sendable {
   public var dialect: Dialect
   public var tabWidth: Int
   public var useTabs: Bool
+  public var indentStyle: IndentStyle
   public var keywordCase: KeywordCase
   public var functionCase: KeywordCase
   public var dataTypeCase: KeywordCase
@@ -121,6 +128,7 @@ public struct FormatOptions: Sendable {
     dialect: Dialect = .standardSQL,
     tabWidth: Int = 2,
     useTabs: Bool = false,
+    indentStyle: IndentStyle = .standard,
     keywordCase: KeywordCase = .preserve,
     functionCase: KeywordCase = .preserve,
     dataTypeCase: KeywordCase = .preserve,
@@ -141,6 +149,7 @@ public struct FormatOptions: Sendable {
     self.dialect = dialect
     self.tabWidth = tabWidth
     self.useTabs = useTabs
+    self.indentStyle = indentStyle
     self.keywordCase = keywordCase
     self.functionCase = functionCase
     self.dataTypeCase = dataTypeCase

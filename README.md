@@ -81,9 +81,10 @@ let options = FormatOptions(
   dialect: .postgreSQL,
   tabWidth: 2,
   useTabs: false,
+  indentStyle: .standard,
   keywordCase: .upper,
-   functionCase: .upper,
-   dataTypeCase: .upper,
+    functionCase: .upper,
+    dataTypeCase: .upper,
    identifierCase: .preserve,
    logicalOperatorNewline: .after,
   linesBetweenQueries: 1,
@@ -124,8 +125,9 @@ let numbered = try format(
 ### Option reference
 
 - `dialect` chooses the SQL dialect.
+- `IndentStyle` supports `.standard`, `.tabularLeft`, and `.tabularRight`; tabular styles are kept for upstream compatibility and always use 10-space indentation.
 - `formatDialect(_, dialect:, options:)` mirrors upstream explicit dialect selection.
-- `tabWidth` and `useTabs` control indentation.
+- `tabWidth`, `useTabs`, and `indentStyle` control indentation.
 - `keywordCase`, `functionCase`, `dataTypeCase`, and `identifierCase` control token casing.
 - `logicalOperatorNewline`, `linesBetweenQueries`, `expressionWidth`, `newlineBeforeSemicolon`, and `denseOperators` control layout.
 - `params` and `paramTypes` provide the main placeholder API.
@@ -187,11 +189,29 @@ Format SQL from stdin:
 cat query.sql | swift run sqlfmt --dialect postgresql --keyword-case upper --function-case upper --logical-operator-newline after
 ```
 
+`--language` is also available as an upstream-compatible alias for `--dialect`.
+
+You can load CLI defaults from `.sql-formatter.json`, `.sql-formatterrc`, or an explicit `--config <path>` JSON file. CLI flags override config values.
+
+Example `.sql-formatter.json`:
+
+```json
+{
+  "language": "postgresql",
+  "keywordCase": "upper",
+  "indentStyle": "tabularLeft",
+  "linesBetweenQueries": 2
+}
+```
+
 Common CLI flags:
 
 - `--dialect`
+- `--language`
+- `--config`
 - `--tab-width`
 - `--tabs`
+- `--indent-style`
 - `--keyword-case`
 - `--function-case`
 - `--data-type-case`

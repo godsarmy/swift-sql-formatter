@@ -1036,6 +1036,36 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func supportsTabularLeftIndentStyle() async throws {
+  let sql = "SELECT id, name FROM users WHERE active = 1 AND team = 2"
+  let expected = """
+    SELECT    id,
+              name
+    FROM      users
+    WHERE     active = 1
+    AND       team = 2
+    """
+
+  let result = try format(sql, options: FormatOptions(indentStyle: .tabularLeft))
+
+  #expect(result == expected)
+}
+
+@Test func supportsTabularRightIndentStyle() async throws {
+  let sql = "SELECT id, name FROM users WHERE active = 1 AND team = 2"
+  let expected = """
+    SELECT id,
+              name
+         FROM users
+        WHERE active = 1
+          AND team = 2
+    """
+
+  let result = try format(sql, options: FormatOptions(indentStyle: .tabularRight))
+
+  #expect(result == expected)
+}
+
 @Test func respectsUpperKeywordCaseOption() async throws {
   let sql = "select id, name from users where active = 1"
   let expected = """
@@ -1564,6 +1594,7 @@ import Testing
   #expect(options.dialect == .standardSQL)
   #expect(options.tabWidth == 2)
   #expect(options.useTabs == false)
+  #expect(options.indentStyle == .standard)
   #expect(options.keywordCase == .preserve)
   #expect(options.functionCase == .preserve)
   #expect(options.dataTypeCase == .preserve)

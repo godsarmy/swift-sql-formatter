@@ -4,4 +4,5 @@
 - After any code edits, always run `swift test --filter FormattingAPITests` first for fast validation.
 - The project now has explicit/custom dialect APIs: `formatDialect`, `DialectOptions`, and `createDialect`.
 - `DialectRegistry.dialect(named:additionalDialects:)` should behave case-insensitively for both built-in and custom dialect names.
+- `DialectRegistry` now also supports runtime alias injection via `dialect(named:additionalDialects:additionalAliases:)` and `names(additionalDialects:additionalAliases:)`.
 - Always provide a critique URL for edited files at the end of each edit session.

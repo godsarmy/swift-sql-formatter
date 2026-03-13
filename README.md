@@ -170,6 +170,12 @@ let builtInNames = DialectRegistry.names
 
 let custom = createDialect(DialectOptions(name: "custompg"), base: .postgreSQL)
 let allNames = DialectRegistry.names(additionalDialects: [custom])
+let aliases = ["pgx": "custompg"]
+let resolved = DialectRegistry.dialect(
+  named: "pgx",
+  additionalDialects: [custom],
+  additionalAliases: aliases
+)
 ```
 
 ## CLI

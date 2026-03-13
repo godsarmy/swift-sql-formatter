@@ -41,7 +41,14 @@ public enum DialectRegistry {
   }
 
   public static func names(additionalDialects: [Dialect]) -> [String] {
-    Array(Set(canonicalNames(additionalDialects: additionalDialects) + aliases.keys)).sorted()
+    names(additionalDialects: additionalDialects, additionalAliases: [:])
+  }
+
+  public static func names(additionalDialects: [Dialect], additionalAliases: [String: String]) ->
+    [String]
+  {
+    let mergedAliases = mergedAliases(with: additionalAliases)
+    return Array(Set(canonicalNames(additionalDialects: additionalDialects) + mergedAliases.keys)).sorted()
   }
 
   public static func dialect(named name: String) -> Dialect? {
@@ -49,9 +56,17 @@ public enum DialectRegistry {
   }
 
   public static func dialect(named name: String, additionalDialects: [Dialect]) -> Dialect? {
+    dialect(named: name, additionalDialects: additionalDialects, additionalAliases: [:])
+  }
+
+  public static func dialect(
+    named name: String,
+    additionalDialects: [Dialect],
+    additionalAliases: [String: String]
+  ) -> Dialect? {
     let normalizedName = name.lowercased()
     let candidateDialects = additionalDialects + all
-    let canonicalName = aliases[normalizedName] ?? normalizedName
+    let canonicalName = mergedAliases(with: additionalAliases)[normalizedName] ?? normalizedName
 
     return candidateDialects.first { dialect in
       dialect.name.lowercased() == canonicalName
@@ -63,4 +78,14 @@ public enum DialectRegistry {
     "singlestore": "singlestoredb",
     "tsql": "transactsql",
   ]
+
+  private static func mergedAliases(with additionalAliases: [String: String]) -> [String: String] {
+    aliases.merging(
+      additionalAliases.reduce(into: [String: String]()) { result, entry in
+        result[entry.key.lowercased()] = entry.value.lowercased()
+      }
+    ) { current, _ in
+      current
+    }
+  }
 }

@@ -1660,6 +1660,35 @@ import Testing
   #expect(names.contains("tsql"))
 }
 
+@Test func canResolveCustomDialectAliasesFromRegistry() async throws {
+  let custom = createDialect(DialectOptions(name: "CustomPG"), base: .postgreSQL)
+  let aliases = ["pgx": "CustomPG"]
+
+  #expect(
+    DialectRegistry.dialect(
+      named: "pgx",
+      additionalDialects: [custom],
+      additionalAliases: aliases
+    ) == custom)
+  #expect(
+    DialectRegistry.dialect(
+      named: "PGX",
+      additionalDialects: [custom],
+      additionalAliases: aliases
+    ) == custom)
+}
+
+@Test func registryNamesIncludeAdditionalAliases() async throws {
+  let custom = createDialect(DialectOptions(name: "CustomPG"), base: .postgreSQL)
+  let names = DialectRegistry.names(
+    additionalDialects: [custom],
+    additionalAliases: ["pgx": "CustomPG"]
+  )
+
+  #expect(names.contains("custompg"))
+  #expect(names.contains("pgx"))
+}
+
 @Test func formatDialectUsesExplicitDialectArgument() async throws {
   let sql = "select id from users returning id"
   let expected = """

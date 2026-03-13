@@ -1615,6 +1615,18 @@ import Testing
   #expect(DialectRegistry.dialect(named: "missing") == nil)
 }
 
+@Test func canResolveBuiltInDialectsFromMixedCaseNames() async throws {
+  #expect(DialectRegistry.dialect(named: "PostgreSQL") == .postgreSQL)
+  #expect(DialectRegistry.dialect(named: "TRANSACTSQL") == .transactSQL)
+  #expect(DialectRegistry.dialect(named: "BigQuery") == .bigQuery)
+}
+
+@Test func canResolveAliasDialectsFromMixedCaseNames() async throws {
+  #expect(DialectRegistry.dialect(named: "POSTGRES") == .postgreSQL)
+  #expect(DialectRegistry.dialect(named: "SingleStore") == .singleStoreDB)
+  #expect(DialectRegistry.dialect(named: "TSQL") == .transactSQL)
+}
+
 @Test func canResolveCustomDialectByNameFromRegistry() async throws {
   let custom = createDialect(
     DialectOptions(

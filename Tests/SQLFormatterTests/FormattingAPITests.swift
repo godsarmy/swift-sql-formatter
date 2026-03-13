@@ -1648,6 +1648,18 @@ import Testing
   #expect(DialectRegistry.dialect(named: "CUSTOMPG", additionalDialects: [custom]) == custom)
 }
 
+@Test func registryNamesIncludeAdditionalDialects() async throws {
+  let custom = createDialect(DialectOptions(name: "CustomPG"), base: .postgreSQL)
+
+  let canonicalNames = DialectRegistry.canonicalNames(additionalDialects: [custom])
+  let names = DialectRegistry.names(additionalDialects: [custom])
+
+  #expect(canonicalNames.contains("custompg"))
+  #expect(names.contains("custompg"))
+  #expect(names.contains("postgres"))
+  #expect(names.contains("tsql"))
+}
+
 @Test func formatDialectUsesExplicitDialectArgument() async throws {
   let sql = "select id from users returning id"
   let expected = """

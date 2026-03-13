@@ -165,6 +165,13 @@ SELECT id FROM teams
 
 You can also discover dialects by name with `DialectRegistry`.
 
+```swift
+let builtInNames = DialectRegistry.names
+
+let custom = createDialect(DialectOptions(name: "custompg"), base: .postgreSQL)
+let allNames = DialectRegistry.names(additionalDialects: [custom])
+```
+
 ## CLI
 
 Format SQL from stdin:

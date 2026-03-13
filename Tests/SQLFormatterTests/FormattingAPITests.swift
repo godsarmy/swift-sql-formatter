@@ -1669,6 +1669,36 @@ import Testing
   #expect(result == expected)
 }
 
+@Test func customDialectCanInheritFromPostgreSQLBase() async throws {
+  let custom = createDialect(DialectOptions(name: "custompg"), base: .postgreSQL)
+
+  let tokens = try Tokenizer(dialect: custom).tokenize("SELECT meta::jsonb || data")
+
+  #expect(tokens.contains(where: { $0.text == "::" && $0.type == .operatorToken }))
+  #expect(tokens.contains(where: { $0.text == "||" && $0.type == .operatorToken }))
+}
+
+@Test func customDialectWithPostgreSQLBaseFormatsReturningClause() async throws {
+  let custom = createDialect(
+    DialectOptions(name: "custompg"),
+    base: .postgreSQL
+  )
+
+  let sql = "select id from users returning id"
+  let expected = """
+    SELECT
+      id
+    FROM
+      users
+    RETURNING
+      id
+    """
+
+  let result = try formatDialect(sql, dialect: custom, options: FormatOptions(keywordCase: .upper))
+
+  #expect(result == expected)
+}
+
 @Test func postgreSQLDialectTokenizesPostgresSpecificOperators() async throws {
   let tokenizer = Tokenizer(dialect: .postgreSQL)
   let tokens = try tokenizer.tokenize("SELECT meta::jsonb || data")

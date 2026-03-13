@@ -58,9 +58,10 @@ import SQLFormatter
 let customDialect = createDialect(
   DialectOptions(
     name: "customsql",
-    clauseKeywords: Dialect.standardSQL.clauseKeywords.union(["RETURNING"]),
-    reservedWords: Dialect.standardSQL.reservedWords.union(["RETURNING"])
-  )
+    clauseKeywords: Dialect.postgreSQL.clauseKeywords.union(["ANALYZE"]),
+    reservedWords: Dialect.postgreSQL.reservedWords.union(["ANALYZE"])
+  ),
+  base: .postgreSQL
 )
 
 let formatted = try formatDialect(

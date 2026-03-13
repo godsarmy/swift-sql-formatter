@@ -1766,6 +1766,26 @@ import Testing
   #expect(resolved == .postgreSQL)
 }
 
+@Test func cyclicAdditionalAliasesDoNotResolve() async throws {
+  let resolved = DialectRegistry.dialect(
+    named: "pgx",
+    additionalDialects: [],
+    additionalAliases: ["pgx": "pg", "pg": "pgx"]
+  )
+
+  #expect(resolved == nil)
+}
+
+@Test func selfReferentialAdditionalAliasDoesNotResolve() async throws {
+  let resolved = DialectRegistry.dialect(
+    named: "pgx",
+    additionalDialects: [],
+    additionalAliases: ["pgx": "pgx"]
+  )
+
+  #expect(resolved == nil)
+}
+
 @Test func namesIncludeAdditionalAliasesWithoutCustomDialects() async throws {
   let names = DialectRegistry.names(
     additionalDialects: [],

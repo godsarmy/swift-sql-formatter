@@ -1786,6 +1786,16 @@ import Testing
   #expect(resolved == nil)
 }
 
+@Test func aliasChainEndingInUnknownTargetDoesNotResolve() async throws {
+  let resolved = DialectRegistry.dialect(
+    named: "pgx",
+    additionalDialects: [],
+    additionalAliases: ["pgx": "pg", "pg": "missing-dialect"]
+  )
+
+  #expect(resolved == nil)
+}
+
 @Test func namesIncludeAdditionalAliasesWithoutCustomDialects() async throws {
   let names = DialectRegistry.names(
     additionalDialects: [],
@@ -1793,6 +1803,15 @@ import Testing
   )
 
   #expect(names.contains("pgx"))
+}
+
+@Test func namesDeduplicateCaseVariantsOfAdditionalAliases() async throws {
+  let names = DialectRegistry.names(
+    additionalDialects: [],
+    additionalAliases: ["PGX": "postgres", "pgx": "postgresql"]
+  )
+
+  #expect(names.filter { $0 == "pgx" }.count == 1)
 }
 
 @Test func formatDialectUsesExplicitDialectArgument() async throws {

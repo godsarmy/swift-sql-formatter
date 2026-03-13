@@ -66,7 +66,10 @@ public enum DialectRegistry {
   ) -> Dialect? {
     let normalizedName = name.lowercased()
     let candidateDialects = additionalDialects + all
-    let canonicalName = mergedAliases(with: additionalAliases)[normalizedName] ?? normalizedName
+    let canonicalName = resolveCanonicalName(
+      for: normalizedName,
+      aliases: mergedAliases(with: additionalAliases)
+    )
 
     return candidateDialects.first { dialect in
       dialect.name.lowercased() == canonicalName
@@ -87,5 +90,17 @@ public enum DialectRegistry {
     ) { current, _ in
       current
     }
+  }
+
+  private static func resolveCanonicalName(for name: String, aliases: [String: String]) -> String {
+    var seen = Set<String>()
+    var current = name
+
+    while let next = aliases[current], !seen.contains(current) {
+      seen.insert(current)
+      current = next
+    }
+
+    return current
   }
 }

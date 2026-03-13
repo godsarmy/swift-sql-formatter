@@ -1746,6 +1746,26 @@ import Testing
   #expect(resolved == .postgreSQL)
 }
 
+@Test func additionalAliasCanResolveBuiltInAliasTarget() async throws {
+  let resolved = DialectRegistry.dialect(
+    named: "pgx",
+    additionalDialects: [],
+    additionalAliases: ["pgx": "postgres"]
+  )
+
+  #expect(resolved == .postgreSQL)
+}
+
+@Test func additionalAliasCanResolveThroughAliasChain() async throws {
+  let resolved = DialectRegistry.dialect(
+    named: "pgx",
+    additionalDialects: [],
+    additionalAliases: ["pgx": "pg", "pg": "postgres"]
+  )
+
+  #expect(resolved == .postgreSQL)
+}
+
 @Test func namesIncludeAdditionalAliasesWithoutCustomDialects() async throws {
   let names = DialectRegistry.names(
     additionalDialects: [],

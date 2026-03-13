@@ -42,7 +42,7 @@ public enum DialectRegistry {
     let canonicalName = aliases[normalizedName] ?? normalizedName
 
     return candidateDialects.first { dialect in
-      dialect.name == canonicalName
+      dialect.name.lowercased() == canonicalName
     }
   }
 

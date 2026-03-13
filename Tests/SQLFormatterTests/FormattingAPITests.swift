@@ -1625,7 +1625,15 @@ import Testing
   )
 
   #expect(DialectRegistry.dialect(named: "customsql", additionalDialects: [custom]) == custom)
+  #expect(DialectRegistry.dialect(named: "CUSTOMSQL", additionalDialects: [custom]) == custom)
   #expect(DialectRegistry.dialect(named: "customsql") == nil)
+}
+
+@Test func canResolveMixedCaseCustomDialectNamesFromRegistry() async throws {
+  let custom = createDialect(DialectOptions(name: "CustomPG"), base: .postgreSQL)
+
+  #expect(DialectRegistry.dialect(named: "custompg", additionalDialects: [custom]) == custom)
+  #expect(DialectRegistry.dialect(named: "CUSTOMPG", additionalDialects: [custom]) == custom)
 }
 
 @Test func formatDialectUsesExplicitDialectArgument() async throws {

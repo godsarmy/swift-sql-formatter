@@ -1689,6 +1689,30 @@ import Testing
   #expect(names.contains("pgx"))
 }
 
+@Test func customAliasesAreCaseInsensitiveForKeysAndTargets() async throws {
+  let custom = createDialect(DialectOptions(name: "CustomPG"), base: .postgreSQL)
+
+  let resolved = DialectRegistry.dialect(
+    named: "pgx",
+    additionalDialects: [custom],
+    additionalAliases: ["PGX": "CUSTOMPG"]
+  )
+
+  #expect(resolved == custom)
+}
+
+@Test func builtInAliasesTakePrecedenceOverConflictingCustomAliases() async throws {
+  let custom = createDialect(DialectOptions(name: "custom-postgres"), base: .postgreSQL)
+
+  let resolved = DialectRegistry.dialect(
+    named: "postgres",
+    additionalDialects: [custom],
+    additionalAliases: ["postgres": "custom-postgres"]
+  )
+
+  #expect(resolved == .postgreSQL)
+}
+
 @Test func formatDialectUsesExplicitDialectArgument() async throws {
   let sql = "select id from users returning id"
   let expected = """

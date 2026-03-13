@@ -8,7 +8,7 @@ Inspired by [sql-formatter](https://github.com/sql-formatter-org/sql-formatter).
 Add the package to your `Package.swift` dependencies:
 
 ```swift
-.package(url: "https://github.com/your-org/swift-sql-formatter.git", from: "0.1.0")
+.package(url: "https://github.com/your-org/swift-sql-formatter.git", from: "1.0.0")
 ```
 
 Then add the product to your target dependencies:
@@ -231,4 +231,4 @@ swift run sqlfmt-bench
 ## Release workflow
 
 - CI build and tests run on pull requests and pushes to `main`.
-- A GitHub release is created automatically when a tag like `v0.1.0` is pushed.
+- A GitHub release is created automatically when a tag like `v1.0.0` is pushed.

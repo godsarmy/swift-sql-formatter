@@ -1,6 +1,7 @@
 # Swift SQL Formatter
 
 A Swift package for formatting SQL queries with readable indentation, clause layout, and configurable options.
+Inspired by [sql-formatter](https://github.com/sql-formatter-org/sql-formatter).
 
 ## Installation
 

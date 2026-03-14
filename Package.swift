@@ -44,7 +44,8 @@ let package = Package(
     ),
     .testTarget(
       name: "SQLFormatterTests",
-      dependencies: ["SQLFormatter", "SQLFormatterCLICommon"]
+      dependencies: ["SQLFormatter", "SQLFormatterCLICommon"],
+      exclude: ["Parity/UPSTREAM-TEST-INVENTORY.md"]
     ),
   ]
 )

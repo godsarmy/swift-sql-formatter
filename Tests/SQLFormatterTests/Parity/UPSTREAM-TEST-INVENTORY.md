@@ -14,11 +14,11 @@
 
 - `DONE` Added `Tests/SQLFormatterTests/Parity/Helpers/ParityAssertions.swift`
 - `DONE` Added this inventory lock file
-- `IN PROGRESS` Enforce upstream file + case title traceability in each parity test comment
+- `DONE` Enforce upstream file + case title traceability in each parity test comment
 
 ## Options Suites
 
-- `IN PROGRESS` `test/options/keywordCase.ts` -> `Tests/SQLFormatterTests/Parity/Options/KeywordCaseParityTests.swift` (1/6 cases ported and passing)
+- `DONE` `test/options/keywordCase.ts` -> `Tests/SQLFormatterTests/Parity/Options/KeywordCaseParityTests.swift` (5/6 cases ported, 1 skipped due to divergence)
 - `PENDING` `test/options/dataTypeCase.ts`
 - `PENDING` `test/options/expressionWidth.ts`
 - `PENDING` `test/options/functionCase.ts`

@@ -21,7 +21,7 @@
 - `DONE` `test/options/keywordCase.ts` -> `Tests/SQLFormatterTests/Parity/Options/KeywordCaseParityTests.swift` (5/6 cases ported, 1 skipped due to divergence)
 - `DONE` `test/options/dataTypeCase.ts` -> `Tests/SQLFormatterTests/Parity/Options/DataTypeCaseParityTests.swift`
 - `DONE` `test/options/expressionWidth.ts` -> `Tests/SQLFormatterTests/Parity/Options/ExpressionWidthParityTests.swift`
-- `PENDING` `test/options/param.ts`
+- `DONE` `test/options/param.ts` -> `Tests/SQLFormatterTests/Parity/Options/ParamParityTests.swift`
 - `PENDING` `test/options/paramTypes.ts`
 - `DONE` `test/options/tabWidth.ts` -> `Tests/SQLFormatterTests/Parity/Options/TabWidthParityTests.swift`
 - `DONE` `test/options/useTabs.ts` -> `Tests/SQLFormatterTests/Parity/Options/UseTabsParityTests.swift`

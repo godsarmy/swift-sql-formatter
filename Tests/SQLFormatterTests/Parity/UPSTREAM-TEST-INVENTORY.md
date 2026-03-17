@@ -31,9 +31,12 @@
 - `DONE` `test/options/tabWidth.ts` -> `Tests/SQLFormatterTests/Parity/Options/TabWidthParityTests.swift`
 - `DONE` `test/options/useTabs.ts` -> `Tests/SQLFormatterTests/Parity/Options/UseTabsParityTests.swift`
 
-## Shared Behavior, Features, Dialects, API, Unit
+## Shared Behavior Suites
 
-- `PENDING` Not yet split into this tracker; use `PLAN-TEST.md` as source checklist until migrated.
+- `DONE` `test/behavesLikeSqlFormatter.ts` -> `Tests/SQLFormatterTests/Parity/Helpers/SqlFormatterBehaviorParityTests.swift` (15/16 tests, 1 skipped)
+- `PENDING` `test/behavesLikePostgresqlFormatter.ts`
+- `PENDING` `test/behavesLikeMariaDbFormatter.ts`
+- `PENDING` `test/behavesLikeDb2Formatter.ts`
 
 ## Known Divergences (Documented)
 

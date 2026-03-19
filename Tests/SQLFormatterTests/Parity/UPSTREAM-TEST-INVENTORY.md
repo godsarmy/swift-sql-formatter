@@ -25,6 +25,9 @@
 - `DONE` `test/options/paramTypes.ts` -> `Tests/SQLFormatterTests/Parity/Options/ParamTypesParityTests.swift`
 - `DONE` `test/options/tabWidth.ts` -> `Tests/SQLFormatterTests/Parity/Options/TabWidthParityTests.swift`
 - `DONE` `test/options/useTabs.ts` -> `Tests/SQLFormatterTests/Parity/Options/UseTabsParityTests.swift`
+- `DONE` `test/options/linesBetweenQueries.ts` -> `Tests/SQLFormatterTests/Parity/Options/LinesBetweenQueriesParityTests.swift`
+- `DONE` `test/options/logicalOperatorNewline.ts` -> `Tests/SQLFormatterTests/Parity/Options/LogicalOperatorNewlineParityTests.swift`
+- `DONE` `test/options/newlineBeforeSemicolon.ts` -> `Tests/SQLFormatterTests/Parity/Options/NewlineBeforeSemicolonParityTests.swift`
 
 ## Shared Behavior Suites
 
@@ -36,3 +39,4 @@
 ## Known Divergences (Documented)
 
 - `test/options/tabWidth.ts` and `test/options/useTabs.ts`: Swift currently formats `count(*)` as `count( *)`.
+- `test/options/newlineBeforeSemicolon.ts` (`SELECT a FROM;` case): Swift emits semicolon on a separate line.

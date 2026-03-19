@@ -4,23 +4,12 @@ import Testing
 
 // Upstream: test/options/newlineBeforeSemicolon.ts :: formats lonely semicolon
 @Test func parity_newlineBeforeSemicolon_formatsLonelySemicolon() throws {
-  try assertFormat(
-    ";",
-    """
-      ;
-      """
-  )
+  try assertFormat(";", ";")
 }
 
 // Upstream: test/options/newlineBeforeSemicolon.ts :: does not add newline before lonely semicolon when newlineBeforeSemicolon:true
-@Test func parity_newlineBeforeSemicolon_doesNotAddNewlineBeforeLonelySemicolonWhenTrue() throws {
-  try assertFormat(
-    ";",
-    """
-      ;
-      """,
-    options: FormatOptions(newlineBeforeSemicolon: true)
-  )
+@Test func parity_newlineBeforeSemicolon_doesNotAddNewlineBeforeLonelySemicolon() throws {
+  try assertFormat(";", ";", options: FormatOptions(newlineBeforeSemicolon: true))
 }
 
 // Upstream: test/options/newlineBeforeSemicolon.ts :: defaults to semicolon on end of last line
@@ -37,7 +26,7 @@ import Testing
 }
 
 // Upstream: test/options/newlineBeforeSemicolon.ts :: places semicolon on the same line as a single-line clause
-// Swift divergence: Swift puts semicolon on separate line rather than same line as FROM
+// Swift divergence: semicolon is emitted as a separate clause line for this invalid SQL input.
 @Test func parity_newlineBeforeSemicolon_placesSemicolonOnSameLineAsSingleLineClause() throws {
   try assertFormat(
     "SELECT a FROM;",
@@ -80,7 +69,7 @@ import Testing
 }
 
 // Upstream: test/options/newlineBeforeSemicolon.ts :: does not introduce extra empty lines between semicolons when newlineBeforeSemicolon:true
-@Test func parity_newlineBeforeSemicolon_noExtraEmptyLinesBetweenSemicolonsWhenTrue() throws {
+@Test func parity_newlineBeforeSemicolon_doesNotIntroduceExtraEmptyLinesBetweenSemicolons() throws {
   try assertFormat(
     ";;;",
     """

@@ -36,10 +36,12 @@
 
 - `DONE` `test/behavesLikeSqlFormatter.ts` -> `Tests/SQLFormatterTests/Parity/Helpers/SqlFormatterBehaviorParityTests.swift` (15/16 tests, 1 skipped)
 - `DONE` `test/behavesLikePostgresqlFormatter.ts` -> `Tests/SQLFormatterTests/Parity/Helpers/PostgresqlBehaviorParityTests.swift` (PostgreSQL/DuckDB shared assertions; imported feature/option suites tracked separately)
-- `PENDING` `test/behavesLikeMariaDbFormatter.ts`
-- `PENDING` `test/behavesLikeDb2Formatter.ts`
+- `DONE` `test/behavesLikeMariaDbFormatter.ts` -> `Tests/SQLFormatterTests/Parity/Helpers/MariaDbBehaviorParityTests.swift` (MariaDB/MySQL shared assertions; imported feature/option suites tracked separately)
+- `DONE` `test/behavesLikeDb2Formatter.ts` -> `Tests/SQLFormatterTests/Parity/Helpers/Db2BehaviorParityTests.swift` (DB2/DB2i shared assertions; imported feature/option suites tracked separately)
 
 ## Known Divergences (Documented)
 
 - `test/options/tabWidth.ts` and `test/options/useTabs.ts`: Swift currently formats `count(*)` as `count( *)`.
 - `test/options/newlineBeforeSemicolon.ts` (`SELECT a FROM;` case): Swift emits semicolon on a separate line.
+- `test/behavesLikeMariaDbFormatter.ts`: current formatting differs for `@\`name\`` variables, `:=`, `*.*`, and ON DUPLICATE KEY / REPLACE tuple wrapping.
+- `test/behavesLikeDb2Formatter.ts`: current formatting differs for prefixed literals (`G'...'`), comment indentation under `FROM`, and `ALTER COLUMN` / `WITH CS` line breaking.

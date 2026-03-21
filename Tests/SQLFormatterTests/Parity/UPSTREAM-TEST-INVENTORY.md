@@ -42,6 +42,7 @@
 ## Feature Suites
 
 - `DONE` `test/features/between.ts` -> `Tests/SQLFormatterTests/Parity/Features/BetweenFeatureParityTests.swift`
+- `IN PROGRESS` `test/features/comments.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentsFeatureParityTests.swift` (9/22 upstream cases ported)
 
 ## Known Divergences (Documented)
 
@@ -50,3 +51,4 @@
 - `test/behavesLikeMariaDbFormatter.ts`: current formatting differs for `@\`name\`` variables, `:=`, `*.*`, and ON DUPLICATE KEY / REPLACE tuple wrapping.
 - `test/behavesLikeDb2Formatter.ts`: current formatting differs for prefixed literals (`G'...'`), comment indentation under `FROM`, and `ALTER COLUMN` / `WITH CS` line breaking.
 - `test/features/between.ts`: Swift breaks `BETWEEN ... AND ...` across lines and also expands comment/case layouts differently from upstream.
+- `test/features/comments.ts`: Swift emits many inline/indented comments as standalone unindented lines compared with upstream.

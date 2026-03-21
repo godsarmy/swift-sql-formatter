@@ -10,3 +10,4 @@
 - Keep `Tests/SQLFormatterTests/Parity/UPSTREAM-TEST-INVENTORY.md` in sync with already-added parity files; it can lag behind active work.
 - Known parity divergences to preserve in assertions: `count(*)` currently formats as `count( *)`, and invalid `SELECT a FROM;` emits `;` on its own line.
 - `test/features/comments.ts` currently diverges heavily: inline comments are often lifted to standalone lines and block comments lose expected indentation.
+- `test/features/comments.ts` unclosed `/*` input currently throws `unterminatedBlockComment` in Swift rather than formatting to `count(*) / * ...` as upstream JS test expects.

@@ -161,3 +161,211 @@ import Testing
       """
   )
 }
+
+// Upstream: test/features/comments.ts :: formats line comments followed by semicolon
+// Swift divergence: inline line comment is emitted on its own line.
+@Test func parity_comments_formatsLineCommentFollowedBySemicolon() throws {
+  try assertFormat(
+    """
+      SELECT a FROM b --comment
+      ;
+    """,
+    """
+      SELECT
+        a
+      FROM
+        b
+      --comment
+      ;
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: formats line comments followed by comma
+// Swift divergence: comment and following identifier are emitted on dedicated lines.
+@Test func parity_comments_formatsLineCommentFollowedByComma() throws {
+  try assertFormat(
+    """
+      SELECT a --comment
+      , b
+    """,
+    """
+      SELECT
+        a
+      --comment
+      ,
+      b
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: formats line comments followed by close-paren
+// Swift divergence: parenthesized expression remains compact; comment is moved to own line.
+@Test func parity_comments_formatsLineCommentFollowedByCloseParen() throws {
+  try assertFormat(
+    "SELECT ( a --comment\n )",
+    """
+      SELECT
+        ( a
+      --comment
+      )
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: formats line comments followed by open-paren
+// Swift divergence: comment is moved to own line and `()` stays unindented.
+@Test func parity_comments_formatsLineCommentFollowedByOpenParen() throws {
+  try assertFormat(
+    "SELECT a --comment\n()",
+    """
+      SELECT
+        a
+      --comment
+      ()
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: preserves single-line comments at end of lines
+// Swift divergence: end-of-line comments are split into standalone lines.
+@Test func parity_comments_preservesSingleLineCommentsAtEndOfLines() throws {
+  try assertFormat(
+    """
+      SELECT
+        a, --comment1
+        b --comment2
+      FROM --comment3
+        my_table;
+    """,
+    """
+      SELECT
+        a,
+      --comment1
+      b
+      --comment2
+      FROM
+      --comment3
+      my_table;
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: preserves single-line comments on separate lines
+// Swift divergence: separate-line comments are preserved but unindented.
+@Test func parity_comments_preservesSingleLineCommentsOnSeparateLines() throws {
+  try assertFormat(
+    """
+      SELECT
+        --comment1
+        a,
+        --comment2
+        b
+      FROM
+        --comment3
+        my_table;
+    """,
+    """
+      SELECT
+      --comment1
+      a,
+      --comment2
+      b
+      FROM
+      --comment3
+      my_table;
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: does not detect unclosed comment as a comment
+@Test func parity_comments_doesNotDetectUnclosedCommentAsComment() throws {
+  assertFormatError(
+    """
+      SELECT count(*)
+      /*SomeComment
+      """,
+    contains: "unterminatedBlockComment"
+  )
+}
+
+// Upstream: test/features/comments.ts :: formats comments between function name and parenthesis
+// Swift divergence: comment is emitted on a standalone line and `*` gets spaced.
+@Test func parity_comments_formatsCommentsBetweenFunctionNameAndParenthesis() throws {
+  try assertFormat(
+    """
+      SELECT count /* comment */ (*);
+    """,
+    """
+      SELECT
+        count
+      /* comment */
+      ( *);
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: formats comments between qualified.names (before dot)
+// Swift divergence: comments before dot split qualified names over multiple lines.
+@Test func parity_comments_formatsCommentsBetweenQualifiedNamesBeforeDot() throws {
+  try assertFormat(
+    """
+      SELECT foo/* com1 */.bar, count()/* com2 */.bar, foo.bar/* com3 */.baz, (1, 2) /* com4 */.foo;
+    """,
+    """
+      SELECT
+        foo
+      /* com1 */
+      .bar,
+      count()
+      /* com2 */
+      .bar,
+      foo.bar
+      /* com3 */
+      .baz,
+      (1,
+      2)
+      /* com4 */
+      .foo;
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: indents multiline block comment that is not a doc-comment
+// Swift divergence: multiline block comment is not indented.
+@Test func parity_comments_indentsMultilineBlockCommentThatIsNotDocComment() throws {
+  try assertFormat(
+    """
+      SELECT 1
+      /*
+      comment line
+      */
+    """,
+    """
+      SELECT
+        1
+      /*
+        comment line
+        */
+      """
+  )
+}
+
+// Upstream: test/features/comments.ts :: formats comments between qualified.names (after dot)
+// Swift divergence: comments after dot split each token to separate lines.
+@Test func parity_comments_formatsCommentsBetweenQualifiedNamesAfterDot() throws {
+  try assertFormat(
+    """
+      SELECT foo. /* com1 */ bar, foo. /* com2 */ *;
+    """,
+    """
+      SELECT
+        foo.
+      /* com1 */
+      bar,
+      foo.
+      /* com2 */
+      *;
+      """
+  )
+}

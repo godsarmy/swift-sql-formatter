@@ -43,6 +43,8 @@
 
 - `DONE` `test/features/between.ts` -> `Tests/SQLFormatterTests/Parity/Features/BetweenFeatureParityTests.swift`
 - `DONE` `test/features/comments.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentsFeatureParityTests.swift` (22/22 upstream cases ported)
+- `DONE` `test/features/disableComment.ts` -> `Tests/SQLFormatterTests/Parity/Features/DisableCommentFeatureParityTests.swift`
+- `DONE` `test/features/with.ts` -> `Tests/SQLFormatterTests/Parity/Features/WithFeatureParityTests.swift`
 
 ## Known Divergences (Documented)
 
@@ -52,3 +54,5 @@
 - `test/behavesLikeDb2Formatter.ts`: current formatting differs for prefixed literals (`G'...'`), comment indentation under `FROM`, and `ALTER COLUMN` / `WITH CS` line breaking.
 - `test/features/between.ts`: Swift breaks `BETWEEN ... AND ...` across lines and also expands comment/case layouts differently from upstream.
 - `test/features/comments.ts`: Swift emits many inline/indented comments as standalone unindented lines compared with upstream.
+- `test/features/disableComment.ts`: disabled inline segment under `SELECT` is currently emitted without expression indentation.
+- `test/features/with.ts`: CTE body indentation and parameterized CTE parentheses spacing differ from upstream.

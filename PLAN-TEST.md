@@ -40,24 +40,24 @@ Add core helpers:
 ## Parity Mapping Checklist
 
 ### 1) Shared behavior suites (port as Swift helper suites)
-- [ ] `test/behavesLikeSqlFormatter.ts`
-- [ ] `test/behavesLikePostgresqlFormatter.ts`
-- [ ] `test/behavesLikeMariaDbFormatter.ts`
-- [ ] `test/behavesLikeDb2Formatter.ts`
+- [x] `test/behavesLikeSqlFormatter.ts`
+- [x] `test/behavesLikePostgresqlFormatter.ts`
+- [x] `test/behavesLikeMariaDbFormatter.ts`
+- [x] `test/behavesLikeDb2Formatter.ts`
 
 ### 2) Feature suites (31 files)
 - [ ] `test/features/alterTable.ts`
 - [ ] `test/features/arrayAndMapAccessors.ts`
 - [ ] `test/features/arrayLiterals.ts`
-- [ ] `test/features/between.ts`
+- [x] `test/features/between.ts`
 - [ ] `test/features/case.ts`
 - [ ] `test/features/commentOn.ts`
-- [ ] `test/features/comments.ts`
+- [x] `test/features/comments.ts`
 - [ ] `test/features/constraints.ts`
 - [ ] `test/features/createTable.ts`
 - [ ] `test/features/createView.ts`
 - [ ] `test/features/deleteFrom.ts`
-- [ ] `test/features/disableComment.ts`
+- [x] `test/features/disableComment.ts`
 - [ ] `test/features/dropTable.ts`
 - [ ] `test/features/identifiers.ts`
 - [ ] `test/features/insertInto.ts`
@@ -76,22 +76,22 @@ Add core helpers:
 - [ ] `test/features/update.ts`
 - [ ] `test/features/window.ts`
 - [ ] `test/features/windowFunctions.ts`
-- [ ] `test/features/with.ts`
+- [x] `test/features/with.ts`
 
 ### 3) Option suites (13 files)
-- [ ] `test/options/dataTypeCase.ts`
-- [ ] `test/options/expressionWidth.ts`
-- [ ] `test/options/functionCase.ts`
-- [ ] `test/options/identifierCase.ts`
-- [ ] `test/options/indentStyle.ts`
-- [ ] `test/options/keywordCase.ts`
-- [ ] `test/options/linesBetweenQueries.ts`
-- [ ] `test/options/logicalOperatorNewline.ts`
-- [ ] `test/options/newlineBeforeSemicolon.ts`
-- [ ] `test/options/param.ts`
-- [ ] `test/options/paramTypes.ts`
-- [ ] `test/options/tabWidth.ts`
-- [ ] `test/options/useTabs.ts`
+- [x] `test/options/dataTypeCase.ts`
+- [x] `test/options/expressionWidth.ts`
+- [x] `test/options/functionCase.ts`
+- [x] `test/options/identifierCase.ts`
+- [x] `test/options/indentStyle.ts`
+- [x] `test/options/keywordCase.ts`
+- [x] `test/options/linesBetweenQueries.ts`
+- [x] `test/options/logicalOperatorNewline.ts`
+- [x] `test/options/newlineBeforeSemicolon.ts`
+- [x] `test/options/param.ts`
+- [x] `test/options/paramTypes.ts`
+- [x] `test/options/tabWidth.ts`
+- [x] `test/options/useTabs.ts`
 
 ### 4) Dialect integration suites (20 files)
 - [ ] `test/sql.test.ts`

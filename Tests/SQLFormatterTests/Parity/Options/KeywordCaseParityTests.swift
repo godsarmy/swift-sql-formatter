@@ -8,9 +8,9 @@ import Testing
   try assertFormat(
     "select 'distinct' as foo",
     """
-      SELECT
-        'distinct' AS foo
-      """,
+    SELECT
+      'distinct' AS foo
+    """,
     options: FormatOptions(keywordCase: .upper)
   )
 }
@@ -21,16 +21,16 @@ import Testing
   try assertFormat(
     "select distinct * frOM foo left JOIN bar WHERe cola > 1 and colb = 3",
     """
-      select
-        distinct *
-      frOM
-        foo
-      left JOIN
-        bar
-      WHERe
-        cola > 1
-        and colb = 3
-      """
+    select
+      distinct *
+    frOM
+      foo
+    left JOIN
+      bar
+    WHERe
+      cola > 1
+      and colb = 3
+    """
   )
 }
 
@@ -40,16 +40,16 @@ import Testing
   try assertFormat(
     "select distinct * frOM foo left JOIN mycol WHERe cola > 1 and colb = 3",
     """
-      SELECT
-        distinct *
-      FROM
-        foo
-      LEFT JOIN
-        mycol
-      WHERE
-        cola > 1
-        AND colb = 3
-      """,
+    SELECT
+      distinct *
+    FROM
+      foo
+    LEFT JOIN
+      mycol
+    WHERE
+      cola > 1
+      AND colb = 3
+    """,
     options: FormatOptions(keywordCase: .upper)
   )
 }
@@ -60,16 +60,16 @@ import Testing
   try assertFormat(
     "select distinct * frOM foo left JOIN bar WHERe cola > 1 and colb = 3",
     """
-      select
-        distinct *
-      from
-        foo
-      left join
-        bar
-      where
-        cola > 1
-        and colb = 3
-      """,
+    select
+      distinct *
+    from
+      foo
+    left join
+      bar
+    where
+      cola > 1
+      and colb = 3
+    """,
     options: FormatOptions(keywordCase: .lower)
   )
 }
@@ -111,21 +111,21 @@ import Testing
     mytable2.col3;
     """,
     """
-      SELECT
-        *
-      FROM
-        mytable
-      INNER JOIN
-        mytable2
-      ON
-        mytable1.col1 = mytable2.col1
-      WHERE
-        mytable2.col1 = 5
-      GROUP BY
-        mytable1.col2
-      ORDER BY
-        mytable2.col3;
-      """,
+    SELECT
+      *
+    FROM
+      mytable
+    INNER JOIN
+      mytable2
+    ON
+      mytable1.col1 = mytable2.col1
+    WHERE
+      mytable2.col1 = 5
+    GROUP BY
+      mytable1.col2
+    ORDER BY
+      mytable2.col3;
+    """,
     options: FormatOptions(keywordCase: .upper)
   )
 }

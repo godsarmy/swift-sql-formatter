@@ -7,12 +7,12 @@ import Testing
   try assertFormat(
     "SELECT MiN(price) AS min_price, Cast(item_code AS INT) FROM products",
     """
-      SELECT
-        MiN(price) AS min_price,
-        Cast(item_code AS INT)
-      FROM
-        products
-      """
+    SELECT
+      MiN(price) AS min_price,
+      Cast(item_code AS INT)
+    FROM
+      products
+    """
   )
 }
 
@@ -21,12 +21,12 @@ import Testing
   try assertFormat(
     "SELECT MiN(price) AS min_price, Cast(item_code AS INT) FROM products",
     """
-      SELECT
-        MIN(price) AS min_price,
-        CAST(item_code AS INT)
-      FROM
-        products
-      """,
+    SELECT
+      MIN(price) AS min_price,
+      CAST(item_code AS INT)
+    FROM
+      products
+    """,
     options: FormatOptions(functionCase: .upper)
   )
 }
@@ -36,12 +36,12 @@ import Testing
   try assertFormat(
     "SELECT MiN(price) AS min_price, Cast(item_code AS INT) FROM products",
     """
-      SELECT
-        min(price) AS min_price,
-        cast(item_code AS INT)
-      FROM
-        products
-      """,
+    SELECT
+      min(price) AS min_price,
+      cast(item_code AS INT)
+    FROM
+      products
+    """,
     options: FormatOptions(functionCase: .lower)
   )
 }

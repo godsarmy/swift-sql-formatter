@@ -8,9 +8,9 @@ import Testing
   try assertFormat(
     "foo BETWEEN bar AND baz",
     """
-      foo BETWEEN bar
-      AND baz
-      """
+    foo BETWEEN bar
+    AND baz
+    """
   )
 }
 
@@ -20,9 +20,9 @@ import Testing
   try assertFormat(
     "foo BETWEEN t.bar AND t.baz",
     """
-      foo BETWEEN t.bar
-      AND t.baz
-      """
+    foo BETWEEN t.bar
+    AND t.baz
+    """
   )
 }
 
@@ -32,15 +32,15 @@ import Testing
   try assertFormat(
     "WHERE foo BETWEEN /*C1*/ t.bar /*C2*/ AND /*C3*/ t.baz",
     """
-      WHERE
-        foo BETWEEN
-      /*C1*/
-      t.bar
-      /*C2*/
-      AND
-      /*C3*/
-      t.baz
-      """
+    WHERE
+      foo BETWEEN
+    /*C1*/
+    t.bar
+    /*C2*/
+    AND
+    /*C3*/
+    t.baz
+    """
   )
 }
 
@@ -50,9 +50,9 @@ import Testing
   try assertFormat(
     "foo BETWEEN 1+2 AND 3+4",
     """
-      foo BETWEEN 1 + 2
-      AND 3 + 4
-      """
+    foo BETWEEN 1 + 2
+    AND 3 + 4
+    """
   )
 }
 
@@ -62,9 +62,9 @@ import Testing
   try assertFormat(
     "foo BETWEEN CASE x WHEN 1 THEN 2 END AND 3",
     """
-      foo BETWEEN CASE x WHEN 1 THEN 2 END
-      AND 3
-      """
+    foo BETWEEN CASE x WHEN 1 THEN 2 END
+    AND 3
+    """
   )
 }
 
@@ -74,10 +74,10 @@ import Testing
   try assertFormat(
     "SELECT foo BETWEEN 1 AND 2 AND x > 10",
     """
-      SELECT
-        foo BETWEEN 1
-        AND 2
-        AND x > 10
-      """
+    SELECT
+      foo BETWEEN 1
+      AND 2
+      AND x > 10
+    """
   )
 }

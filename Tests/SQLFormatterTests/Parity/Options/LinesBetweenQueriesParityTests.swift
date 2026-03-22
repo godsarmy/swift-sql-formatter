@@ -7,16 +7,16 @@ import Testing
   try assertFormat(
     "SELECT * FROM foo; SELECT * FROM bar;",
     """
-      SELECT
-        *
-      FROM
-        foo;
+    SELECT
+      *
+    FROM
+      foo;
 
-      SELECT
-        *
-      FROM
-        bar;
-      """
+    SELECT
+      *
+    FROM
+      bar;
+    """
   )
 }
 
@@ -25,17 +25,17 @@ import Testing
   try assertFormat(
     "SELECT * FROM foo; SELECT * FROM bar;",
     """
-      SELECT
-        *
-      FROM
-        foo;
+    SELECT
+      *
+    FROM
+      foo;
 
 
-      SELECT
-        *
-      FROM
-        bar;
-      """,
+    SELECT
+      *
+    FROM
+      bar;
+    """,
     options: FormatOptions(linesBetweenQueries: 2)
   )
 }
@@ -45,15 +45,15 @@ import Testing
   try assertFormat(
     "SELECT * FROM foo; SELECT * FROM bar;",
     """
-      SELECT
-        *
-      FROM
-        foo;
-      SELECT
-        *
-      FROM
-        bar;
-      """,
+    SELECT
+      *
+    FROM
+      foo;
+    SELECT
+      *
+    FROM
+      bar;
+    """,
     options: FormatOptions(linesBetweenQueries: 0)
   )
 }

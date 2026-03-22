@@ -42,7 +42,7 @@
 ## Feature Suites
 
 - `DONE` `test/features/between.ts` -> `Tests/SQLFormatterTests/Parity/Features/BetweenFeatureParityTests.swift`
-- `IN PROGRESS` `test/features/comments.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentsFeatureParityTests.swift` (20/22 upstream cases ported)
+- `DONE` `test/features/comments.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentsFeatureParityTests.swift` (22/22 upstream cases ported)
 
 ## Known Divergences (Documented)
 

@@ -8,12 +8,12 @@ import Testing
   try assertFormat(
     "SELECT count(*),Column1 FROM Table1;",
     """
-      SELECT
-        count( *),
-        Column1
-      FROM
-        Table1;
-      """
+    SELECT
+      count( *),
+      Column1
+    FROM
+      Table1;
+    """
   )
 }
 
@@ -23,12 +23,12 @@ import Testing
   try assertFormat(
     "SELECT count(*),Column1 FROM Table1;",
     """
-      SELECT
-          count( *),
-          Column1
-      FROM
-          Table1;
-      """,
+    SELECT
+        count( *),
+        Column1
+    FROM
+        Table1;
+    """,
     options: FormatOptions(tabWidth: 4)
   )
 }

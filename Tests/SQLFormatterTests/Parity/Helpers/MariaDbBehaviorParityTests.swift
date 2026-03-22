@@ -16,10 +16,10 @@ private func assertMariaLike(
   try assertMariaLike(
     "SELECT $foo, some$$ident",
     """
-      SELECT
-        $foo,
-        some$$ident
-      """
+    SELECT
+      $foo,
+      some$$ident
+    """
   )
 }
 
@@ -28,14 +28,14 @@ private func assertMariaLike(
   try assertMariaLike(
     "SELECT 4four, 12345e, 12e45, $567 FROM tbl",
     """
-      SELECT
-        4four,
-        12345e,
-        12e45,
-        $567
-      FROM
-        tbl
-      """
+    SELECT
+      4four,
+      12345e,
+      12e45,
+      $567
+    FROM
+      tbl
+    """
   )
 }
 
@@ -44,11 +44,11 @@ private func assertMariaLike(
   try assertMariaLike(
     "SELECT 1ä FROM tbl",
     """
-      SELECT
-        1ä
-      FROM
-        tbl
-      """
+    SELECT
+      1ä
+    FROM
+      tbl
+    """
   )
 }
 
@@ -57,10 +57,10 @@ private func assertMariaLike(
   try assertMariaLike(
     "SELECT @foo, @some_long.var$with$special.chars",
     """
-      SELECT
-        @foo,
-        @some_long.var$with$special.chars
-      """
+    SELECT
+      @foo,
+      @some_long.var$with$special.chars
+    """
   )
 }
 
@@ -70,11 +70,11 @@ private func assertMariaLike(
   try assertMariaLike(
     "SELECT @`baz zaz` FROM tbl;",
     """
-      SELECT
-        @ `baz zaz`
-      FROM
-        tbl;
-      """
+    SELECT
+      @ `baz zaz`
+    FROM
+      tbl;
+    """
   )
 }
 
@@ -84,9 +84,9 @@ private func assertMariaLike(
   try assertMariaLike(
     "SET @foo := 10;",
     """
-      SET
-        @foo : = 10;
-      """
+    SET
+      @foo : = 10;
+    """
   )
 }
 
@@ -95,13 +95,13 @@ private func assertMariaLike(
   try assertMariaLike(
     "SELECT @@GLOBAL.time, @@SYSTEM.date, @@hour FROM foo;",
     """
-      SELECT
-        @@GLOBAL.time,
-        @@SYSTEM.date,
-        @@hour
-      FROM
-        foo;
-      """
+    SELECT
+      @@GLOBAL.time,
+      @@SYSTEM.date,
+      @@hour
+    FROM
+      foo;
+    """
   )
 }
 
@@ -111,13 +111,13 @@ private func assertMariaLike(
   try assertMariaLike(
     "REPLACE INTO tbl VALUES (1,'Leopard'),(2,'Dog');",
     """
-      REPLACE INTO tbl
-      VALUES
-        (1,
-        'Leopard'),
-        (2,
-        'Dog');
-      """
+    REPLACE INTO tbl
+    VALUES
+      (1,
+      'Leopard'),
+      (2,
+      'Dog');
+    """
   )
 }
 
@@ -127,14 +127,14 @@ private func assertMariaLike(
   try assertMariaLike(
     "INSERT INTO customer VALUES ('John','Doe') ON DUPLICATE KEY UPDATE fname='Untitled';",
     """
-      INSERT INTO customer
-      VALUES
-        ('John',
-        'Doe')
-      ON
-        DUPLICATE KEY
-      UPDATE fname = 'Untitled';
-      """
+    INSERT INTO customer
+    VALUES
+      ('John',
+      'Doe')
+    ON
+      DUPLICATE KEY
+    UPDATE fname = 'Untitled';
+    """
   )
 }
 
@@ -144,16 +144,16 @@ private func assertMariaLike(
   try assertMariaLike(
     "INSERT INTO customer VALUES ('John','Doe') ON DUPLICATE KEY UPDATE col=VALUES(col2);",
     """
-      INSERT INTO customer
-      VALUES
-        ('John',
-        'Doe')
-      ON
-        DUPLICATE KEY
-      UPDATE col =
-      VALUES
-        (col2);
-      """
+    INSERT INTO customer
+    VALUES
+      ('John',
+      'Doe')
+    ON
+      DUPLICATE KEY
+    UPDATE col =
+    VALUES
+      (col2);
+    """
   )
 }
 
@@ -167,19 +167,19 @@ private func assertMariaLike(
     insert into user (id, name) values (1, 'Blah');
     """,
     """
-      CREATE TABLE account(id INT comment 'the most important column');
+    CREATE TABLE account(id INT comment 'the most important column');
 
-      SELECT
-        *
-      FROM
-        mysql.user;
+    SELECT
+      *
+    FROM
+      mysql.user;
 
-      INSERT INTO user(id,
-      name)
-      VALUES
-        (1,
-        'Blah');
-      """,
+    INSERT INTO user(id,
+    name)
+    VALUES
+      (1,
+      'Blah');
+    """,
     options: FormatOptions(keywordCase: .upper, dataTypeCase: .upper)
   )
 }
@@ -190,11 +190,11 @@ private func assertMariaLike(
   try assertMariaLike(
     "GRANT ALL ON *.* TO user2;",
     """
-      GRANT ALL
-      ON
-        *. *
-      TO
-        user2;
-      """
+    GRANT ALL
+    ON
+      *. *
+    TO
+      user2;
+    """
   )
 }

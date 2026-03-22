@@ -7,11 +7,11 @@ import Testing
   try assertFormat(
     "SELECT ?, ?, ?;",
     """
-      SELECT
-        first,
-        second,
-        third;
-      """,
+    SELECT
+      first,
+      second,
+      third;
+    """,
     options: FormatOptions(
       positionalPlaceholders: ["first", "second", "third"],
       placeholderTypes: [.questionMark]
@@ -24,11 +24,11 @@ import Testing
   try assertFormat(
     "SELECT :a, :b, :c;",
     """
-      SELECT
-        first,
-        second,
-        third;
-      """,
+    SELECT
+      first,
+      second,
+      third;
+    """,
     options: FormatOptions(
       namedPlaceholders: ["a": "first", "b": "second", "c": "third"],
       placeholderTypes: [.colonNamed]

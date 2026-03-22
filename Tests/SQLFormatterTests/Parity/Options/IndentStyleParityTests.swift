@@ -7,11 +7,11 @@ import Testing
   try assertFormat(
     "SELECT COUNT(a.column1) FROM table1",
     """
-      SELECT
-        COUNT(a.column1)
-      FROM
-        table1
-      """,
+    SELECT
+      COUNT(a.column1)
+    FROM
+      table1
+    """,
     options: FormatOptions(indentStyle: .standard)
   )
 }
@@ -21,9 +21,9 @@ import Testing
   try assertFormat(
     "SELECT COUNT(a.column1) FROM table1",
     """
-      SELECT    COUNT(a.column1)
-      FROM      table1
-      """,
+    SELECT    COUNT(a.column1)
+    FROM      table1
+    """,
     options: FormatOptions(indentStyle: .tabularLeft)
   )
 }
@@ -33,9 +33,9 @@ import Testing
   try assertFormat(
     "SELECT COUNT(a.column1) FROM table1",
     """
-      SELECT COUNT(a.column1)
-           FROM table1
-      """,
+    SELECT COUNT(a.column1)
+         FROM table1
+    """,
     options: FormatOptions(indentStyle: .tabularRight)
   )
 }
@@ -53,12 +53,12 @@ import Testing
     LEFT OUTER JOIN c;
     """,
     """
-      SELECT    *
-      FROM      a UNION ALL
-      SELECT    *
-      FROM      b
-      LEFT OUTER JOIN c;
-      """,
+    SELECT    *
+    FROM      a UNION ALL
+    SELECT    *
+    FROM      b
+    LEFT OUTER JOIN c;
+    """,
     options: FormatOptions(indentStyle: .tabularLeft)
   )
 }
@@ -76,12 +76,12 @@ import Testing
     LEFT OUTER JOIN c;
     """,
     """
-      SELECT *
-           FROM a UNION ALL
-         SELECT *
-           FROM b
-      LEFT OUTER JOIN c;
-      """,
+    SELECT *
+         FROM a UNION ALL
+       SELECT *
+         FROM b
+    LEFT OUTER JOIN c;
+    """,
     options: FormatOptions(indentStyle: .tabularRight)
   )
 }

@@ -7,12 +7,12 @@ import Testing
   try assertFormat(
     "SELECT a WHERE true AND false;",
     """
-      SELECT
-        a
-      WHERE
-        true
-        AND false;
-      """
+    SELECT
+      a
+    WHERE
+      true
+      AND false;
+    """
   )
 }
 
@@ -21,12 +21,12 @@ import Testing
   try assertFormat(
     "SELECT a WHERE true AND false;",
     """
-      SELECT
-        a
-      WHERE
-        true AND
-        false;
-      """,
+    SELECT
+      a
+    WHERE
+      true AND
+      false;
+    """,
     options: FormatOptions(logicalOperatorNewline: .after)
   )
 }

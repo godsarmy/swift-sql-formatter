@@ -7,11 +7,11 @@ import Testing
   try assertFormat(
     "SELECT ?, ?, ?;",
     """
-      SELECT
-        ?,
-        ?,
-        ?;
-      """
+    SELECT
+      ?,
+      ?,
+      ?;
+    """
   )
 }
 
@@ -20,11 +20,11 @@ import Testing
   try assertFormat(
     "SELECT ?, ?, ?;",
     """
-      SELECT
-        first,
-        second,
-        third;
-      """,
+    SELECT
+      first,
+      second,
+      third;
+    """,
     options: FormatOptions(params: .positional(["first", "second", "third"]))
   )
 }
@@ -35,12 +35,12 @@ import Testing
   try assertFormat(
     "SELECT name WHERE age BETWEEN ? AND ?;",
     """
-      SELECT
-        name
-      WHERE
-        age BETWEEN 5
-        AND 10;
-      """,
+    SELECT
+      name
+    WHERE
+      age BETWEEN 5
+      AND 10;
+    """,
     options: FormatOptions(params: .positional(["5", "10"]))
   )
 }
@@ -50,11 +50,11 @@ import Testing
   try assertFormat(
     "SELECT :foo, :bar, :baz;",
     """
-      SELECT
-        :foo,
-        :bar,
-        :baz;
-      """
+    SELECT
+      :foo,
+      :bar,
+      :baz;
+    """
   )
 }
 
@@ -64,10 +64,10 @@ import Testing
   try assertFormat(
     "WHERE name = :name AND age > :current_age;",
     """
-      WHERE
-        name = :name
-        AND age > :current_age;
-      """,
+    WHERE
+      name = :name
+      AND age > :current_age;
+    """,
     options: FormatOptions(params: .named(["name": "'John'", "current_age": "10"]))
   )
 }

@@ -21,12 +21,12 @@ private func assertDb2Like(
       MyTable;
     """,
     """
-      SELECT
-        col
-      FROM
-      -- This is a comment
-      MyTable;
-      """
+    SELECT
+      col
+    FROM
+    -- This is a comment
+    MyTable;
+    """
   )
 }
 
@@ -36,14 +36,14 @@ private func assertDb2Like(
   try assertDb2Like(
     "SELECT G'blah blah', GX'01AC', BX'0101', UX'CCF239' FROM foo",
     """
-      SELECT
-        G 'blah blah',
-        GX '01AC',
-        BX '0101',
-        UX 'CCF239'
-      FROM
-        foo
-      """
+    SELECT
+      G 'blah blah',
+      GX '01AC',
+      BX '0101',
+      UX 'CCF239'
+    FROM
+      foo
+    """
   )
 }
 
@@ -52,14 +52,14 @@ private func assertDb2Like(
   try assertDb2Like(
     "SELECT @foo, #bar, $zap, fo@o, ba#2, za$3",
     """
-      SELECT
-        @foo,
-        #bar,
-        $zap,
-        fo@o,
-        ba#2,
-        za$3
-      """
+    SELECT
+      @foo,
+      #bar,
+      $zap,
+      fo@o,
+      ba#2,
+      za$3
+    """
   )
 }
 
@@ -68,14 +68,14 @@ private func assertDb2Like(
   try assertDb2Like(
     "SELECT :foo@bar, :foo#bar, :foo$bar, :@zip, :#zap, :$zop",
     """
-      SELECT
-        :foo@bar,
-        :foo#bar,
-        :foo$bar,
-        :@zip,
-        :#zap,
-        :$zop
-      """
+    SELECT
+      :foo@bar,
+      :foo#bar,
+      :foo$bar,
+      :@zip,
+      :#zap,
+      :$zop
+    """
   )
 }
 
@@ -85,12 +85,12 @@ private func assertDb2Like(
   try assertDb2Like(
     "UPDATE foo SET x = 10 WITH CS",
     """
-      UPDATE foo
-      SET
-        x = 10
-      WITH
-        CS
-      """
+    UPDATE foo
+    SET
+      x = 10
+    WITH
+      CS
+    """
   )
 }
 
@@ -103,13 +103,13 @@ private func assertDb2Like(
     ALTER TABLE t ALTER COLUMN foo SET NOT NULL;
     """,
     """
-      ALTER TABLE t ALTER COLUMN foo
-      SET
-        DATA TYPE VARCHAR;
+    ALTER TABLE t ALTER COLUMN foo
+    SET
+      DATA TYPE VARCHAR;
 
-      ALTER TABLE t ALTER COLUMN foo
-      SET
-        NOT NULL;
-      """
+    ALTER TABLE t ALTER COLUMN foo
+    SET
+      NOT NULL;
+    """
   )
 }

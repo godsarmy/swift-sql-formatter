@@ -17,11 +17,11 @@ import Testing
   try assertFormat(
     "SELECT a FROM b;",
     """
-      SELECT
-        a
-      FROM
-        b;
-      """
+    SELECT
+      a
+    FROM
+      b;
+    """
   )
 }
 
@@ -31,11 +31,11 @@ import Testing
   try assertFormat(
     "SELECT a FROM;",
     """
-      SELECT
-        a
-      FROM
-      ;
-      """
+    SELECT
+      a
+    FROM
+    ;
+    """
   )
 }
 
@@ -44,12 +44,12 @@ import Testing
   try assertFormat(
     "SELECT a FROM b;",
     """
-      SELECT
-        a
-      FROM
-        b
-      ;
-      """,
+    SELECT
+      a
+    FROM
+      b
+    ;
+    """,
     options: FormatOptions(newlineBeforeSemicolon: true)
   )
 }
@@ -59,12 +59,12 @@ import Testing
   try assertFormat(
     ";;;",
     """
-      ;
+    ;
 
-      ;
+    ;
 
-      ;
-      """
+    ;
+    """
   )
 }
 
@@ -73,12 +73,12 @@ import Testing
   try assertFormat(
     ";;;",
     """
-      ;
+    ;
 
-      ;
+    ;
 
-      ;
-      """,
+    ;
+    """,
     options: FormatOptions(newlineBeforeSemicolon: true)
   )
 }

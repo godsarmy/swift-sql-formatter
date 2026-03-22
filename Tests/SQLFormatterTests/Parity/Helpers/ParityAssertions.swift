@@ -7,7 +7,8 @@ func dedent(_ text: String) -> String {
   let lines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
 
   var start = 0
-  while start < lines.count && lines[start].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+  while start < lines.count && lines[start].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  {
     start += 1
   }
 
@@ -34,7 +35,8 @@ func dedent(_ text: String) -> String {
     }
     .min() ?? 0
 
-  return core
+  return
+    core
     .map { line in
       guard minimumIndent > 0 else {
         return line

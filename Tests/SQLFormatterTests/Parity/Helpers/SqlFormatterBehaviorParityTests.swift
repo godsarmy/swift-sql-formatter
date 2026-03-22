@@ -8,13 +8,13 @@ import Testing
   try assertFormat(
     "SELECT tbl.*, count(*), col1 * col2 FROM tbl;",
     """
-      SELECT
-        tbl. *,
-        count( *),
-        col1 * col2
-      FROM
-        tbl;
-      """
+    SELECT
+      tbl. *,
+      count( *),
+      col1 * col2
+    FROM
+      tbl;
+    """
   )
 }
 
@@ -23,14 +23,14 @@ import Testing
   try assertFormat(
     "SELECT DISTINCT name, ROUND(age/7) field1, 18 + 20 AS field2, 'some string' FROM foo;",
     """
-      SELECT
-        DISTINCT name,
-        ROUND(age / 7) field1,
-        18 + 20 AS field2,
-        'some string'
-      FROM
-        foo;
-      """
+    SELECT
+      DISTINCT name,
+      ROUND(age / 7) field1,
+      18 + 20 AS field2,
+      'some string'
+    FROM
+      foo;
+    """
   )
 }
 
@@ -43,15 +43,15 @@ import Testing
     AND ( (Column2 = Column3 OR Column4 >= ABS(5)) );
     """,
     """
-      SELECT
-        *
-      FROM
-        foo
-      WHERE
-        Column1 = 'testing'
-        AND ( (Column2 = Column3
-        OR Column4 >= ABS(5)));
-      """
+    SELECT
+      *
+    FROM
+      foo
+    WHERE
+      Column1 = 'testing'
+      AND ( (Column2 = Column3
+      OR Column4 >= ABS(5)));
+    """
   )
 }
 
@@ -63,19 +63,19 @@ import Testing
     HAVING column > 10 ORDER BY other_column;
     """,
     """
-      SELECT
-        *
-      FROM
-        foo
-      WHERE
-        name = 'John'
-      GROUP BY
-        some_column
-      HAVING
-        column > 10
-      ORDER BY
-        other_column;
-      """
+    SELECT
+      *
+    FROM
+      foo
+    WHERE
+      name = 'John'
+    GROUP BY
+      some_column
+    HAVING
+      column > 10
+    ORDER BY
+      other_column;
+    """
   )
 }
 
@@ -104,14 +104,14 @@ import Testing
   try assertFormat(
     "SELECT * FROM foo ORDER BY col1 ASC, col2 DESC;",
     """
-      SELECT
-        *
-      FROM
-        foo
-      ORDER BY
-        col1 ASC,
-        col2 DESC;
-      """
+    SELECT
+      *
+    FROM
+      foo
+    ORDER BY
+      col1 ASC,
+      col2 DESC;
+    """
   )
 }
 
@@ -121,20 +121,20 @@ import Testing
   try assertFormat(
     "SELECT *, SUM(*) AS total FROM (SELECT * FROM Posts WHERE age > 10) WHERE a > b",
     """
-      SELECT
-        *,
-        SUM( *) AS total
-      FROM
-        (
-      SELECT
-        *
-      FROM
-        Posts
-      WHERE
-        age > 10)
-      WHERE
-        a > b
-      """
+    SELECT
+      *,
+      SUM( *) AS total
+    FROM
+      (
+    SELECT
+      *
+    FROM
+      Posts
+    WHERE
+      age > 10)
+    WHERE
+      a > b
+    """
   )
 }
 
@@ -144,27 +144,28 @@ import Testing
   try assertFormat(
     "INSERT INTO TestIds (id) VALUES (4),(5), (6),(7),(9),(10),(11);",
     """
-      INSERT INTO TestIds(id)
-      VALUES
-        (4),
-        (5),
-        (6),
-        (7),
-        (9),
-        (10),
-        (11);
-      """
+    INSERT INTO TestIds(id)
+    VALUES
+      (4),
+      (5),
+      (6),
+      (7),
+      (9),
+      (10),
+      (11);
+    """
   )
 }
 
 // Upstream: test/behavesLikeSqlFormatter.ts :: keeps short parenthesized list with nested parenthesis on single line
-@Test func parity_sqlFormatter_keepsShortParenthesizedListWithNestedParenthesisOnSingleLine() throws {
+@Test func parity_sqlFormatter_keepsShortParenthesizedListWithNestedParenthesisOnSingleLine() throws
+{
   try assertFormat(
     "SELECT (a + b * (c - SIN(1)));",
     """
-      SELECT
-        (a + b * (c - SIN(1)));
-      """
+    SELECT
+      (a + b * (c - SIN(1)));
+    """
   )
 }
 
@@ -178,39 +179,42 @@ import Testing
     COALESCE (dq.id_discounter_shopping = 2, 'amount', 'percentage') FROM foo);
     """,
     """
-      INSERT INTO some_table(id_product,
-      id_shop,
-      id_currency,
-      id_country,
-      id_registration) (
-      SELECT
-        COALESCE(dq.id_discounter_shopping = 2,
-        dq.value,
-        dq.value / 100),
-        COALESCE(dq.id_discounter_shopping = 2,
-        'amount',
-        'percentage')
-      FROM
-        foo);
-      """
+    INSERT INTO some_table(id_product,
+    id_shop,
+    id_currency,
+    id_country,
+    id_registration) (
+    SELECT
+      COALESCE(dq.id_discounter_shopping = 2,
+      dq.value,
+      dq.value / 100),
+      COALESCE(dq.id_discounter_shopping = 2,
+      'amount',
+      'percentage')
+    FROM
+      foo);
+    """
   )
 }
 
 // Upstream: test/behavesLikeSqlFormatter.ts :: formats top-level and newline multi-word reserved words with inconsistent spacing
 // Swift divergence: JOIN placed on separate line, ORDER BY on separate line
-@Test func parity_sqlFormatter_formatsTopLevelAndNewlineMultiWordReservedWordsWithInconsistentSpacing() throws {
+@Test
+func parity_sqlFormatter_formatsTopLevelAndNewlineMultiWordReservedWordsWithInconsistentSpacing()
+  throws
+{
   try assertFormat(
     "SELECT * FROM foo LEFT JOIN mycol ORDER BY blah",
     """
-      SELECT
-        *
-      FROM
-        foo
-      LEFT JOIN
-        mycol
-      ORDER BY
-        blah
-      """
+    SELECT
+      *
+    FROM
+      foo
+    LEFT JOIN
+      mycol
+    ORDER BY
+      blah
+    """
   )
 }
 
@@ -220,14 +224,14 @@ import Testing
   try assertFormat(
     "SELECT * FROM foo WHERE x = ((foo = '0123456789-0123456789-0123456789-0123456789'))",
     """
-      SELECT
-        *
-      FROM
-        foo
-      WHERE
-        x = ((foo =
-        '0123456789-0123456789-0123456789-0123456789'))
-      """
+    SELECT
+      *
+    FROM
+      foo
+    WHERE
+      x = ((foo =
+      '0123456789-0123456789-0123456789-0123456789'))
+    """
   )
 }
 
@@ -236,8 +240,8 @@ import Testing
   try assertFormat(
     "((foo = 'bar'))",
     """
-      ((foo = 'bar'))
-      """
+    ((foo = 'bar'))
+    """
   )
 }
 
@@ -246,12 +250,12 @@ import Testing
   try assertFormat(
     "SELECT 结合使用, тест FROM töörõõm;",
     """
-      SELECT
-        结合使用,
-        тест
-      FROM
-        töörõõm;
-      """
+    SELECT
+      结合使用,
+      тест
+    FROM
+      töörõõm;
+    """
   )
 }
 
@@ -260,11 +264,11 @@ import Testing
   try assertFormat(
     "SELECT my၁၂၃ FROM tbl༡༢༣;",
     """
-      SELECT
-        my၁၂၃
-      FROM
-        tbl༡༢༣;
-      """
+    SELECT
+      my၁၂၃
+    FROM
+      tbl༡༢༣;
+    """
   )
 }
 
@@ -273,10 +277,10 @@ import Testing
   try assertFormat(
     "SELECT õ FROM tbl;",
     """
-      SELECT
-        õ
-      FROM
-        tbl;
-      """
+    SELECT
+      õ
+    FROM
+      tbl;
+    """
   )
 }

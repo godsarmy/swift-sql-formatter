@@ -8,10 +8,10 @@ import Testing
   try assertFormat(
     "CREATE TABLE users ( user_id iNt PRIMARY KEY, total_earnings Decimal(5, 2) NOT NULL )",
     """
-      CREATE TABLE users( user_id iNt PRIMARY KEY,
-      total_earnings Decimal(5,
-      2) NOT NULL)
-      """
+    CREATE TABLE users( user_id iNt PRIMARY KEY,
+    total_earnings Decimal(5,
+    2) NOT NULL)
+    """
   )
 }
 
@@ -21,10 +21,10 @@ import Testing
   try assertFormat(
     "CREATE TABLE users ( user_id iNt PRIMARY KEY, total_earnings Decimal(5, 2) NOT NULL )",
     """
-      CREATE TABLE users( user_id INT PRIMARY KEY,
-      total_earnings DECIMAL(5,
-      2) NOT NULL)
-      """,
+    CREATE TABLE users( user_id INT PRIMARY KEY,
+    total_earnings DECIMAL(5,
+    2) NOT NULL)
+    """,
     options: FormatOptions(dataTypeCase: .upper)
   )
 }
@@ -35,10 +35,10 @@ import Testing
   try assertFormat(
     "CREATE TABLE users ( user_id iNt PRIMARY KEY, total_earnings Decimal(5, 2) NOT NULL )",
     """
-      CREATE TABLE users( user_id int PRIMARY KEY,
-      total_earnings decimal(5,
-      2) NOT NULL)
-      """,
+    CREATE TABLE users( user_id int PRIMARY KEY,
+    total_earnings decimal(5,
+    2) NOT NULL)
+    """,
     options: FormatOptions(dataTypeCase: .lower)
   )
 }

@@ -24,12 +24,12 @@ import Testing
   try assertFormat(
     "SELECT product.price + (product.original_price * product.sales_tax) AS total FROM product;",
     """
-      SELECT
-        product.price + (product.
-        original_price * product.sales_tax) AS total
-      FROM
-        product;
-      """,
+    SELECT
+      product.price + (product.
+      original_price * product.sales_tax) AS total
+    FROM
+      product;
+    """,
     options: FormatOptions(expressionWidth: 40)
   )
 }

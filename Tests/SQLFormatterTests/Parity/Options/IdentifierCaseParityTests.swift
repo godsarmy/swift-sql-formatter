@@ -8,17 +8,17 @@ import Testing
   try assertFormat(
     "select Abc, 'mytext' as MyText from tBl1 left join Tbl2 where colA > 1 and colB = 3",
     """
-      select
-        Abc,
-        'mytext' as MyText
-      from
-        tBl1
-      left join
-        Tbl2
-      where
-        colA > 1
-        and colB = 3
-      """
+    select
+      Abc,
+      'mytext' as MyText
+    from
+      tBl1
+    left join
+      Tbl2
+    where
+      colA > 1
+      and colB = 3
+    """
   )
 }
 
@@ -28,17 +28,17 @@ import Testing
   try assertFormat(
     "select Abc, 'mytext' as MyText from tBl1 left join Tbl2 where colA > 1 and colB = 3",
     """
-      select
-        ABC,
-        'mytext' as MYTEXT
-      from
-        TBL1
-      left join
-        TBL2
-      where
-        COLA > 1
-        and COLB = 3
-      """,
+    select
+      ABC,
+      'mytext' as MYTEXT
+    from
+      TBL1
+    left join
+      TBL2
+    where
+      COLA > 1
+      and COLB = 3
+    """,
     options: FormatOptions(identifierCase: .upper)
   )
 }
@@ -49,17 +49,17 @@ import Testing
   try assertFormat(
     "select Abc, 'mytext' as MyText from tBl1 left join Tbl2 where colA > 1 and colB = 3",
     """
-      select
-        abc,
-        'mytext' as mytext
-      from
-        tbl1
-      left join
-        tbl2
-      where
-        cola > 1
-        and colb = 3
-      """,
+    select
+      abc,
+      'mytext' as mytext
+    from
+      tbl1
+    left join
+      tbl2
+    where
+      cola > 1
+      and colb = 3
+    """,
     options: FormatOptions(identifierCase: .lower)
   )
 }
@@ -69,9 +69,9 @@ import Testing
   try assertFormat(
     "select \"abc\" as foo",
     """
-      select
-        "abc" as FOO
-      """,
+    select
+      "abc" as FOO
+    """,
     options: FormatOptions(identifierCase: .upper)
   )
 }
@@ -81,11 +81,11 @@ import Testing
   try assertFormat(
     "select Abc from Part1.Part2.Part3",
     """
-      select
-        ABC
-      from
-        PART1.PART2.PART3
-      """,
+    select
+      ABC
+    from
+      PART1.PART2.PART3
+    """,
     options: FormatOptions(identifierCase: .upper)
   )
 }
@@ -96,11 +96,11 @@ import Testing
   try assertFormat(
     "select count(*) from tbl",
     """
-      select
-        count( *)
-      from
-        TBL
-      """,
+    select
+      count( *)
+    from
+      TBL
+    """,
     options: FormatOptions(identifierCase: .upper)
   )
 }

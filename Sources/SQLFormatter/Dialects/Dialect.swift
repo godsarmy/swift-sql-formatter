@@ -35,7 +35,8 @@ public struct DialectOptions: Sendable {
 public func createDialect(_ options: DialectOptions, base: Dialect = .standardSQL) -> Dialect {
   Dialect(
     name: options.name,
-    quotedIdentifierDelimiters: options.quotedIdentifierDelimiters ?? base.quotedIdentifierDelimiters,
+    quotedIdentifierDelimiters: options.quotedIdentifierDelimiters
+      ?? base.quotedIdentifierDelimiters,
     punctuationCharacters: options.punctuationCharacters ?? base.punctuationCharacters,
     operatorCharacters: options.operatorCharacters ?? base.operatorCharacters,
     clauseKeywords: options.clauseKeywords ?? base.clauseKeywords,

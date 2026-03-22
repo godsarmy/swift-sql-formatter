@@ -44,11 +44,12 @@ public enum DialectRegistry {
     names(additionalDialects: additionalDialects, additionalAliases: [:])
   }
 
-  public static func names(additionalDialects: [Dialect], additionalAliases: [String: String]) ->
-    [String]
+  public static func names(additionalDialects: [Dialect], additionalAliases: [String: String])
+    -> [String]
   {
     let mergedAliases = mergedAliases(with: additionalAliases)
-    return Array(Set(canonicalNames(additionalDialects: additionalDialects) + mergedAliases.keys)).sorted()
+    return Array(Set(canonicalNames(additionalDialects: additionalDialects) + mergedAliases.keys))
+      .sorted()
   }
 
   public static func dialect(named name: String) -> Dialect? {

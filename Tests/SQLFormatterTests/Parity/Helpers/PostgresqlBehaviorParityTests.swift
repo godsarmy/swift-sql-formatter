@@ -16,10 +16,10 @@ private func assertPostgresLike(
   try assertPostgresLike(
     "SELECT foo$, some$$ident",
     """
-      SELECT
-        foo$,
-        some$$ident
-      """
+    SELECT
+      foo$,
+      some$$ident
+    """
   )
 }
 
@@ -29,9 +29,9 @@ private func assertPostgresLike(
   try assertPostgresLike(
     "SELECT 2 :: numeric AS foo;",
     """
-      SELECT
-        2 :: numeric AS foo;
-      """
+    SELECT
+      2 :: numeric AS foo;
+    """
   )
 }
 
@@ -41,15 +41,15 @@ private func assertPostgresLike(
   try assertPostgresLike(
     "SELECT DISTINCT ON (c1, c2) c1, c2 FROM tbl;",
     """
-      SELECT
-        DISTINCT
-      ON
-        (c1,
-        c2) c1,
-        c2
-      FROM
-        tbl;
-      """
+    SELECT
+      DISTINCT
+    ON
+      (c1,
+      c2) c1,
+      c2
+    FROM
+      tbl;
+    """
   )
 }
 
@@ -65,16 +65,16 @@ private func assertPostgresLike(
     ALTER TABLE t ALTER COLUMN foo DROP NOT NULL;
     """,
     """
-      ALTER TABLE t ALTER COLUMN foo SET DATA TYPE VARCHAR;
+    ALTER TABLE t ALTER COLUMN foo SET DATA TYPE VARCHAR;
 
-      ALTER TABLE t ALTER COLUMN foo SET DEFAULT 5;
+    ALTER TABLE t ALTER COLUMN foo SET DEFAULT 5;
 
-      ALTER TABLE t ALTER COLUMN foo DROP DEFAULT;
+    ALTER TABLE t ALTER COLUMN foo DROP DEFAULT;
 
-      ALTER TABLE t ALTER COLUMN foo SET NOT NULL;
+    ALTER TABLE t ALTER COLUMN foo SET NOT NULL;
 
-      ALTER TABLE t ALTER COLUMN foo DROP NOT NULL;
-      """
+    ALTER TABLE t ALTER COLUMN foo DROP NOT NULL;
+    """
   )
 }
 
@@ -83,12 +83,12 @@ private func assertPostgresLike(
   try assertPostgresLike(
     "SELECT type, modified_at FROM items;",
     """
-      SELECT
-        type,
-        modified_at
-      FROM
-        items;
-      """
+    SELECT
+      type,
+      modified_at
+    FROM
+      items;
+    """
   )
 }
 
@@ -97,16 +97,16 @@ private func assertPostgresLike(
   try assertPostgresLike(
     "SELECT id, type, name, location, label, password FROM release;",
     """
-      SELECT
-        id,
-        type,
-        name,
-        location,
-        label,
-        password
-      FROM
-        release;
-      """,
+    SELECT
+      id,
+      type,
+      name,
+      location,
+      label,
+      password
+    FROM
+      release;
+    """,
     options: FormatOptions(keywordCase: .upper)
   )
 }
@@ -117,10 +117,10 @@ private func assertPostgresLike(
   try assertPostgresLike(
     "INSERT INTO items default values RETURNING id;",
     """
-      INSERT INTO items default values
-      RETURNING
-        id;
-      """,
+    INSERT INTO items default values
+    RETURNING
+      id;
+    """,
     options: FormatOptions(keywordCase: .upper)
   )
 }
@@ -131,16 +131,16 @@ private func assertPostgresLike(
   try assertPostgresLike(
     "CREATE TABLE foo (items text);",
     """
-      CREATE TABLE foo(items TEXT);
-      """,
+    CREATE TABLE foo(items TEXT);
+    """,
     options: FormatOptions(dataTypeCase: .upper)
   )
 
   try assertPostgresLike(
     "CREATE TABLE foo (text VARCHAR(100));",
     """
-      CREATE TABLE foo(text VARCHAR(100));
-      """,
+    CREATE TABLE foo(text VARCHAR(100));
+    """,
     options: FormatOptions(keywordCase: .upper)
   )
 }
@@ -151,11 +151,11 @@ private func assertPostgresLike(
   try assertPostgresLike(
     "create table time_table (id int primary key, created_at timestamp with time zone);",
     """
-      create table time_table(id INT primary key,
-      created_at TIMESTAMP
-      with
-        TIME zone);
-      """,
+    create table time_table(id INT primary key,
+    created_at TIMESTAMP
+    with
+      TIME zone);
+    """,
     options: FormatOptions(dataTypeCase: .upper)
   )
 }

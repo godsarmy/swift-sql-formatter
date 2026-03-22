@@ -55,36 +55,37 @@ public enum SQLFormatterCLIParser {
     currentDirectory: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
   ) throws -> SQLFormatterCLIOptions {
     var options = SQLFormatterCLIOptions()
-    try loadConfigIfPresent(into: &options, arguments: arguments, currentDirectory: currentDirectory)
+    try loadConfigIfPresent(
+      into: &options, arguments: arguments, currentDirectory: currentDirectory)
     try apply(arguments: arguments, to: &options)
     return options
   }
 
   public static var helpText: String {
     """
-      sqlfmt - Format SQL from stdin
+    sqlfmt - Format SQL from stdin
 
-      Usage:
-        cat query.sql | sqlfmt [options]
+    Usage:
+      cat query.sql | sqlfmt [options]
 
-      Options:
-        --dialect <\(DialectRegistry.names.joined(separator: "|"))>
-        --language <\(DialectRegistry.names.joined(separator: "|"))>
-        --config <path>
-        --tab-width <n>
-        --tabs
-        --indent-style <standard|tabularLeft|tabularRight>
-        --keyword-case <preserve|upper|lower>
-        --function-case <preserve|upper|lower>
-        --data-type-case <preserve|upper|lower>
-        --identifier-case <preserve|upper|lower>
-        --logical-operator-newline <before|after>
-        --lines-between-queries <n>
-        --expression-width <n>
-        --newline-before-semicolon
-        --dense-operators
-        -h, --help
-      """
+    Options:
+      --dialect <\(DialectRegistry.names.joined(separator: "|"))>
+      --language <\(DialectRegistry.names.joined(separator: "|"))>
+      --config <path>
+      --tab-width <n>
+      --tabs
+      --indent-style <standard|tabularLeft|tabularRight>
+      --keyword-case <preserve|upper|lower>
+      --function-case <preserve|upper|lower>
+      --data-type-case <preserve|upper|lower>
+      --identifier-case <preserve|upper|lower>
+      --logical-operator-newline <before|after>
+      --lines-between-queries <n>
+      --expression-width <n>
+      --newline-before-semicolon
+      --dense-operators
+      -h, --help
+    """
   }
 
   private static func loadConfigIfPresent(
@@ -188,7 +189,8 @@ public enum SQLFormatterCLIParser {
       case "--data-type-case":
         options.dataTypeCase = try parseKeywordCase(flag: "--data-type-case", iterator: &iterator)
       case "--identifier-case":
-        options.identifierCase = try parseKeywordCase(flag: "--identifier-case", iterator: &iterator)
+        options.identifierCase = try parseKeywordCase(
+          flag: "--identifier-case", iterator: &iterator)
       case "--logical-operator-newline":
         guard let value = iterator.next() else {
           throw SQLFormatterCLIError.invalidArgument("Missing value for --logical-operator-newline")
@@ -196,12 +198,14 @@ public enum SQLFormatterCLIParser {
         options.logicalOperatorNewline = try parseLogicalOperatorNewline(value)
       case "--lines-between-queries":
         guard let value = iterator.next(), let lines = Int(value), lines >= 0 else {
-          throw SQLFormatterCLIError.invalidArgument("--lines-between-queries must be a non-negative integer")
+          throw SQLFormatterCLIError.invalidArgument(
+            "--lines-between-queries must be a non-negative integer")
         }
         options.linesBetweenQueries = lines
       case "--expression-width":
         guard let value = iterator.next(), let width = Int(value), width > 0 else {
-          throw SQLFormatterCLIError.invalidArgument("--expression-width must be a positive integer")
+          throw SQLFormatterCLIError.invalidArgument(
+            "--expression-width must be a positive integer")
         }
         options.expressionWidth = width
       case "--newline-before-semicolon":
@@ -216,7 +220,8 @@ public enum SQLFormatterCLIParser {
     }
   }
 
-  private static func apply(config: [String: Any], to options: inout SQLFormatterCLIOptions) throws {
+  private static func apply(config: [String: Any], to options: inout SQLFormatterCLIOptions) throws
+  {
     if let dialectName = stringValue(for: ["dialect", "language"], in: config) {
       options.dialect = try parseDialect(dialectName)
     }
@@ -252,7 +257,8 @@ public enum SQLFormatterCLIParser {
     }
     if let linesBetweenQueries = intValue(for: "linesBetweenQueries", in: config) {
       guard linesBetweenQueries >= 0 else {
-        throw SQLFormatterCLIError.invalidConfig("linesBetweenQueries must be a non-negative integer")
+        throw SQLFormatterCLIError.invalidConfig(
+          "linesBetweenQueries must be a non-negative integer")
       }
       options.linesBetweenQueries = linesBetweenQueries
     }
@@ -280,7 +286,9 @@ public enum SQLFormatterCLIParser {
     return dialect
   }
 
-  private static func parseIndentStyle(_ value: String, source: String = "argument") throws -> IndentStyle {
+  private static func parseIndentStyle(_ value: String, source: String = "argument") throws
+    -> IndentStyle
+  {
     switch value {
     case "standard":
       return .standard
@@ -320,7 +328,8 @@ public enum SQLFormatterCLIParser {
     }
   }
 
-  private static func parseLogicalOperatorNewline(_ value: String, source: String = "argument") throws
+  private static func parseLogicalOperatorNewline(_ value: String, source: String = "argument")
+    throws
     -> LogicalOperatorNewline
   {
     switch value.lowercased() {

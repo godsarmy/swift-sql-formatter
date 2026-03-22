@@ -17,18 +17,18 @@ import Testing
       WHERE 1 = 2;
     """,
     """
-      SELECT
-      /*
-         * This is a block comment
-         */
-      *
-      FROM
-      -- This is another comment
-      MyTable
-      -- One final comment
-      WHERE
-        1 = 2;
-      """
+    SELECT
+    /*
+       * This is a block comment
+       */
+    *
+    FROM
+    -- This is another comment
+    MyTable
+    -- One final comment
+    WHERE
+      1 = 2;
+    """
   )
 }
 
@@ -37,27 +37,27 @@ import Testing
 @Test func parity_comments_maintainsBlockCommentIndentation() throws {
   try assertFormat(
     """
-      SELECT
-        /*
-         * This is a block comment
-         */
-        *
-      FROM
-        MyTable
-      WHERE
-        1 = 2;
-      """,
-    """
-      SELECT
+    SELECT
       /*
-         * This is a block comment
-         */
+       * This is a block comment
+       */
       *
-      FROM
-        MyTable
-      WHERE
-        1 = 2;
-      """
+    FROM
+      MyTable
+    WHERE
+      1 = 2;
+    """,
+    """
+    SELECT
+    /*
+       * This is a block comment
+       */
+    *
+    FROM
+      MyTable
+    WHERE
+      1 = 2;
+    """
   )
 }
 
@@ -66,22 +66,22 @@ import Testing
 @Test func parity_comments_keepsSeparateLineBlockCommentOnSeparateLine() throws {
   try assertFormat(
     """
-      SELECT
-        /* separate-line block comment */
-        foo,
-        bar /* inline block comment */
-      FROM
-        tbl;
-      """,
-    """
-      SELECT
+    SELECT
       /* separate-line block comment */
       foo,
-      bar
-      /* inline block comment */
-      FROM
-        tbl;
-      """
+      bar /* inline block comment */
+    FROM
+      tbl;
+    """,
+    """
+    SELECT
+    /* separate-line block comment */
+    foo,
+    bar
+    /* inline block comment */
+    FROM
+      tbl;
+    """
   )
 }
 
@@ -91,13 +91,13 @@ import Testing
   try assertFormat(
     "SELECT a--comment, here\nFROM b--comment",
     """
-      SELECT
-        a
-      --comment, here
-      FROM
-        b
-      --comment
-      """
+    SELECT
+      a
+    --comment, here
+    FROM
+      b
+    --comment
+    """
   )
 }
 
@@ -106,9 +106,9 @@ import Testing
   try assertFormat(
     "-- comment1\n-- comment2\n",
     """
-      -- comment1
-      -- comment2
-      """
+    -- comment1
+    -- comment2
+    """
   )
 }
 
@@ -117,9 +117,9 @@ import Testing
   try assertFormat(
     "/*comment1*/\n/*comment2*/\n",
     """
-      /*comment1*/
-      /*comment2*/
-      """
+    /*comment1*/
+    /*comment2*/
+    """
   )
 }
 
@@ -143,22 +143,66 @@ import Testing
     "SELECT alpha # commment\nFROM beta",
     dialect: .mariaDB,
     """
-      SELECT
-        alpha # commment
-      FROM
-        beta
-      """
+    SELECT
+      alpha # commment
+    FROM
+      beta
+    """
   )
 
   try assertFormatDialect(
     "SELECT alpha # commment\nFROM beta",
     dialect: .mySQL,
     """
-      SELECT
-        alpha # commment
-      FROM
-        beta
-      """
+    SELECT
+      alpha # commment
+    FROM
+      beta
+    """
+  )
+}
+
+// Upstream: test/features/comments.ts :: supports // line comment (when double-slash comments enabled)
+@Test func parity_comments_supportsDoubleSlashLineCommentInSnowflake() throws {
+  try assertFormatDialect(
+    "SELECT alpha // commment\nFROM beta",
+    dialect: .snowflake,
+    """
+    SELECT
+      alpha // commment
+    FROM
+      beta
+    """
+  )
+}
+
+// Upstream: test/features/comments.ts :: supports nested block comments (when nested comments enabled)
+// Swift divergence: tokenizer closes block comments at the first */, so nested comments split across lines.
+@Test func parity_comments_supportsNestedBlockCommentsInPostgresqlFamily() throws {
+  try assertFormatDialect(
+    "SELECT alpha /* /* commment */ */ FROM beta",
+    dialect: .postgreSQL,
+    """
+    SELECT
+      alpha
+    /* /* commment */
+    */
+    FROM
+      beta
+    """
+  )
+
+  try assertFormatDialect(
+    "SELECT alpha /* /* commment */ */ FROM beta",
+    dialect: .duckDB,
+    """
+    SELECT
+      alpha
+    /* /* commment */
+    */
+    FROM
+      beta
+    """
   )
 }
 
@@ -171,13 +215,13 @@ import Testing
       ;
     """,
     """
-      SELECT
-        a
-      FROM
-        b
-      --comment
-      ;
-      """
+    SELECT
+      a
+    FROM
+      b
+    --comment
+    ;
+    """
   )
 }
 
@@ -190,12 +234,12 @@ import Testing
       , b
     """,
     """
-      SELECT
-        a
-      --comment
-      ,
-      b
-      """
+    SELECT
+      a
+    --comment
+    ,
+    b
+    """
   )
 }
 
@@ -205,11 +249,11 @@ import Testing
   try assertFormat(
     "SELECT ( a --comment\n )",
     """
-      SELECT
-        ( a
-      --comment
-      )
-      """
+    SELECT
+      ( a
+    --comment
+    )
+    """
   )
 }
 
@@ -219,11 +263,11 @@ import Testing
   try assertFormat(
     "SELECT a --comment\n()",
     """
-      SELECT
-        a
-      --comment
-      ()
-      """
+    SELECT
+      a
+    --comment
+    ()
+    """
   )
 }
 
@@ -239,15 +283,15 @@ import Testing
         my_table;
     """,
     """
-      SELECT
-        a,
-      --comment1
-      b
-      --comment2
-      FROM
-      --comment3
-      my_table;
-      """
+    SELECT
+      a,
+    --comment1
+    b
+    --comment2
+    FROM
+    --comment3
+    my_table;
+    """
   )
 }
 
@@ -266,15 +310,15 @@ import Testing
         my_table;
     """,
     """
-      SELECT
-      --comment1
-      a,
-      --comment2
-      b
-      FROM
-      --comment3
-      my_table;
-      """
+    SELECT
+    --comment1
+    a,
+    --comment2
+    b
+    FROM
+    --comment3
+    my_table;
+    """
   )
 }
 
@@ -282,9 +326,9 @@ import Testing
 @Test func parity_comments_doesNotDetectUnclosedCommentAsComment() throws {
   assertFormatError(
     """
-      SELECT count(*)
-      /*SomeComment
-      """,
+    SELECT count(*)
+    /*SomeComment
+    """,
     contains: "unterminatedBlockComment"
   )
 }
@@ -297,11 +341,11 @@ import Testing
       SELECT count /* comment */ (*);
     """,
     """
-      SELECT
-        count
-      /* comment */
-      ( *);
-      """
+    SELECT
+      count
+    /* comment */
+    ( *);
+    """
   )
 }
 
@@ -313,21 +357,21 @@ import Testing
       SELECT foo/* com1 */.bar, count()/* com2 */.bar, foo.bar/* com3 */.baz, (1, 2) /* com4 */.foo;
     """,
     """
-      SELECT
-        foo
-      /* com1 */
-      .bar,
-      count()
-      /* com2 */
-      .bar,
-      foo.bar
-      /* com3 */
-      .baz,
-      (1,
-      2)
-      /* com4 */
-      .foo;
-      """
+    SELECT
+      foo
+    /* com1 */
+    .bar,
+    count()
+    /* com2 */
+    .bar,
+    foo.bar
+    /* com3 */
+    .baz,
+    (1,
+    2)
+    /* com4 */
+    .foo;
+    """
   )
 }
 
@@ -342,12 +386,12 @@ import Testing
       */
     """,
     """
-      SELECT
-        1
-      /*
-        comment line
-        */
-      """
+    SELECT
+      1
+    /*
+      comment line
+      */
+    """
   )
 }
 
@@ -359,13 +403,13 @@ import Testing
       SELECT foo. /* com1 */ bar, foo. /* com2 */ *;
     """,
     """
-      SELECT
-        foo.
-      /* com1 */
-      bar,
+    SELECT
       foo.
-      /* com2 */
-      *;
-      """
+    /* com1 */
+    bar,
+    foo.
+    /* com2 */
+    *;
+    """
   )
 }

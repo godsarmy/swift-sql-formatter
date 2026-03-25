@@ -50,7 +50,7 @@ Add core helpers:
 - [ ] `test/features/arrayAndMapAccessors.ts`
 - [ ] `test/features/arrayLiterals.ts`
 - [x] `test/features/between.ts`
-- [ ] `test/features/case.ts`
+- [x] `test/features/case.ts`
 - [ ] `test/features/commentOn.ts`
 - [x] `test/features/comments.ts`
 - [ ] `test/features/constraints.ts`
@@ -71,7 +71,7 @@ Add core helpers:
 - [ ] `test/features/returning.ts`
 - [ ] `test/features/schema.ts`
 - [ ] `test/features/setOperations.ts`
-- [ ] `test/features/strings.ts`
+- [x] `test/features/strings.ts`
 - [ ] `test/features/truncateTable.ts`
 - [ ] `test/features/update.ts`
 - [ ] `test/features/window.ts`

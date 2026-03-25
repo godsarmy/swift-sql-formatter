@@ -42,9 +42,11 @@
 ## Feature Suites
 
 - `DONE` `test/features/between.ts` -> `Tests/SQLFormatterTests/Parity/Features/BetweenFeatureParityTests.swift`
+- `DONE` `test/features/case.ts` -> `Tests/SQLFormatterTests/Parity/Features/CaseFeatureParityTests.swift` (13/13 upstream cases ported with documented divergences)
 - `DONE` `test/features/comments.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentsFeatureParityTests.swift` (22/22 upstream cases ported)
 - `DONE` `test/features/disableComment.ts` -> `Tests/SQLFormatterTests/Parity/Features/DisableCommentFeatureParityTests.swift`
 - `DONE` `test/features/with.ts` -> `Tests/SQLFormatterTests/Parity/Features/WithFeatureParityTests.swift`
+- `DONE` `test/features/strings.ts` -> `Tests/SQLFormatterTests/Parity/Features/StringsFeatureParityTests.swift` (34 cases ported with known divergences)
 
 ## Known Divergences (Documented)
 
@@ -53,6 +55,8 @@
 - `test/behavesLikeMariaDbFormatter.ts`: current formatting differs for `@\`name\`` variables, `:=`, `*.*`, and ON DUPLICATE KEY / REPLACE tuple wrapping.
 - `test/behavesLikeDb2Formatter.ts`: current formatting differs for prefixed literals (`G'...'`), comment indentation under `FROM`, and `ALTER COLUMN` / `WITH CS` line breaking.
 - `test/features/between.ts`: Swift breaks `BETWEEN ... AND ...` across lines and also expands comment/case layouts differently from upstream.
+- `test/features/case.ts`: Swift keeps many CASE chains inline (including nested/tabular variants), emits CASE comments on standalone lines, and preserves lowercase case/else/end tokens in one upper-case option scenario.
 - `test/features/comments.ts`: Swift emits many inline/indented comments as standalone unindented lines compared with upstream.
 - `test/features/disableComment.ts`: disabled inline segment under `SELECT` is currently emitted without expression indentation.
 - `test/features/with.ts`: CTE body indentation and parameterized CTE parentheses spacing differ from upstream.
+- `test/features/strings.ts`: Swift accepts both doubling and backslash escapes for single/double quotes (no parse errors), lowercase hex/bit prefixes are separated from literals while uppercase prefixes stay contiguous (including double-quote variants), dollar-quoted strings are reformatted with SQL layout/newlines, and lowercase raw-string prefixes currently trigger unterminated token errors.

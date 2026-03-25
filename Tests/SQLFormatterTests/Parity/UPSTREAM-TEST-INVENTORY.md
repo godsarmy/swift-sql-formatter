@@ -43,8 +43,11 @@
 
 - `DONE` `test/features/between.ts` -> `Tests/SQLFormatterTests/Parity/Features/BetweenFeatureParityTests.swift`
 - `DONE` `test/features/case.ts` -> `Tests/SQLFormatterTests/Parity/Features/CaseFeatureParityTests.swift` (13/13 upstream cases ported with documented divergences)
+- `DONE` `test/features/commentOn.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentOnFeatureParityTests.swift` (2 cases ported)
 - `DONE` `test/features/comments.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentsFeatureParityTests.swift` (22/22 upstream cases ported)
+- `DONE` `test/features/constraints.ts` -> `Tests/SQLFormatterTests/Parity/Features/ConstraintsFeatureParityTests.swift` (6 cases ported)
 - `DONE` `test/features/deleteFrom.ts` -> `Tests/SQLFormatterTests/Parity/Features/DeleteFromFeatureParityTests.swift` (2/2 upstream cases ported)
+- `DONE` `test/features/join.ts` -> `Tests/SQLFormatterTests/Parity/Features/JoinFeatureParityTests.swift` (21 cases ported)
 - `DONE` `test/features/disableComment.ts` -> `Tests/SQLFormatterTests/Parity/Features/DisableCommentFeatureParityTests.swift`
 - `DONE` `test/features/createTable.ts` -> `Tests/SQLFormatterTests/Parity/Features/CreateTableFeatureParityTests.swift` (7 cases ported with documented divergences)
 - `DONE` `test/features/createView.ts` -> `Tests/SQLFormatterTests/Parity/Features/CreateViewFeatureParityTests.swift` (5 cases ported with documented divergence on column spacing)
@@ -54,6 +57,8 @@
 - `DONE` `test/features/identifiers.ts` -> `Tests/SQLFormatterTests/Parity/Features/IdentifiersFeatureParityTests.swift` (17 cases ported with documented divergences)
 - `DONE` `test/features/limiting.ts` -> `Tests/SQLFormatterTests/Parity/Features/LimitingFeatureParityTests.swift` (9 cases ported with documented divergences)
 - `DONE` `test/features/insertInto.ts` -> `Tests/SQLFormatterTests/Parity/Features/InsertIntoFeatureParityTests.swift` (2 cases ported)
+- `DONE` `test/features/schema.ts` -> `Tests/SQLFormatterTests/Parity/Features/SchemaFeatureParityTests.swift` (1 case ported)
+- `DONE` `test/features/update.ts` -> `Tests/SQLFormatterTests/Parity/Features/UpdateFeatureParityTests.swift` (3 cases ported)
 - `DONE` `test/features/truncateTable.ts` -> `Tests/SQLFormatterTests/Parity/Features/TruncateTableFeatureParityTests.swift` (2 cases ported)
 
 ## Known Divergences (Documented)
@@ -72,3 +77,8 @@
 - `test/features/limiting.ts`: Swift splits multi-value LIMIT expressions (including tabular styles) and comments onto separate lines and keeps FETCH/OFFSET clauses adjacent to their previous clauses instead of breaking them onto their own lines.
 - `test/features/createView.ts`: Swift keeps the column list adjacent to the view identifier (no space before the opening parenthesis) and emits columns on separate lines without extra indentation before the SELECT clause.
 - `test/features/createTable.ts`: Swift keeps the column list adjacent to the table identifier (no space before the opening parenthesis), breaks `CREATE OR REPLACE` across lines while the inline column layout stays compact, and the tabularLeft indent style currently does not reproduce upstream spacing around the CREATE TABLE header.
+- `test/features/commentOn.ts`: Swift breaks COMMENT ON TABLE/COLUMN clause keywords (`COMMENT`, `ON`, `TABLE/COLUMN`) onto separate lines compared with upstream’s more compact form.
+- `test/features/constraints.ts`: Swift line-breaks `ON UPDATE/DELETE` clauses aggressively and splits `SET NULL` into separate tokens/lines.
+- `test/features/schema.ts`: Swift emits `SET` and `SCHEMA` on separate lines instead of the single-line clause upstream expects.
+- `test/features/join.ts`: Swift places many JOIN qualifiers and `ON` predicates on more lines (including NATURAL variants and APPLY forms) than upstream.
+- `test/features/update.ts`: Swift keeps `UPDATE ... AS (...)` body indentation flatter and splits `WHERE CURRENT OF` across lines.

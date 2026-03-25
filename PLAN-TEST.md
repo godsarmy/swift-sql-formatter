@@ -51,9 +51,9 @@ Add core helpers:
 - [ ] `test/features/arrayLiterals.ts`
 - [x] `test/features/between.ts`
 - [x] `test/features/case.ts`
-- [ ] `test/features/commentOn.ts`
+- [x] `test/features/commentOn.ts`
 - [x] `test/features/comments.ts`
-- [ ] `test/features/constraints.ts`
+- [x] `test/features/constraints.ts`
 - [x] `test/features/createTable.ts`
 - [x] `test/features/createView.ts`
 - [x] `test/features/deleteFrom.ts`
@@ -62,18 +62,18 @@ Add core helpers:
 - [x] `test/features/identifiers.ts`
 - [x] `test/features/insertInto.ts`
 - [ ] `test/features/isDistinctFrom.ts`
-- [ ] `test/features/join.ts`
+- [x] `test/features/join.ts`
 - [x] `test/features/limiting.ts`
 - [ ] `test/features/mergeInto.ts`
 - [ ] `test/features/numbers.ts`
 - [ ] `test/features/onConflict.ts`
 - [ ] `test/features/operators.ts`
 - [ ] `test/features/returning.ts`
-- [ ] `test/features/schema.ts`
+- [x] `test/features/schema.ts`
 - [ ] `test/features/setOperations.ts`
 - [x] `test/features/strings.ts`
 - [x] `test/features/truncateTable.ts`
-- [ ] `test/features/update.ts`
+- [x] `test/features/update.ts`
 - [ ] `test/features/window.ts`
 - [ ] `test/features/windowFunctions.ts`
 - [x] `test/features/with.ts`

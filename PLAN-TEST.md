@@ -59,11 +59,11 @@ Add core helpers:
 - [ ] `test/features/deleteFrom.ts`
 - [x] `test/features/disableComment.ts`
 - [ ] `test/features/dropTable.ts`
-- [ ] `test/features/identifiers.ts`
+- [x] `test/features/identifiers.ts`
 - [ ] `test/features/insertInto.ts`
 - [ ] `test/features/isDistinctFrom.ts`
 - [ ] `test/features/join.ts`
-- [ ] `test/features/limiting.ts`
+- [x] `test/features/limiting.ts`
 - [ ] `test/features/mergeInto.ts`
 - [ ] `test/features/numbers.ts`
 - [ ] `test/features/onConflict.ts`

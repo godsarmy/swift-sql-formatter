@@ -47,6 +47,8 @@
 - `DONE` `test/features/disableComment.ts` -> `Tests/SQLFormatterTests/Parity/Features/DisableCommentFeatureParityTests.swift`
 - `DONE` `test/features/with.ts` -> `Tests/SQLFormatterTests/Parity/Features/WithFeatureParityTests.swift`
 - `DONE` `test/features/strings.ts` -> `Tests/SQLFormatterTests/Parity/Features/StringsFeatureParityTests.swift` (34 cases ported with known divergences)
+- `DONE` `test/features/identifiers.ts` -> `Tests/SQLFormatterTests/Parity/Features/IdentifiersFeatureParityTests.swift` (17 cases ported with documented divergences)
+- `DONE` `test/features/limiting.ts` -> `Tests/SQLFormatterTests/Parity/Features/LimitingFeatureParityTests.swift` (9 cases ported with documented divergences)
 
 ## Known Divergences (Documented)
 
@@ -60,3 +62,5 @@
 - `test/features/disableComment.ts`: disabled inline segment under `SELECT` is currently emitted without expression indentation.
 - `test/features/with.ts`: CTE body indentation and parameterized CTE parentheses spacing differ from upstream.
 - `test/features/strings.ts`: Swift accepts both doubling and backslash escapes for single/double quotes (no parse errors), lowercase hex/bit prefixes are separated from literals while uppercase prefixes stay contiguous (including double-quote variants), dollar-quoted strings are reformatted with SQL layout/newlines, and lowercase raw-string prefixes currently trigger unterminated token errors.
+- `test/features/identifiers.ts`: Swift accepts both repeated-quote and backslash escaping across double-quoted and `U&` double-quoted identifiers (so upstream parse-error cases now pass) and emits whitespace between `U&` prefixes and their quoted identifiers.
+- `test/features/limiting.ts`: Swift splits multi-value LIMIT expressions (including tabular styles) and comments onto separate lines and keeps FETCH/OFFSET clauses adjacent to their previous clauses instead of breaking them onto their own lines.

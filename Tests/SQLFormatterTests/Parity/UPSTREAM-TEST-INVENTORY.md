@@ -44,11 +44,17 @@
 - `DONE` `test/features/between.ts` -> `Tests/SQLFormatterTests/Parity/Features/BetweenFeatureParityTests.swift`
 - `DONE` `test/features/case.ts` -> `Tests/SQLFormatterTests/Parity/Features/CaseFeatureParityTests.swift` (13/13 upstream cases ported with documented divergences)
 - `DONE` `test/features/comments.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentsFeatureParityTests.swift` (22/22 upstream cases ported)
+- `DONE` `test/features/deleteFrom.ts` -> `Tests/SQLFormatterTests/Parity/Features/DeleteFromFeatureParityTests.swift` (2/2 upstream cases ported)
 - `DONE` `test/features/disableComment.ts` -> `Tests/SQLFormatterTests/Parity/Features/DisableCommentFeatureParityTests.swift`
+- `DONE` `test/features/createTable.ts` -> `Tests/SQLFormatterTests/Parity/Features/CreateTableFeatureParityTests.swift` (7 cases ported with documented divergences)
+- `DONE` `test/features/createView.ts` -> `Tests/SQLFormatterTests/Parity/Features/CreateViewFeatureParityTests.swift` (5 cases ported with documented divergence on column spacing)
+- `DONE` `test/features/dropTable.ts` -> `Tests/SQLFormatterTests/Parity/Features/DropTableFeatureParityTests.swift` (2 cases ported)
 - `DONE` `test/features/with.ts` -> `Tests/SQLFormatterTests/Parity/Features/WithFeatureParityTests.swift`
 - `DONE` `test/features/strings.ts` -> `Tests/SQLFormatterTests/Parity/Features/StringsFeatureParityTests.swift` (34 cases ported with known divergences)
 - `DONE` `test/features/identifiers.ts` -> `Tests/SQLFormatterTests/Parity/Features/IdentifiersFeatureParityTests.swift` (17 cases ported with documented divergences)
 - `DONE` `test/features/limiting.ts` -> `Tests/SQLFormatterTests/Parity/Features/LimitingFeatureParityTests.swift` (9 cases ported with documented divergences)
+- `DONE` `test/features/insertInto.ts` -> `Tests/SQLFormatterTests/Parity/Features/InsertIntoFeatureParityTests.swift` (2 cases ported)
+- `DONE` `test/features/truncateTable.ts` -> `Tests/SQLFormatterTests/Parity/Features/TruncateTableFeatureParityTests.swift` (2 cases ported)
 
 ## Known Divergences (Documented)
 
@@ -64,3 +70,5 @@
 - `test/features/strings.ts`: Swift accepts both doubling and backslash escapes for single/double quotes (no parse errors), lowercase hex/bit prefixes are separated from literals while uppercase prefixes stay contiguous (including double-quote variants), dollar-quoted strings are reformatted with SQL layout/newlines, and lowercase raw-string prefixes currently trigger unterminated token errors.
 - `test/features/identifiers.ts`: Swift accepts both repeated-quote and backslash escaping across double-quoted and `U&` double-quoted identifiers (so upstream parse-error cases now pass) and emits whitespace between `U&` prefixes and their quoted identifiers.
 - `test/features/limiting.ts`: Swift splits multi-value LIMIT expressions (including tabular styles) and comments onto separate lines and keeps FETCH/OFFSET clauses adjacent to their previous clauses instead of breaking them onto their own lines.
+- `test/features/createView.ts`: Swift keeps the column list adjacent to the view identifier (no space before the opening parenthesis) and emits columns on separate lines without extra indentation before the SELECT clause.
+- `test/features/createTable.ts`: Swift keeps the column list adjacent to the table identifier (no space before the opening parenthesis), breaks `CREATE OR REPLACE` across lines while the inline column layout stays compact, and the tabularLeft indent style currently does not reproduce upstream spacing around the CREATE TABLE header.

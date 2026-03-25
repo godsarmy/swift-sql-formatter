@@ -54,13 +54,13 @@ Add core helpers:
 - [ ] `test/features/commentOn.ts`
 - [x] `test/features/comments.ts`
 - [ ] `test/features/constraints.ts`
-- [ ] `test/features/createTable.ts`
-- [ ] `test/features/createView.ts`
-- [ ] `test/features/deleteFrom.ts`
+- [x] `test/features/createTable.ts`
+- [x] `test/features/createView.ts`
+- [x] `test/features/deleteFrom.ts`
 - [x] `test/features/disableComment.ts`
-- [ ] `test/features/dropTable.ts`
+- [x] `test/features/dropTable.ts`
 - [x] `test/features/identifiers.ts`
-- [ ] `test/features/insertInto.ts`
+- [x] `test/features/insertInto.ts`
 - [ ] `test/features/isDistinctFrom.ts`
 - [ ] `test/features/join.ts`
 - [x] `test/features/limiting.ts`
@@ -72,7 +72,7 @@ Add core helpers:
 - [ ] `test/features/schema.ts`
 - [ ] `test/features/setOperations.ts`
 - [x] `test/features/strings.ts`
-- [ ] `test/features/truncateTable.ts`
+- [x] `test/features/truncateTable.ts`
 - [ ] `test/features/update.ts`
 - [ ] `test/features/window.ts`
 - [ ] `test/features/windowFunctions.ts`

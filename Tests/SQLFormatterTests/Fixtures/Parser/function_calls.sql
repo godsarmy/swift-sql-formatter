@@ -1,0 +1,1 @@
+SELECT sqrt(2), CURRENT_TIME a, CURRENT_DATE() b;

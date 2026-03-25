@@ -94,38 +94,38 @@ Add core helpers:
 - [x] `test/options/useTabs.ts`
 
 ### 4) Dialect integration suites (20 files)
-- [ ] `test/sql.test.ts`
-- [ ] `test/bigquery.test.ts`
-- [ ] `test/clickhouse.test.ts`
-- [ ] `test/db2.test.ts`
-- [ ] `test/db2i.test.ts`
-- [ ] `test/duckdb.test.ts`
-- [ ] `test/hive.test.ts`
-- [ ] `test/mariadb.test.ts`
-- [ ] `test/mysql.test.ts`
-- [ ] `test/n1ql.test.ts`
-- [ ] `test/plsql.test.ts`
-- [ ] `test/postgresql.test.ts`
-- [ ] `test/redshift.test.ts`
-- [ ] `test/singlestoredb.test.ts`
-- [ ] `test/snowflake.test.ts`
-- [ ] `test/spark.test.ts`
-- [ ] `test/sqlite.test.ts`
-- [ ] `test/tidb.test.ts`
-- [ ] `test/transactsql.test.ts`
-- [ ] `test/trino.test.ts`
+- [x] `test/sql.test.ts`
+- [x] `test/bigquery.test.ts`
+- [x] `test/clickhouse.test.ts`
+- [x] `test/db2.test.ts`
+- [x] `test/db2i.test.ts`
+- [x] `test/duckdb.test.ts`
+- [x] `test/hive.test.ts`
+- [x] `test/mariadb.test.ts`
+- [x] `test/mysql.test.ts`
+- [x] `test/n1ql.test.ts`
+- [x] `test/plsql.test.ts`
+- [x] `test/postgresql.test.ts`
+- [x] `test/redshift.test.ts`
+- [x] `test/singlestoredb.test.ts`
+- [x] `test/snowflake.test.ts`
+- [x] `test/spark.test.ts`
+- [x] `test/sqlite.test.ts`
+- [x] `test/tidb.test.ts`
+- [x] `test/transactsql.test.ts`
+- [x] `test/trino.test.ts`
 
 ### 5) API/top-level behavior suites
-- [ ] `test/sqlFormatter.test.ts` (error messaging, deprecated option handling, invalid argument behavior, explicit dialect API)
+- [x] `test/sqlFormatter.test.ts` (ported applicable Swift-equivalent API semantics; JS-only/deprecated cases documented as N/A)
 
 ### 6) Unit internals suites
-- [ ] `test/unit/Layout.test.ts`
-- [ ] `test/unit/NestedComment.test.ts`
-- [ ] `test/unit/Parser.test.ts`
-- [ ] `test/unit/Tokenizer.test.ts`
-- [ ] `test/unit/expandPhrases.test.ts`
-- [ ] `test/unit/tabularStyle.test.ts`
-- [ ] Snapshot equivalence for parser/tokenizer fixtures (`__snapshots__/*.snap`) via Swift fixture files
+- [x] `test/unit/Layout.test.ts`
+- [x] `test/unit/NestedComment.test.ts`
+- [x] `test/unit/Parser.test.ts`
+- [x] `test/unit/Tokenizer.test.ts`
+- [x] `test/unit/expandPhrases.test.ts`
+- [x] `test/unit/tabularStyle.test.ts`
+- [x] Snapshot equivalence for parser/tokenizer fixtures (`__snapshots__/*.snap`) via Swift fixture files
 
 ### 7) Performance parity (non-blocking)
 - [ ] `test/perftest.ts`

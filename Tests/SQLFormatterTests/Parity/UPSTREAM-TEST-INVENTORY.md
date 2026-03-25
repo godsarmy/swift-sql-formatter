@@ -73,10 +73,53 @@
 - `DONE` `test/features/window.ts` -> `Tests/SQLFormatterTests/Parity/Features/WindowFeatureParityTests.swift` (2 cases ported)
 - `DONE` `test/features/windowFunctions.ts` -> `Tests/SQLFormatterTests/Parity/Features/WindowFunctionsFeatureParityTests.swift` (1 case ported)
 
+## Dialect Suites
+
+- `DONE` `test/bigquery.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/BigqueryDialectParityTests.swift` (42 cases ported with documented divergences)
+- `DONE` `test/sql.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/SqlDialectParityTests.swift` (4 cases ported)
+- `DONE` `test/sqlite.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/SqliteDialectParityTests.swift` (2 cases ported)
+- `DONE` `test/clickhouse.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/ClickhouseDialectParityTests.swift` (6 cases ported)
+- `DONE` `test/db2.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/Db2DialectParityTests.swift` (1 case ported)
+- `DONE` `test/db2i.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/Db2iDialectParityTests.swift` (32 cases ported)
+- `DONE` `test/postgresql.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/PostgresqlDialectParityTests.swift` (10 cases ported)
+- `DONE` `test/duckdb.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/DuckdbDialectParityTests.swift` (7 cases ported)
+- `DONE` `test/hive.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/HiveDialectParityTests.swift` (3 cases ported)
+- `DONE` `test/mariadb.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/MariadbDialectParityTests.swift` (3 cases ported)
+- `DONE` `test/mysql.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/MysqlDialectParityTests.swift` (3 cases ported)
+- `DONE` `test/n1ql.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/N1qlDialectParityTests.swift` (6 cases ported)
+- `DONE` `test/plsql.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/PlsqlDialectParityTests.swift` (7 cases ported)
+- `DONE` `test/redshift.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/RedshiftDialectParityTests.swift` (8 cases ported)
+- `DONE` `test/singlestoredb.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/SinglestoredbDialectParityTests.swift` (3 cases ported)
+- `DONE` `test/snowflake.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/SnowflakeDialectParityTests.swift` (12 cases ported)
+- `DONE` `test/spark.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/SparkDialectParityTests.swift` (6 cases ported)
+- `DONE` `test/tidb.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/TidbDialectParityTests.swift` (3 cases ported)
+- `DONE` `test/transactsql.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/TransactsqlDialectParityTests.swift` (18 cases ported)
+- `DONE` `test/trino.test.ts` -> `Tests/SQLFormatterTests/Parity/Dialects/TrinoDialectParityTests.swift` (2 cases ported)
+
+## API Suites
+
+- `DONE` `test/sqlFormatter.test.ts` -> `Tests/SQLFormatterTests/Parity/API/SqlFormatterAPIParityTests.swift` (ported applicable Swift-equivalent cases; JS-only/deprecated behaviors documented as N/A)
+
+## Unit Suites
+
+- `DONE` `test/unit/Layout.test.ts` -> `Tests/SQLFormatterTests/Unit/LayoutUnitParityTests.swift` (20 cases ported with documented divergences)
+- `DONE` `test/unit/NestedComment.test.ts` -> `Tests/SQLFormatterTests/Unit/NestedCommentUnitParityTests.swift` (11 cases ported with documented divergences)
+- `DONE` `test/unit/Parser.test.ts` -> `Tests/SQLFormatterTests/Unit/ParserUnitParityTests.swift` (18 tokenizer-backed parity checks; parser-API divergence documented)
+- `DONE` `test/unit/Tokenizer.test.ts` -> `Tests/SQLFormatterTests/Unit/TokenizerUnitParityTests.swift` (3 representative cases ported with whitespace-token divergence documented)
+- `DONE` `test/unit/expandPhrases.test.ts` -> `Tests/SQLFormatterTests/Unit/ExpandPhrasesUnitParityTests.swift` (13 cases ported)
+- `DONE` `test/unit/tabularStyle.test.ts` -> `Tests/SQLFormatterTests/Unit/TabularStyleUnitParityTests.swift` (3 cases ported with spacing divergences documented)
+- `DONE` snapshot equivalence (`test/unit/__snapshots__/*.snap`) -> Swift fixture-based parity implemented via `Tests/SQLFormatterTests/Fixtures/{Parser,Tokenizer}` and `*SnapshotParityTests.swift`
+
 ## Known Divergences (Documented)
 
 - `test/options/tabWidth.ts` and `test/options/useTabs.ts`: Swift currently formats `count(*)` as `count( *)`.
 - `test/options/newlineBeforeSemicolon.ts` (`SELECT a FROM;` case): Swift emits semicolon on a separate line.
+- `test/sqlFormatter.test.ts`: several JS runtime/deprecated option behaviors are N/A in Swift (typed dialect selection, no deprecated JS flags, no regex-based custom string type extension, and different invalid-input surface area).
+- `test/unit/Layout.test.ts`: Swift `OutputBuffer` newline/no-space trimming semantics differ from upstream in some retroactive whitespace-removal and indent-token interactions.
+- `test/unit/NestedComment.test.ts`: Swift tokenizer closes block comments at first `*/`; nested-comment handling differs from upstream helper expectations.
+- `test/unit/Parser.test.ts`: no direct public parser AST API parity surface in Swift tests; parity is approximated via tokenizer-backed structural checks.
+- `test/unit/Tokenizer.test.ts`: Swift tokenizer exposes whitespace/newline tokens explicitly, unlike upstream token snapshots.
+- `test/unit/tabularStyle.test.ts`: Swift tabular styles retain different trailing/padding spaces for some multi-word clauses.
 - `test/behavesLikeMariaDbFormatter.ts`: current formatting differs for `@\`name\`` variables, `:=`, `*.*`, and ON DUPLICATE KEY / REPLACE tuple wrapping.
 - `test/behavesLikeDb2Formatter.ts`: current formatting differs for prefixed literals (`G'...'`), comment indentation under `FROM`, and `ALTER COLUMN` / `WITH CS` line breaking.
 - `test/features/between.ts`: Swift breaks `BETWEEN ... AND ...` across lines and also expands comment/case layouts differently from upstream.
@@ -106,3 +149,23 @@
 - `test/features/setOperations.ts`: Swift keeps many set operators more inline and subquery set-operation blocks less indented than upstream.
 - `test/features/window.ts`: Swift keeps WINDOW clause specifications more inline than upstream’s broken-out layout.
 - `test/features/windowFunctions.ts`: Swift lays out OVER/ROWS BETWEEN frames differently from upstream clause wrapping.
+- `test/sql.test.ts`: Swift accepts unknown tokens/curly braces as identifiers and keeps ALTER COLUMN clauses flatter than upstream.
+- `test/bigquery.test.ts`: Swift differs broadly in spacing/line breaks for hyphenated identifiers, prefixed strings, parametric type punctuation, CREATE/ALTER forms, and PIVOT/UNPIVOT/UNNEST; one triple-quoted prefixed-string variant currently errors instead of formatting.
+- `test/sqlite.test.ts`: Swift keeps `REPLACE INTO` table target on one line and splits `ON CONFLICT` keywords differently.
+- `test/clickhouse.test.ts`: Swift differs in map/lambda/ternary spacing, insert+WITH placement, and DROP/RENAME clause wrapping.
+- `test/db2.test.ts`: Swift formats non-standard `FOR` clause constructs with different clause splitting than upstream.
+- `test/db2i.test.ts`: Swift differs across nested comments, LIMIT/FETCH wrapping, EXCEPTION JOIN layout, operator density/spacing, and data-type casing behavior.
+- `test/postgresql.test.ts`: Swift differs in spacing/line breaks for array slices, `OPERATOR()` usage, `FOR UPDATE`, OR REPLACE bodies, and COMMENT ON formatting.
+- `test/duckdb.test.ts`: Swift differs for prefix alias spacing, struct literal spacing, large literal wrapping, JSON casing, and `IS NOT NULL` casing.
+- `test/hive.test.ts`: Swift differs for substitution variable escaping and SORT/CLUSTER/DISTRIBUTE BY clause grouping/line breaks.
+- `test/mariadb.test.ts`: Swift emits whitespace between `@` and quoted variable names and keeps ALTER COLUMN clauses flatter.
+- `test/mysql.test.ts`: Swift emits whitespace between `@` and quoted variable names and keeps ALTER COLUMN clauses flatter.
+- `test/n1ql.test.ts`: Swift keeps many INSERT/USE KEYS/NEST/UNNEST and object-literal forms significantly more inline than upstream.
+- `test/plsql.test.ts`: Swift differs in spacing around special identifiers/parameters, Q literals, recursive CTE formatting, and FOR UPDATE placement.
+- `test/redshift.test.ts`: Swift differs for `::` spacing, line-comment placement, temp table naming layout, DIST/SORT key wrapping, ALTER COLUMN line breaks, and QUALIFY positioning.
+- `test/singlestoredb.test.ts`: Swift inserts spacing around `::%` path operator compared with upstream’s compact form.
+- `test/snowflake.test.ts`: Swift differs on colon path operator spacing, QUALIFY placement, lambda formatting, CASE layout, and ALTER COLUMN clause stacking.
+- `test/spark.test.ts`: Swift differs for WINDOW/OVER wrapping, substitution variable handling, SORT/CLUSTER/DISTRIBUTE clause layout, and ALTER COLUMN flattening.
+- `test/tidb.test.ts`: Swift emits whitespace between `@` and quoted variable names and keeps ALTER COLUMN clauses flatter.
+- `test/transactsql.test.ts`: Swift differs in line breaking for scope resolution, `INTO`/`OPTION`/`FOR` clauses, GO blocks, and some identifier casing/spacing cases.
+- `test/trino.test.ts`: Swift differs in row-pattern (`MATCH_RECOGNIZE`) clause wrapping.

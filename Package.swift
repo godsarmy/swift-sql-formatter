@@ -45,7 +45,10 @@ let package = Package(
     .testTarget(
       name: "SQLFormatterTests",
       dependencies: ["SQLFormatter", "SQLFormatterCLICommon"],
-      exclude: ["Parity/UPSTREAM-TEST-INVENTORY.md"]
+      exclude: ["Parity/UPSTREAM-TEST-INVENTORY.md"],
+      resources: [
+        .process("Fixtures")
+      ]
     ),
   ]
 )

@@ -1,0 +1,1 @@
+SELECT foo FROM bar UNION ALL SELECT foo FROM baz;

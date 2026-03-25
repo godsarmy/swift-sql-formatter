@@ -46,9 +46,9 @@ Add core helpers:
 - [x] `test/behavesLikeDb2Formatter.ts`
 
 ### 2) Feature suites (31 files)
-- [ ] `test/features/alterTable.ts`
-- [ ] `test/features/arrayAndMapAccessors.ts`
-- [ ] `test/features/arrayLiterals.ts`
+- [x] `test/features/alterTable.ts`
+- [x] `test/features/arrayAndMapAccessors.ts`
+- [x] `test/features/arrayLiterals.ts`
 - [x] `test/features/between.ts`
 - [x] `test/features/case.ts`
 - [x] `test/features/commentOn.ts`
@@ -61,21 +61,21 @@ Add core helpers:
 - [x] `test/features/dropTable.ts`
 - [x] `test/features/identifiers.ts`
 - [x] `test/features/insertInto.ts`
-- [ ] `test/features/isDistinctFrom.ts`
+- [x] `test/features/isDistinctFrom.ts`
 - [x] `test/features/join.ts`
 - [x] `test/features/limiting.ts`
-- [ ] `test/features/mergeInto.ts`
-- [ ] `test/features/numbers.ts`
-- [ ] `test/features/onConflict.ts`
-- [ ] `test/features/operators.ts`
-- [ ] `test/features/returning.ts`
+- [x] `test/features/mergeInto.ts`
+- [x] `test/features/numbers.ts`
+- [x] `test/features/onConflict.ts`
+- [x] `test/features/operators.ts`
+- [x] `test/features/returning.ts`
 - [x] `test/features/schema.ts`
-- [ ] `test/features/setOperations.ts`
+- [x] `test/features/setOperations.ts`
 - [x] `test/features/strings.ts`
 - [x] `test/features/truncateTable.ts`
 - [x] `test/features/update.ts`
-- [ ] `test/features/window.ts`
-- [ ] `test/features/windowFunctions.ts`
+- [x] `test/features/window.ts`
+- [x] `test/features/windowFunctions.ts`
 - [x] `test/features/with.ts`
 
 ### 3) Option suites (13 files)

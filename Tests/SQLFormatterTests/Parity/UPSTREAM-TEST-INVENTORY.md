@@ -42,6 +42,9 @@
 ## Feature Suites
 
 - `DONE` `test/features/between.ts` -> `Tests/SQLFormatterTests/Parity/Features/BetweenFeatureParityTests.swift`
+- `DONE` `test/features/alterTable.ts` -> `Tests/SQLFormatterTests/Parity/Features/AlterTableFeatureParityTests.swift` (5 cases ported)
+- `DONE` `test/features/arrayAndMapAccessors.ts` -> `Tests/SQLFormatterTests/Parity/Features/ArrayAndMapAccessorsFeatureParityTests.swift` (7 cases ported)
+- `DONE` `test/features/arrayLiterals.ts` -> `Tests/SQLFormatterTests/Parity/Features/ArrayLiteralsFeatureParityTests.swift` (5 cases ported)
 - `DONE` `test/features/case.ts` -> `Tests/SQLFormatterTests/Parity/Features/CaseFeatureParityTests.swift` (13/13 upstream cases ported with documented divergences)
 - `DONE` `test/features/commentOn.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentOnFeatureParityTests.swift` (2 cases ported)
 - `DONE` `test/features/comments.ts` -> `Tests/SQLFormatterTests/Parity/Features/CommentsFeatureParityTests.swift` (22/22 upstream cases ported)
@@ -55,11 +58,20 @@
 - `DONE` `test/features/with.ts` -> `Tests/SQLFormatterTests/Parity/Features/WithFeatureParityTests.swift`
 - `DONE` `test/features/strings.ts` -> `Tests/SQLFormatterTests/Parity/Features/StringsFeatureParityTests.swift` (34 cases ported with known divergences)
 - `DONE` `test/features/identifiers.ts` -> `Tests/SQLFormatterTests/Parity/Features/IdentifiersFeatureParityTests.swift` (17 cases ported with documented divergences)
+- `DONE` `test/features/isDistinctFrom.ts` -> `Tests/SQLFormatterTests/Parity/Features/IsDistinctFromFeatureParityTests.swift` (1 case ported)
 - `DONE` `test/features/limiting.ts` -> `Tests/SQLFormatterTests/Parity/Features/LimitingFeatureParityTests.swift` (9 cases ported with documented divergences)
+- `DONE` `test/features/mergeInto.ts` -> `Tests/SQLFormatterTests/Parity/Features/MergeIntoFeatureParityTests.swift` (1 case ported)
+- `DONE` `test/features/numbers.ts` -> `Tests/SQLFormatterTests/Parity/Features/NumbersFeatureParityTests.swift` (6 cases ported)
+- `DONE` `test/features/onConflict.ts` -> `Tests/SQLFormatterTests/Parity/Features/OnConflictFeatureParityTests.swift` (1 case ported)
+- `DONE` `test/features/operators.ts` -> `Tests/SQLFormatterTests/Parity/Features/OperatorsFeatureParityTests.swift` (5 cases ported)
+- `DONE` `test/features/returning.ts` -> `Tests/SQLFormatterTests/Parity/Features/ReturningFeatureParityTests.swift` (1 case ported)
 - `DONE` `test/features/insertInto.ts` -> `Tests/SQLFormatterTests/Parity/Features/InsertIntoFeatureParityTests.swift` (2 cases ported)
 - `DONE` `test/features/schema.ts` -> `Tests/SQLFormatterTests/Parity/Features/SchemaFeatureParityTests.swift` (1 case ported)
+- `DONE` `test/features/setOperations.ts` -> `Tests/SQLFormatterTests/Parity/Features/SetOperationsFeatureParityTests.swift` (18 cases ported)
 - `DONE` `test/features/update.ts` -> `Tests/SQLFormatterTests/Parity/Features/UpdateFeatureParityTests.swift` (3 cases ported)
 - `DONE` `test/features/truncateTable.ts` -> `Tests/SQLFormatterTests/Parity/Features/TruncateTableFeatureParityTests.swift` (2 cases ported)
+- `DONE` `test/features/window.ts` -> `Tests/SQLFormatterTests/Parity/Features/WindowFeatureParityTests.swift` (2 cases ported)
+- `DONE` `test/features/windowFunctions.ts` -> `Tests/SQLFormatterTests/Parity/Features/WindowFunctionsFeatureParityTests.swift` (1 case ported)
 
 ## Known Divergences (Documented)
 
@@ -82,3 +94,15 @@
 - `test/features/schema.ts`: Swift emits `SET` and `SCHEMA` on separate lines instead of the single-line clause upstream expects.
 - `test/features/join.ts`: Swift places many JOIN qualifiers and `ON` predicates on more lines (including NATURAL variants and APPLY forms) than upstream.
 - `test/features/update.ts`: Swift keeps `UPDATE ... AS (...)` body indentation flatter and splits `WHERE CURRENT OF` across lines.
+- `test/features/alterTable.ts`: Swift keeps ALTER TABLE action variants mostly on single lines where upstream breaks clauses into multiple lines.
+- `test/features/arrayAndMapAccessors.ts`: Swift inserts spaces before bracket accessors and emits comments around accessors differently than upstream.
+- `test/features/arrayLiterals.ts`: Swift keeps array literals more inline and differs in keyword/data-type casing behavior for ARRAY forms.
+- `test/features/isDistinctFrom.ts`: Swift breaks `IS DISTINCT FROM` around `FROM` with additional line splitting.
+- `test/features/mergeInto.ts`: Swift splits MERGE clause boundaries differently (more/earlier line breaks) than upstream.
+- `test/features/numbers.ts`: Swift differs around exponent/sign spacing and underscore-separated numeric literal formatting.
+- `test/features/onConflict.ts`: Swift splits VALUES/ON CONFLICT boundaries differently from upstream layout.
+- `test/features/operators.ts`: Swift formats `IN`/`NOT IN`/`ANY` with denser token spacing and multiline argument layout differences.
+- `test/features/returning.ts`: Swift keeps RETURNING closer to VALUES row content where upstream breaks it to its own clause line.
+- `test/features/setOperations.ts`: Swift keeps many set operators more inline and subquery set-operation blocks less indented than upstream.
+- `test/features/window.ts`: Swift keeps WINDOW clause specifications more inline than upstream’s broken-out layout.
+- `test/features/windowFunctions.ts`: Swift lays out OVER/ROWS BETWEEN frames differently from upstream clause wrapping.

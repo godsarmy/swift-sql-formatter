@@ -110,6 +110,11 @@
 - `DONE` `test/unit/tabularStyle.test.ts` -> `Tests/SQLFormatterTests/Unit/TabularStyleUnitParityTests.swift` (3 cases ported with spacing divergences documented)
 - `DONE` snapshot equivalence (`test/unit/__snapshots__/*.snap`) -> Swift fixture-based parity implemented via `Tests/SQLFormatterTests/Fixtures/{Parser,Tokenizer}` and `*SnapshotParityTests.swift`
 
+## Performance Suites (non-blocking)
+
+- `DONE` `test/perftest.ts` -> adapted as memory smoke checks in `Sources/sqlfmt-bench/main.swift`
+- `DONE` `test/perf/perf-test.js` -> adapted representative mixed-query workload benchmark in `Sources/sqlfmt-bench/main.swift`
+
 ## Known Divergences (Documented)
 
 - `test/options/tabWidth.ts` and `test/options/useTabs.ts`: Swift currently formats `count(*)` as `count( *)`.

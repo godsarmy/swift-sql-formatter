@@ -128,8 +128,8 @@ Add core helpers:
 - [x] Snapshot equivalence for parser/tokenizer fixtures (`__snapshots__/*.snap`) via Swift fixture files
 
 ### 7) Performance parity (non-blocking)
-- [ ] `test/perftest.ts`
-- [ ] `test/perf/perf-test.js`
+- [x] `test/perftest.ts` (adapted as non-blocking memory smoke checks in `sqlfmt-bench`)
+- [x] `test/perf/perf-test.js` (adapted representative mixed-query workload in `sqlfmt-bench`)
 
 ## Implementation Phases
 

@@ -8,7 +8,7 @@ Baseline upstream:
 Current Swift parity status:
 - Parity/unit parity test files added: 78
 - Ported parity test cases (`@Test`) across parity + unit parity suites: 563
-- Plan checklist status: all parity phases complete except performance parity (`test/perftest.ts`, `test/perf/perf-test.js`) which is explicitly non-blocking in `PLAN-TEST.md`.
+- Plan checklist status: all phases complete; performance parity is implemented as non-blocking smoke/benchmark coverage under `sqlfmt-bench`.
 
 ## Coverage by suite type
 
@@ -19,6 +19,7 @@ Current Swift parity status:
 - API parity suite (`sqlFormatter.test.ts`): complete for Swift-equivalent semantics
 - Unit suites (`Layout`, `NestedComment`, `Parser`, `Tokenizer`, `expandPhrases`, `tabularStyle`): complete
 - Snapshot equivalence (`test/unit/__snapshots__/*.snap`): complete via Swift fixture-based snapshot tests
+- Performance parity (`test/perftest.ts`, `test/perf/perf-test.js`): complete as non-blocking memory/throughput smoke checks in `Sources/sqlfmt-bench/main.swift`
 
 ## Explicit N/A cases
 

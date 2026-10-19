@@ -66,8 +66,11 @@ struct FormatterPipeline {
     var pendingSpace = false
     var formattingDisabled = false
     var positionalPlaceholderIndex = 0
+    var enclosingBrackets: [String] = []
     var parenthesizedExpressionDepth = 0
     var index = 0
+    var statementKeyword: String?
+    var isTriggerStatement = false
 
     while index < tokens.count {
       let token = tokens[index]
@@ -78,7 +81,18 @@ struct FormatterPipeline {
       )
       let resolvedTokenText = resolvedPlaceholder.text
 
+      if statementKeyword == nil, token.type == .word {
+        statementKeyword = token.text.uppercased()
+        isTriggerStatement =
+          options.dialect.name == "postgresql"
+          && (matchPhrase(["CREATE", "TRIGGER"], at: index, in: tokens) != nil
+            || matchPhrase(["CREATE", "CONSTRAINT", "TRIGGER"], at: index, in: tokens) != nil)
+      }
+
       if formattingDisabled {
+        if token.type == .punctuation, token.text == ";" {
+          statementKeyword = nil
+        }
         buffer.writeVerbatim(resolvedTokenText)
         if token.type == .comment, isFormatterEnableDirective(token.text) {
           formattingDisabled = false
@@ -114,6 +128,7 @@ struct FormatterPipeline {
           buffer.write(resolvedTokenText)
           pendingSpace = false
         } else if resolvedTokenText == ";" {
+          statementKeyword = nil
           indentationState.endClauseIfNeeded(using: &buffer)
           if options.newlineBeforeSemicolon {
             buffer.newline()
@@ -124,17 +139,23 @@ struct FormatterPipeline {
           }
           pendingSpace = false
         } else {
+          if [")", "]", "}"].contains(resolvedTokenText) {
+            _ = enclosingBrackets.popLast()
+          }
           if resolvedTokenText == ")" {
             parenthesizedExpressionDepth = max(0, parenthesizedExpressionDepth - 1)
           }
 
-          if pendingSpace, resolvedTokenText != ")",
+          if pendingSpace, ![")", "]", "}"].contains(resolvedTokenText),
             !shouldOmitSpaceBeforePunctuation(resolvedTokenText, at: index, in: tokens)
           {
             buffer.space()
           }
           buffer.write(resolvedTokenText)
-          pendingSpace = resolvedTokenText != "("
+          pendingSpace = !["(", "[", "{"].contains(resolvedTokenText)
+          if ["(", "[", "{"].contains(resolvedTokenText) {
+            enclosingBrackets.append(resolvedTokenText)
+          }
 
           if resolvedTokenText == "(" {
             parenthesizedExpressionDepth += 1
@@ -146,10 +167,11 @@ struct FormatterPipeline {
           buffer: &buffer,
           indentationState: indentationState,
           parenthesizedExpressionDepth: parenthesizedExpressionDepth,
-          pendingSpace: &pendingSpace
+          pendingSpace: &pendingSpace,
+          enclosingBracket: enclosingBrackets.last
         )
       case .word, .quoted:
-        if token.type == .word,
+        if token.type == .word, !isAliasAfterAs(at: index, in: tokens),
           handleTransactSQLControlWord(
             token.text,
             at: index,
@@ -163,7 +185,10 @@ struct FormatterPipeline {
           continue
         }
 
-        if let clause = clause(at: index, in: tokens) {
+        if let clause = clause(
+          at: index, in: tokens, statementKeyword: statementKeyword,
+          isTriggerStatement: isTriggerStatement)
+        {
           indentationState.endClauseIfNeeded(using: &buffer)
           buffer.newline()
           writeClause(
@@ -182,13 +207,16 @@ struct FormatterPipeline {
               resolvedTokenText,
               originalTokenText: token.text,
               at: index,
-              in: tokens
+              in: tokens,
+              isTriggerStatement: isTriggerStatement
             )
           } else {
             tokenText = resolvedTokenText
           }
 
-          if token.type == .word, isLogicalOperator(token.text) {
+          if token.type == .word, isLogicalOperator(token.text),
+            !isAliasAfterAs(at: index, in: tokens), !isTriggerStatement
+          {
             writeLogicalOperator(
               tokenText,
               buffer: &buffer,
@@ -276,13 +304,51 @@ struct FormatterPipeline {
     }
   }
 
-  private func clause(at index: Int, in tokens: [Token]) -> (text: String, endIndex: Int)? {
+  private func clause(
+    at index: Int, in tokens: [Token], statementKeyword: String?, isTriggerStatement: Bool
+  )
+    -> (text: String, endIndex: Int)?
+  {
     guard tokens[index].type == .word else {
       return nil
     }
 
+    guard !isAliasAfterAs(at: index, in: tokens) else { return nil }
     let keyword = tokens[index].text.uppercased()
-    let statementKeyword = statementLeadingKeyword(containing: index, in: tokens)
+
+    if options.dialect.name == "trino", isTimeZonePhraseWord(at: index, in: tokens) {
+      return nil
+    }
+    if options.dialect.name == "transactsql", keyword == "AS",
+      ["SELECT", "UPDATE", "DELETE"].contains(statementKeyword)
+    {
+      return nil
+    }
+
+    if isTriggerStatement {
+      let phrases = [
+        ["CREATE", "CONSTRAINT", "TRIGGER"], ["CREATE", "TRIGGER"],
+        ["BEFORE", "INSERT"], ["BEFORE", "UPDATE", "OF"], ["BEFORE", "UPDATE"],
+        ["BEFORE", "DELETE"], ["BEFORE", "TRUNCATE"],
+        ["AFTER", "INSERT"], ["AFTER", "UPDATE", "OF"], ["AFTER", "UPDATE"],
+        ["AFTER", "DELETE"], ["AFTER", "TRUNCATE"],
+        ["INSTEAD", "OF", "INSERT"], ["INSTEAD", "OF", "UPDATE"], ["INSTEAD", "OF", "DELETE"],
+        ["NOT", "DEFERRABLE", "INITIALLY", "DEFERRED"],
+        ["NOT", "DEFERRABLE", "INITIALLY", "IMMEDIATE"],
+        ["DEFERRABLE", "INITIALLY", "DEFERRED"], ["DEFERRABLE", "INITIALLY", "IMMEDIATE"],
+        ["NOT", "DEFERRABLE"], ["DEFERRABLE"],
+        ["INITIALLY", "DEFERRED"], ["INITIALLY", "IMMEDIATE"],
+        ["EXECUTE", "FUNCTION"], ["EXECUTE", "PROCEDURE"], ["EXECUTE"],
+      ]
+      for phrase in phrases {
+        if let end = matchPhrase(phrase, at: index, in: tokens) {
+          let text = tokens[index...end].filter { $0.type == .word }.map(\.text).joined(
+            separator: " ")
+          return (text, end)
+        }
+      }
+      return nil
+    }
 
     if ["GRANT", "REVOKE"].contains(statementKeyword), isPrivilegeKeyword(keyword) {
       return nil
@@ -353,6 +419,63 @@ struct FormatterPipeline {
     return nil
   }
 
+  private func isTimeZonePhraseWord(at index: Int, in tokens: [Token]) -> Bool {
+    let phrases = [
+      ["TIMESTAMP", "WITH", "TIME", "ZONE"], ["TIMESTAMP", "WITHOUT", "TIME", "ZONE"],
+      ["TIME", "WITH", "TIME", "ZONE"], ["TIME", "WITHOUT", "TIME", "ZONE"],
+      ["WITH", "TIME", "ZONE"], ["WITHOUT", "TIME", "ZONE"],
+    ]
+    for phrase in phrases {
+      for position in phrase.indices where phrase[position] == tokens[index].text.uppercased() {
+        var start = index
+        for _ in 0..<position {
+          guard let previous = previousNonWhitespaceTokenIndex(before: start, in: tokens) else {
+            start = -1
+            break
+          }
+          start = previous
+        }
+        if start >= 0, let match = matchPhrase(phrase, at: start, in: tokens), match >= index {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  private func matchPhrase(_ words: [String], at index: Int, in tokens: [Token]) -> Int? {
+    var current = index
+    for (position, word) in words.enumerated() {
+      guard tokens[current].type == .word, tokens[current].text.uppercased() == word else {
+        return nil
+      }
+      if position < words.count - 1 {
+        guard let next = nextWordToken(after: current, in: tokens) else { return nil }
+        current = next.index
+      }
+    }
+    return current
+  }
+
+  private func isAliasAfterAs(at index: Int, in tokens: [Token]) -> Bool {
+    let aliases: Set<String> = [
+      "SET", "UNION", "EXCEPT", "INTERSECT", "JOIN", "INNER", "LEFT", "RIGHT", "FULL",
+      "CROSS", "NATURAL", "LIMIT", "BETWEEN", "CASE", "END", "WHEN", "ELSE", "THEN",
+      "AND", "OR", "XOR",
+    ]
+    guard aliases.contains(tokens[index].text.uppercased()) else { return false }
+    var previous = index - 1
+    while previous >= 0 {
+      let token = tokens[previous]
+      if [.whitespace, .newline, .comment].contains(token.type) {
+        previous -= 1
+        continue
+      }
+      return token.type == .word && token.text.uppercased() == "AS"
+    }
+    return false
+  }
+
   private func nextWordToken(after index: Int, in tokens: [Token]) -> (text: String, index: Int)? {
     var nextIndex = index + 1
     while nextIndex < tokens.count {
@@ -367,24 +490,6 @@ struct FormatterPipeline {
       }
     }
     return nil
-  }
-
-  private func statementLeadingKeyword(containing index: Int, in tokens: [Token]) -> String? {
-    var currentIndex = index
-    var words: [(String, Int)] = []
-
-    while currentIndex >= 0 {
-      let token = tokens[currentIndex]
-      if token.type == .punctuation, token.text == ";" {
-        break
-      }
-      if token.type == .word {
-        words.append((token.text.uppercased(), currentIndex))
-      }
-      currentIndex -= 1
-    }
-
-    return words.last?.0
   }
 
   private func isPrivilegeKeyword(_ keyword: String) -> Bool {
@@ -418,6 +523,14 @@ struct FormatterPipeline {
 
   private func shouldKeepClauseInline(_ text: String) -> Bool {
     let normalizedText = text.uppercased()
+    if options.dialect.name == "postgresql",
+      [
+        "CREATE TRIGGER", "CREATE CONSTRAINT TRIGGER", "BEFORE ", "AFTER ", "INSTEAD OF ",
+        "DEFERRABLE", "NOT DEFERRABLE", "INITIALLY ", "EXECUTE",
+      ].contains(where: { normalizedText.hasPrefix($0) })
+    {
+      return true
+    }
     return [
       "BREAK", "CREATE MATERIALIZED VIEW", "CREATE OR REPLACE VIEW", "CREATE TABLE",
       "CREATE VIEW", "DELETE FROM",
@@ -713,10 +826,31 @@ struct FormatterPipeline {
     _ resolvedText: String,
     originalTokenText: String,
     at index: Int,
-    in tokens: [Token]
+    in tokens: [Token],
+    isTriggerStatement: Bool
   ) -> String {
     guard resolvedText == originalTokenText else {
       return resolvedText
+    }
+
+    if isTriggerStatement,
+      [
+        "OR", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "OF", "ON", "INITIALLY", "DEFERRED",
+        "IMMEDIATE", "FOR", "EACH", "ROW",
+      ].contains(originalTokenText.uppercased())
+    {
+      return formatKeyword(resolvedText)
+    }
+
+    if isAliasAfterAs(at: index, in: tokens) {
+      return formatIdentifier(resolvedText)
+    }
+
+    if options.dialect.name == "trino",
+      ["TIMESTAMP", "WITH", "WITHOUT", "TIME", "ZONE"].contains(originalTokenText.uppercased()),
+      isTimeZonePhraseWord(at: index, in: tokens)
+    {
+      return formatKeyword(resolvedText)
     }
 
     if isKeyword(originalTokenText) || isLogicalOperator(originalTokenText) {
@@ -743,6 +877,7 @@ struct FormatterPipeline {
       return true
     }
 
+    if options.dialect.name == "bigquery", lastCharacter == "-" { return true }
     return !options.dialect.operatorCharacters.contains(lastCharacter) && lastCharacter != "("
   }
 
@@ -751,6 +886,13 @@ struct FormatterPipeline {
     at index: Int,
     in tokens: [Token]
   ) -> Bool {
+    if punctuation == "[", options.dialect.name == "duckdb",
+      let previousIndex = previousNonWhitespaceTokenIndex(before: index, in: tokens)
+    {
+      let previous = tokens[previousIndex]
+      return (previous.type == .word && !isKeyword(previous.text))
+        || previous.type == .quoted || [")", "]"].contains(previous.text)
+    }
     guard punctuation == "(",
       let previousIndex = previousNonWhitespaceTokenIndex(before: index, in: tokens)
     else {
@@ -1018,9 +1160,19 @@ struct FormatterPipeline {
     buffer: inout OutputBuffer,
     indentationState: IndentationState,
     parenthesizedExpressionDepth: Int,
-    pendingSpace: inout Bool
+    pendingSpace: inout Bool,
+    enclosingBracket: String?
   ) {
-    if options.denseOperators {
+    if text == ":", enclosingBracket == "{" {
+      buffer.write(text)
+      pendingSpace = !options.denseOperators
+      return
+    }
+    let keepsSpaces =
+      (text == "-" && options.dialect.name == "bigquery")
+      || text.uppercased().hasPrefix("OPERATOR")
+    let isSliceColon = text == ":" && enclosingBracket == "["
+    if (options.denseOperators && !keepsSpaces) || isSliceColon {
       if shouldWrapExpressionToken(
         text,
         requiresLeadingSpace: false,

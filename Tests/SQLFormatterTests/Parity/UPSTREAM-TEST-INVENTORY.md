@@ -160,8 +160,8 @@
 - `test/clickhouse.test.ts`: Swift differs in map/lambda/ternary spacing, insert+WITH placement, and DROP/RENAME clause wrapping.
 - `test/db2.test.ts`: Swift formats non-standard `FOR` clause constructs with different clause splitting than upstream.
 - `test/db2i.test.ts`: Swift differs across nested comments, LIMIT/FETCH wrapping, EXCEPTION JOIN layout, operator density/spacing, and data-type casing behavior.
-- `test/postgresql.test.ts`: Swift differs in spacing/line breaks for array slices, `OPERATOR()` usage, `FOR UPDATE`, OR REPLACE bodies, and COMMENT ON formatting.
-- `test/duckdb.test.ts`: Swift differs for prefix alias spacing, struct literal spacing, large literal wrapping, JSON casing, and `IS NOT NULL` casing.
+- `test/postgresql.test.ts`: Swift differs in spacing/line breaks for array slices, `FOR UPDATE`, OR REPLACE bodies, and COMMENT ON formatting.
+- `test/duckdb.test.ts`: Swift differs for prefix alias spacing, multiline struct literal layout, large literal wrapping, JSON casing, and `IS NOT NULL` casing.
 - `test/hive.test.ts`: Swift differs for substitution variable escaping and SORT/CLUSTER/DISTRIBUTE BY clause grouping/line breaks.
 - `test/mariadb.test.ts`: Swift emits whitespace between `@` and quoted variable names and keeps ALTER COLUMN clauses flatter.
 - `test/mysql.test.ts`: Swift emits whitespace between `@` and quoted variable names and keeps ALTER COLUMN clauses flatter.
@@ -174,3 +174,15 @@
 - `test/tidb.test.ts`: Swift emits whitespace between `@` and quoted variable names and keeps ALTER COLUMN clauses flatter.
 - `test/transactsql.test.ts`: Swift differs in line breaking for scope resolution, `INTO`/`OPTION`/`FOR` clauses, GO blocks, and some identifier casing/spacing cases.
 - `test/trino.test.ts`: Swift differs in row-pattern (`MATCH_RECOGNIZE`) clause wrapping.
+
+## Incremental v15.9.0 coverage
+
+The original inventory above is retained as historical coverage. The update from
+`a984949` to v15.9.0 (`63dc9f8`) is audited in root `UPSTREAM.md`, with regression
+coverage in `Upstream159Tests.swift` and `Fixtures/upstream-15.9.0.json`.
+The new fixtures cover all built-in dialects for reserved-word aliases and dense
+minus safety, plus PostgreSQL operators, triggers and dump guards, SQLite Tcl
+parameters, Trino time zones, DuckDB slices, OPENJSON and SingleStoreDB modulo.
+Existing comment indentation, BETWEEN/CASE line breaking, signed-number spacing,
+and generic callable-name spacing/casing differences remain. Each new fixture
+that differs from upstream includes its upstream output and a divergence note.

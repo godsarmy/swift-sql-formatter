@@ -232,3 +232,15 @@ swift run sqlfmt-bench
 
 - CI build and tests run on pull requests and pushes to `main`.
 - A GitHub release is created automatically when a tag like `v1.0.0` is pushed.
+
+## Upstream compatibility
+
+The upstream change audit targets **sql-formatter v15.9.0**. This Swift port retains
+its documented formatting differences; see [UPSTREAM.md](UPSTREAM.md) for the
+change checklist, regression fixtures, and update process.
+
+This update supports SQLite Tcl-style `$name::suffix(trailer)` placeholders,
+PostgreSQL dump safety guards and trigger phrases, Trino time-zone type phrases,
+and DuckDB array slices. Dense operators preserve necessary minus/operator spaces.
+
+Upstream updates are reviewed and ported manually using that guide.

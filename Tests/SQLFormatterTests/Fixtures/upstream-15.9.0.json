@@ -1,0 +1,629 @@
+[
+  {
+    "name": "sql-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "sql",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "sql-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "sql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "postgresql-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "postgresql",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "postgresql-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "bigquery-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "bigquery",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "bigquery-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "bigquery",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a - - b,\n  1 - - 1",
+    "upstreamExpected": "SELECT\n  a - - b,\n  1 - -1",
+    "divergence": "Existing Swift sign/digit spacing is retained."
+  },
+  {
+    "name": "sqlite-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "sqlite",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "sqlite-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "sqlite",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "transactsql-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "transactsql",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "transactsql-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "transactsql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "singlestoredb-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "singlestoredb",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "singlestoredb-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "singlestoredb",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "trino-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "trino",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "trino-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "trino",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "duckdb-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "duckdb",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "duckdb-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "duckdb",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "clickhouse-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "clickhouse",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "clickhouse-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "clickhouse",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "db2-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "db2",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "db2-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "db2",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "db2i-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "db2i",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "db2i-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "db2i",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "hive-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "hive",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "hive-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "hive",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "mariadb-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "mariadb",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "mariadb-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "mariadb",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "mysql-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "mysql",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "mysql-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "mysql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "n1ql-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "n1ql",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "n1ql-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "n1ql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "plsql-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "plsql",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "plsql-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "plsql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "redshift-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "redshift",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "redshift-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "redshift",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "snowflake-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "snowflake",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "snowflake-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "snowflake",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "spark-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "spark",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "spark-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "spark",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "tidb-alias",
+    "sql": "SELECT id AS set FROM tbl AS set;",
+    "language": "tidb",
+    "options": {},
+    "expected": "SELECT\n  id AS set\nFROM\n  tbl AS set;",
+    "upstreamExpected": "SELECT\n  id AS set\nFROM\n  tbl AS set;"
+  },
+  {
+    "name": "tidb-minus",
+    "sql": "SELECT a - -b, 1 - -1",
+    "language": "tidb",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a- -b,\n  1- -1",
+    "upstreamExpected": "SELECT\n  a- -b,\n  1- -1"
+  },
+  {
+    "name": "postgres->^",
+    "sql": "SELECT foo >^ bar;",
+    "language": "postgresql",
+    "options": {},
+    "expected": "SELECT\n  foo >^ bar;",
+    "upstreamExpected": "SELECT\n  foo >^ bar;"
+  },
+  {
+    "name": "postgres-dense->^",
+    "sql": "SELECT foo >^ bar;",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  foo>^bar;",
+    "upstreamExpected": "SELECT\n  foo>^bar;"
+  },
+  {
+    "name": "postgres-<@>",
+    "sql": "SELECT foo <@> bar;",
+    "language": "postgresql",
+    "options": {},
+    "expected": "SELECT\n  foo <@> bar;",
+    "upstreamExpected": "SELECT\n  foo <@> bar;"
+  },
+  {
+    "name": "postgres-dense-<@>",
+    "sql": "SELECT foo <@> bar;",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  foo<@>bar;",
+    "upstreamExpected": "SELECT\n  foo<@>bar;"
+  },
+  {
+    "name": "postgres-~>",
+    "sql": "SELECT foo ~> bar;",
+    "language": "postgresql",
+    "options": {},
+    "expected": "SELECT\n  foo ~> bar;",
+    "upstreamExpected": "SELECT\n  foo ~> bar;"
+  },
+  {
+    "name": "postgres-dense-~>",
+    "sql": "SELECT foo ~> bar;",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  foo~>bar;",
+    "upstreamExpected": "SELECT\n  foo~>bar;"
+  },
+  {
+    "name": "postgres-#=",
+    "sql": "SELECT foo #= bar;",
+    "language": "postgresql",
+    "options": {},
+    "expected": "SELECT\n  foo #= bar;",
+    "upstreamExpected": "SELECT\n  foo #= bar;"
+  },
+  {
+    "name": "postgres-dense-#=",
+    "sql": "SELECT foo #= bar;",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  foo#=bar;",
+    "upstreamExpected": "SELECT\n  foo#=bar;"
+  },
+  {
+    "name": "postgres-&&&",
+    "sql": "SELECT foo &&& bar;",
+    "language": "postgresql",
+    "options": {},
+    "expected": "SELECT\n  foo &&& bar;",
+    "upstreamExpected": "SELECT\n  foo &&& bar;"
+  },
+  {
+    "name": "postgres-dense-&&&",
+    "sql": "SELECT foo &&& bar;",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  foo&&&bar;",
+    "upstreamExpected": "SELECT\n  foo&&&bar;"
+  },
+  {
+    "name": "postgres-|=|",
+    "sql": "SELECT foo |=| bar;",
+    "language": "postgresql",
+    "options": {},
+    "expected": "SELECT\n  foo |=| bar;",
+    "upstreamExpected": "SELECT\n  foo |=| bar;"
+  },
+  {
+    "name": "postgres-dense-|=|",
+    "sql": "SELECT foo |=| bar;",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  foo|=|bar;",
+    "upstreamExpected": "SELECT\n  foo|=|bar;"
+  },
+  {
+    "name": "sqlite-tcl",
+    "sql": "select $p(x=y), $foo::bar(extra), $foo::bar::baz(a b);",
+    "language": "sqlite",
+    "options": {},
+    "expected": "select\n  $p(x=y),\n  $foo::bar(extra),\n  $foo::bar::baz(a b);",
+    "upstreamExpected": "select\n  $p(x=y),\n  $foo::bar(extra),\n  $foo::bar::baz(a b);"
+  },
+  {
+    "name": "duckdb-slice",
+    "sql": "SELECT foo[:5], bar[1:], baz[1:5], zap[:];",
+    "language": "duckdb",
+    "options": {},
+    "expected": "SELECT\n  foo[:5],\n  bar[1:],\n  baz[1:5],\n  zap[:];",
+    "upstreamExpected": "SELECT\n  foo[:5],\n  bar[1:],\n  baz[1:5],\n  zap[:];"
+  },
+  {
+    "name": "duckdb-struct",
+    "sql": "SELECT {'k': list[1:5]}, arr[i:j];",
+    "language": "duckdb",
+    "options": {},
+    "expected": "SELECT\n  {'k': list[1:5]},\n  arr[i:j];",
+    "upstreamExpected": "SELECT\n  {'k': list[1:5]},\n  arr[i:j];"
+  },
+  {
+    "name": "postgres-operator",
+    "sql": "SELECT foo OPERATOR(public.===) bar;",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  foo OPERATOR(public.===) bar;",
+    "upstreamExpected": "SELECT\n  foo OPERATOR(public.===) bar;"
+  },
+  {
+    "name": "postgres-operator-simple",
+    "sql": "SELECT a OPERATOR(+) b;",
+    "language": "postgresql",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a OPERATOR(+) b;",
+    "upstreamExpected": "SELECT\n  a OPERATOR(+) b;"
+  },
+  {
+    "name": "bigquery-minus",
+    "sql": "SELECT a - b, x - foo(y)\nFROM t",
+    "language": "bigquery",
+    "options": {
+      "denseOperators": true
+    },
+    "expected": "SELECT\n  a - b,\n  x - foo(y)\nFROM\n  t",
+    "upstreamExpected": "SELECT\n  a - b,\n  x - foo (y)\nFROM\n  t",
+    "divergence": "Existing Swift function/identifier parenthesis spacing is retained."
+  },
+  {
+    "name": "singlestore-modulo",
+    "sql": "SELECT a % b;",
+    "language": "singlestoredb",
+    "options": {},
+    "expected": "SELECT\n  a % b;",
+    "upstreamExpected": "SELECT\n  a % b;"
+  },
+  {
+    "name": "openjson",
+    "sql": "select openjson('{}');",
+    "language": "transactsql",
+    "options": {
+      "functionCase": "upper"
+    },
+    "expected": "select\n  OPENJSON('{}');",
+    "upstreamExpected": "select\n  OPENJSON('{}');"
+  },
+  {
+    "name": "trino-timezone",
+    "sql": "select timestamp with time zone, time without time zone, timestamp(0) with time zone;",
+    "language": "trino",
+    "options": {
+      "keywordCase": "upper",
+      "dataTypeCase": "upper"
+    },
+    "expected": "SELECT\n  TIMESTAMP WITH TIME ZONE,\n  TIME WITHOUT TIME ZONE,\n  TIMESTAMP(0) WITH TIME ZONE;",
+    "upstreamExpected": "SELECT\n  TIMESTAMP WITH TIME ZONE,\n  TIME WITHOUT TIME ZONE,\n  TIMESTAMP(0) WITH TIME ZONE;"
+  },
+  {
+    "name": "trigger",
+    "sql": "create constraint trigger Example_Trigger after insert or update of Column_A, Column_B on Example_Table deferrable initially deferred for each row execute procedure Example_Function ();",
+    "language": "postgresql",
+    "options": {
+      "keywordCase": "upper",
+      "identifierCase": "lower",
+      "functionCase": "lower"
+    },
+    "expected": "CREATE CONSTRAINT TRIGGER example_trigger\nAFTER INSERT OR UPDATE OF column_a,\ncolumn_b ON example_table\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW\nEXECUTE PROCEDURE example_function();",
+    "upstreamExpected": "CREATE CONSTRAINT TRIGGER example_trigger\nAFTER INSERT OR UPDATE OF column_a,\ncolumn_b ON example_table\nDEFERRABLE INITIALLY DEFERRED FOR EACH ROW\nEXECUTE PROCEDURE example_function ();",
+    "divergence": "Swift applies functionCase to callable identifiers; functionCase lower is explicit. Existing parenthesis spacing is retained."
+  },
+  {
+    "name": "trigger-events",
+    "sql": "create trigger Example_Trigger after insert or update or delete on Example_Table for each row execute function Example_Function ();",
+    "language": "postgresql",
+    "options": {
+      "keywordCase": "upper",
+      "identifierCase": "lower",
+      "functionCase": "lower"
+    },
+    "expected": "CREATE TRIGGER example_trigger\nAFTER INSERT OR UPDATE OR DELETE ON example_table FOR EACH ROW\nEXECUTE FUNCTION example_function();",
+    "upstreamExpected": "CREATE TRIGGER example_trigger\nAFTER INSERT OR UPDATE OR DELETE ON example_table FOR EACH ROW\nEXECUTE FUNCTION example_function ();",
+    "divergence": "Swift applies functionCase to callable identifiers; functionCase lower is explicit. Existing parenthesis spacing is retained."
+  },
+  {
+    "name": "pgdump",
+    "sql": "\\restrict AbC123\ncreate table widgets(id integer);\n\\unrestrict AbC123",
+    "language": "postgresql",
+    "options": {},
+    "expected": "\\restrict AbC123\ncreate table widgets(id integer);\n\n\\unrestrict AbC123",
+    "upstreamExpected": "\\restrict AbC123\ncreate table widgets (id integer);\n\n\\unrestrict AbC123",
+    "divergence": "Existing Swift function/identifier parenthesis spacing is retained."
+  },
+  {
+    "name": "trigger-before",
+    "sql": "create trigger x before update of a on t not deferrable initially immediate for each row execute function f();",
+    "language": "postgresql",
+    "options": {
+      "keywordCase": "upper",
+      "identifierCase": "lower",
+      "functionCase": "lower"
+    },
+    "expected": "CREATE TRIGGER x\nBEFORE UPDATE OF a ON t\nNOT DEFERRABLE INITIALLY IMMEDIATE FOR EACH ROW\nEXECUTE FUNCTION f();",
+    "upstreamExpected": "CREATE TRIGGER x\nBEFORE UPDATE OF a ON t\nNOT DEFERRABLE INITIALLY IMMEDIATE FOR EACH ROW\nEXECUTE FUNCTION f ();",
+    "divergence": "Existing Swift callable-name parenthesis spacing is retained."
+  },
+  {
+    "name": "trigger-instead",
+    "sql": "create trigger x instead of insert on t initially deferred for each row execute function f();",
+    "language": "postgresql",
+    "options": {
+      "keywordCase": "upper",
+      "identifierCase": "lower",
+      "functionCase": "lower"
+    },
+    "expected": "CREATE TRIGGER x\nINSTEAD OF INSERT ON t\nINITIALLY DEFERRED FOR EACH ROW\nEXECUTE FUNCTION f();",
+    "upstreamExpected": "CREATE TRIGGER x\nINSTEAD OF INSERT ON t\nINITIALLY DEFERRED FOR EACH ROW\nEXECUTE FUNCTION f ();",
+    "divergence": "Existing Swift callable-name parenthesis spacing is retained."
+  },
+  {
+    "name": "trigger-deferrable",
+    "sql": "create trigger x after delete on t deferrable initially immediate for each row execute function f();",
+    "language": "postgresql",
+    "options": {
+      "keywordCase": "upper",
+      "identifierCase": "lower",
+      "functionCase": "lower"
+    },
+    "expected": "CREATE TRIGGER x\nAFTER DELETE ON t\nDEFERRABLE INITIALLY IMMEDIATE FOR EACH ROW\nEXECUTE FUNCTION f();",
+    "upstreamExpected": "CREATE TRIGGER x\nAFTER DELETE ON t\nDEFERRABLE INITIALLY IMMEDIATE FOR EACH ROW\nEXECUTE FUNCTION f ();",
+    "divergence": "Existing Swift callable-name parenthesis spacing is retained."
+  }
+]

@@ -32,7 +32,7 @@ private func duckdbOptions(
 }
 
 // Upstream: test/duckdb.test.ts :: formats {} struct literal (string keys)
-// Swift divergence: braces keep a leading space around brace contents and add spaces around colons.
+// Swift divergence: commas inside structs still start a new line.
 @Test func parity_duckdb_formatsStructLiteralWithStringKeys() throws {
   try assertFormatDialect(
     "SELECT {'id':1,'type':'Tarzan'} AS obj;",
@@ -40,8 +40,8 @@ private func duckdbOptions(
     dedent(
       """
       SELECT
-        { 'id' : 1,
-        'type' : 'Tarzan' } AS obj;
+        {'id': 1,
+        'type': 'Tarzan'} AS obj;
       """
     )
   )
@@ -56,8 +56,8 @@ private func duckdbOptions(
     dedent(
       """
       SELECT
-        {id : 1,
-        type : 'Tarzan' } AS obj;
+        {id: 1,
+        type: 'Tarzan'} AS obj;
       """
     )
   )
@@ -72,8 +72,8 @@ private func duckdbOptions(
     dedent(
       """
       SELECT
-        { "id" : 1,
-        "type" : 'Tarzan' } AS obj;
+        {"id": 1,
+        "type": 'Tarzan'} AS obj;
       """
     )
   )
@@ -92,14 +92,14 @@ private func duckdbOptions(
       """
       INSERT INTO heroes(KEY,
       VALUE) VALUES('123',
-      { 'id' : 1,
-      'type' : 'Tarzan',
-      'array' : [123456789,
+      {'id': 1,
+      'type': 'Tarzan',
+      'array': [123456789,
       123456789,
       123456789,
       123456789,
       123456789],
-      'hello' : 'world' });
+      'hello': 'world'});
       """
     )
   )

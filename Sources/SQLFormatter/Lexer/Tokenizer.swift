@@ -1,16 +1,65 @@
+import Foundation
+
 struct Tokenizer {
   let dialect: Dialect
 
   func tokenize(_ sql: String) throws -> [Token] {
     var tokens: [Token] = []
     var index = sql.startIndex
+    var line = 1
+    var column = 1
+    var offset = 0
 
     while index < sql.endIndex {
+      let tokenStart = index
+      let tokenLocation = SourceLocation(line: line, column: column, offset: offset)
+      defer {
+        for character in sql[tokenStart..<index] {
+          offset += character.unicodeScalars.count
+          if isLineBreakCharacter(character) {
+            line += 1
+            column = 1
+          } else {
+            column += 1
+          }
+        }
+      }
       let character = sql[index]
 
-      if isLineBreakCharacter(character) {
+      if dialect.name == "postgresql",
+        hasPrefix("\\restrict ", in: sql, at: index)
+          || hasPrefix("\\unrestrict ", in: sql, at: index)
+      {
         let start = index
-        tokens.append(Token(type: .newline, text: "\n", location: location(in: sql, at: start)))
+        index = advanceUntilLineBreak(in: sql, from: index)
+        tokens.append(
+          Token(type: .comment, text: String(sql[start..<index]), location: tokenLocation))
+        continue
+      }
+
+      if dialect.name == "sqlite", character == "$",
+        let range = sql[index...].range(
+          of: #"^\$[a-zA-Z_][a-zA-Z0-9_]*(?:::[a-zA-Z_][a-zA-Z0-9_]*)*(?:\([^)]*\))?"#,
+          options: .regularExpression
+        )
+      {
+        index = range.upperBound
+        tokens.append(Token(type: .word, text: String(sql[range]), location: tokenLocation))
+        continue
+      }
+
+      if dialect.name == "postgresql", character == "O" || character == "o",
+        let range = sql[index...].range(
+          of: #"^(?i:OPERATOR)\s*\([^)]*\)"#, options: .regularExpression)
+      {
+        index = range.upperBound
+        tokens.append(
+          Token(type: .operatorToken, text: String(sql[range]), location: tokenLocation))
+        continue
+      }
+
+      if isLineBreakCharacter(character) {
+        tokens.append(Token(type: .newline, text: "\n", location: tokenLocation))
         index = sql.index(after: index)
         continue
       }
@@ -22,7 +71,7 @@ struct Tokenizer {
           Token(
             type: .whitespace,
             text: String(sql[start..<index]),
-            location: location(in: sql, at: start)
+            location: tokenLocation
           ))
         continue
       }
@@ -32,7 +81,7 @@ struct Tokenizer {
         index = advanceUntilLineBreak(in: sql, from: index)
         tokens.append(
           Token(
-            type: .comment, text: String(sql[start..<index]), location: location(in: sql, at: start)
+            type: .comment, text: String(sql[start..<index]), location: tokenLocation
           )
         )
         continue
@@ -49,7 +98,7 @@ struct Tokenizer {
               Token(
                 type: .comment,
                 text: String(sql[start..<index]),
-                location: location(in: sql, at: start)
+                location: tokenLocation
               ))
             break
           }
@@ -72,7 +121,7 @@ struct Tokenizer {
         )
         tokens.append(
           Token(
-            type: .quoted, text: String(sql[start..<index]), location: location(in: sql, at: start))
+            type: .quoted, text: String(sql[start..<index]), location: tokenLocation)
         )
         continue
       }
@@ -87,7 +136,7 @@ struct Tokenizer {
         )
         tokens.append(
           Token(
-            type: .quoted, text: String(sql[start..<index]), location: location(in: sql, at: start))
+            type: .quoted, text: String(sql[start..<index]), location: tokenLocation)
         )
         continue
       }
@@ -102,14 +151,14 @@ struct Tokenizer {
         )
         tokens.append(
           Token(
-            type: .quoted, text: String(sql[start..<index]), location: location(in: sql, at: start))
+            type: .quoted, text: String(sql[start..<index]), location: tokenLocation)
         )
         continue
       }
 
       if isPunctuation(character) {
         tokens.append(
-          Token(type: .punctuation, text: String(character), location: location(in: sql, at: index))
+          Token(type: .punctuation, text: String(character), location: tokenLocation)
         )
         index = sql.index(after: index)
         continue
@@ -122,7 +171,7 @@ struct Tokenizer {
           Token(
             type: .operatorToken,
             text: String(sql[start..<index]),
-            location: location(in: sql, at: start)
+            location: tokenLocation
           ))
         continue
       }
@@ -133,7 +182,7 @@ struct Tokenizer {
           && quotedTokenDelimiter(for: current) == nil
       }
       tokens.append(
-        Token(type: .word, text: String(sql[start..<index]), location: location(in: sql, at: start))
+        Token(type: .word, text: String(sql[start..<index]), location: tokenLocation)
       )
     }
 

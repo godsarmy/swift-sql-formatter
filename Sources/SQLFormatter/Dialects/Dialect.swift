@@ -109,7 +109,7 @@ public struct Dialect: Sendable, Hashable {
     quotedIdentifierDelimiters: ["\"": "\"", "'": "'"],
     punctuationCharacters: [",", "(", ")", ";", "."],
     operatorCharacters: [
-      "=", ">", "<", "!", "+", "-", "*", "/", "%", "|", "&", "#", "~", "^", "?", ":",
+      "=", ">", "<", "!", "+", "-", "*", "/", "%", "|", "&", "#", "~", "^", "?", ":", "@",
     ],
     clauseKeywords: ["WITH", "SELECT", "FROM", "WHERE", "LIMIT", "HAVING", "ON", "RETURNING"],
     compoundClauseKeywords: ["GROUP": ["BY"], "ORDER": ["BY"]],
@@ -139,7 +139,9 @@ public struct Dialect: Sendable, Hashable {
   )
   public static let db2 = standardSQL.copy(name: "db2")
   public static let db2i = standardSQL.copy(name: "db2i")
-  public static let duckDB = postgreSQL.copy(name: "duckdb")
+  public static let duckDB = postgreSQL.copy(
+    name: "duckdb", punctuationCharacters: [",", "(", ")", ";", ".", "[", "]", "{", "}"]
+  )
   public static let hive = standardSQL.copy(
     name: "hive", quotedIdentifierDelimiters: ["`": "`", "\"": "\"", "'": "'"])
   public static let mariaDB = standardSQL.copy(
@@ -147,7 +149,9 @@ public struct Dialect: Sendable, Hashable {
   public static let mySQL = mariaDB.copy(name: "mysql")
   public static let tiDB = mySQL.copy(name: "tidb")
   public static let n1ql = postgreSQL.copy(name: "n1ql")
-  public static let plSQL = postgreSQL.copy(name: "plsql")
+  public static let plSQL = postgreSQL.copy(
+    name: "plsql", operatorCharacters: postgreSQL.operatorCharacters.subtracting(["@"])
+  )
   public static let redshift = postgreSQL.copy(name: "redshift")
   public static let singleStoreDB = mySQL.copy(name: "singlestoredb")
   public static let snowflake = postgreSQL.copy(name: "snowflake")

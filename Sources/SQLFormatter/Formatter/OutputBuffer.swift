@@ -21,6 +21,10 @@ struct OutputBuffer {
       isLineStart = false
     }
 
+    // Adjacent minus operators must never become a SQL line comment.
+    if output.hasSuffix("-"), text.hasPrefix("-") {
+      output += " "
+    }
     output += text
   }
 

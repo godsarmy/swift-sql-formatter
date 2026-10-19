@@ -94,7 +94,7 @@ private func postgresOptions(
 }
 
 // Upstream: test/postgresql.test.ts :: supports OPERATOR() syntax
-// Swift divergence: spacing around dot-qualified operators and parentheses differs.
+// Qualified operators are preserved as opaque tokens, including their original internal spacing.
 @Test func parity_postgresql_supportsOperatorSyntax() throws {
   try assertFormatDialect(
     "SELECT foo OPERATOR(public.===) bar;",
@@ -102,7 +102,7 @@ private func postgresOptions(
     dedent(
       """
       SELECT
-        foo OPERATOR(public. ===) bar;
+        foo OPERATOR(public.===) bar;
       """
     )
   )
@@ -113,7 +113,7 @@ private func postgresOptions(
     dedent(
       """
       SELECT
-        foo operator( !==) bar;
+        foo operator ( !== ) bar;
       """
     )
   )

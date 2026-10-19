@@ -13,6 +13,14 @@ Guidance for coding agents working in this repository.
 - `Sources/sqlfmt/`: CLI entry point.
 - `Sources/sqlfmt-bench/`: benchmark utility.
 - `Tests/SQLFormatterTests/`: unit and parity tests.
+- `docs/`: Open Knowledge Format (OKF) v0.2 documentation bundle; start at `docs/index.md`.
+
+## Documentation conventions
+
+- Maintain `docs/` in OKF style: one concept per Markdown file with YAML frontmatter containing a non-empty `type`.
+- Use `index.md` for navigation and `log.md` for lifecycle history; keep related concepts linked and directory indexes current.
+- Organize maintenance plans under `docs/plans/` and actionable follow-up work under `docs/tasks/`; do not recreate standalone parity reports or inventories.
+- Use the OKF skill when editing the bundle and run the OKF validator before finalizing documentation changes.
 
 ## Build and test commands
 

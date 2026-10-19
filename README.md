@@ -236,11 +236,17 @@ swift run sqlfmt-bench
 ## Upstream compatibility
 
 The upstream change audit targets **sql-formatter v15.9.0**. This Swift port retains
-its documented formatting differences; see [UPSTREAM.md](UPSTREAM.md) for the
-change checklist, regression fixtures, and update process.
+its documented formatting differences; see the [upstream maintenance plan](docs/plans/upstream-maintenance.md)
+and [proposed follow-up tasks](docs/tasks/) for the update process and scoped work.
 
 This update supports SQLite Tcl-style `$name::suffix(trailer)` placeholders,
 PostgreSQL dump safety guards and trigger phrases, Trino time-zone type phrases,
 and DuckDB array slices. Dense operators preserve necessary minus/operator spaces.
 
-Upstream updates are reviewed and ported manually using that guide.
+Upstream updates are reviewed and ported manually using that plan.
+
+## Documentation
+
+Start with the [documentation bundle](docs/index.md). It includes the
+[architecture guidance](docs/architecture.md), [upstream maintenance plan](docs/plans/upstream-maintenance.md),
+and [proposed tasks](docs/tasks/).
